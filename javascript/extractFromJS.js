@@ -4,10 +4,10 @@
 
     const usage = `
 Two usage modes:
-  1) extractFromJS.js <what> --parallel N <fileList.txt> <dir>
+  1) extractFromJS.js <what> --output <outputFile> --parallel N <fileList.txt> <dir>
      Analyze all files in <dir> that are listed in <fileList.txt>, using N parallel instances.
      If <fileList.txt> is "all", analyze all files in <dir>.
-  2) extractFromJS.js <what> --files <list of files>:
+  2) extractFromJS.js <what> --output <outputFile> --files <list of files>:
      Analyze the list of files.
 
 The <what> argument must be one of:
@@ -32,11 +32,11 @@ The <what> argument must be one of:
 
     const fileToIDFileName = "fileIDs.json";
 
-    function spawnSingleInstance(worklist, what) {
+    function spawnSingleInstance(worklist, what, output) {
         console.log("Left in worklist: " + worklist.length + ". Spawning an instance.");
         const jsFiles = worklist.pop();
         if (jsFiles) {
-            const argsToPass = [process.argv[1], what, "--files"].concat(jsFiles);
+            const argsToPass = [process.argv[1], what, "--output", output, "--files"].concat(jsFiles);
             const cmd = spawn("node", argsToPass);
             cmd.on("close", (code) => {
                 console.log("Instance has finished with exit code " + code);
@@ -53,7 +53,7 @@ The <what> argument must be one of:
         }
     }
 
-    function spawnInstances(nbInstances, jsFiles, what) {
+    function spawnInstances(nbInstances, jsFiles, what, output) {
         const worklist = [];
         for (let i = 0; i < jsFiles.length; i += filesPerParallelInstance) {
             const chunkOfJSFiles = jsFiles.slice(i, i + filesPerParallelInstance);
@@ -61,7 +61,7 @@ The <what> argument must be one of:
         }
 
         for (let instance = 0; instance < nbInstances; instance++) {
-            spawnSingleInstance(worklist, what);
+            spawnSingleInstance(worklist, what, output);
         }
     }
 
@@ -108,14 +108,15 @@ The <what> argument must be one of:
         console.log(usage);
         process.exit(1);
     }
-    if (args[1] === "--parallel") {
-        if (args.length !== 5) {
+    if (args[3] === "--parallel") {
+        if (args.length !== 7) {
             console.log(usage);
             process.exit(1);
         }
-        const nbInstances = args[2];
-        const fileListFile = args[3];
-        const dir = args[4];
+        const output = args[2];
+        const nbInstances = args[4];
+        const fileListFile = args[5];
+        const dir = args[6];
 
         // filter to use only files in file list
         const relativeJsFiles = walkSync(dir, {globs:["**/*.js"], directories:false});
@@ -128,8 +129,8 @@ The <what> argument must be one of:
         }
         console.log("Total number of files: " + jsFiles.length);
         getOrCreateFileToID(jsFiles);
-        spawnInstances(nbInstances, jsFiles, what);
-    } else if (args[1] === "--files") {
+        spawnInstances(nbInstances, jsFiles, what, output);
+    } else if (args[3] === "--files") {
         let extractor;
         if (what === "calls") extractor = require("./extractorOfCalls");
         else if (what === "assignments") extractor = require("./extractorOfAssignments2");
@@ -141,7 +142,7 @@ The <what> argument must be one of:
         else if (what === "callsMissingArg") extractor = require("./extractorOfCallsMissingArg");
 
         const allData = [];
-        const jsFiles = args.slice(2);
+        const jsFiles = args.slice(4);
         let fileToID = getOrCreateFileToID(jsFiles);
         for (let i = 0; i < jsFiles.length; i++) {
             const jsFile = jsFiles[i];
@@ -153,7 +154,7 @@ The <what> argument must be one of:
                 extractor.visitFile(jsFile, allData);
             }
         }
-        const fileName = what + "_" + Date.now() + ".json";
+        const fileName = what + "_" + args[2] + ".json";
         console.log("Writing " + allData.length + " items to file " + fileName);
         fs.writeFileSync(fileName, JSON.stringify(allData, null, 2));
     } else {

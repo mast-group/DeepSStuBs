@@ -45,7 +45,7 @@ Each bug detector addresses a particular bug pattern, e.g.:
 
 #### Step 1: Extract positive and negative training examples
 
-`node javascript/extractFromJS.js calls --parallel 4 data/js/programs_50_training.txt data/js/programs_50`
+`node javascript/extractFromJS.js calls --output training/eval --parallel 4 data/js/programs_50_training.txt data/js/programs_50`
 
   * The `--parallel` argument sets the number of processes to run.
   * `programs_50_training.txt` contains files to include (one file per line). To extract data for validation, run the command with `data/js/programs_50_eval.txt`.
@@ -54,7 +54,7 @@ Each bug detector addresses a particular bug pattern, e.g.:
 
 #### Step 2: Train a classifier to identify bugs
 
-`python3 python/BugDetection.py SwappedArgs --learn token_to_vector.json type_to_vector.json node_type_to_vector.json --trainingData calls_xx*.json --validationData calls_yy*.json`
+`python3 python/BugDetection.py SwappedArgs --learn token_to_vector.json type_to_vector.json node_type_to_vector.json --trainingData calls_training.json --validationData calls_eval.json`
 
   * The first argument selects the bug pattern.
   * The next three arguments are vector representations for tokens (here: identifiers and literals), for types, and for AST node types. These files are provided in the repository.
@@ -71,7 +71,7 @@ The above bug detectors rely on a vector representation for identifier names and
 
 1) Extract identifiers and tokens:
 
-`node javascript/extractFromJS.js tokens --parallel 4 data/js/programs_50_training.txt data/js/programs_50`
+`node javascript/extractFromJS.js tokens --output training/eval --parallel 4 data/js/programs_50_training.txt data/js/programs_50`
 
   * The command produces `tokens_*.json` files.
   
