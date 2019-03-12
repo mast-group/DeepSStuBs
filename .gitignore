@@ -30,4 +30,4 @@ HyperExp*
 
 /node_modules
 /package-lock.json
-tokens*.json
+*_training.json
