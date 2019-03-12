@@ -1,3 +1,5 @@
+DeepSStuBs is currently based on DeepBugs.
+
 DeepBugs: Deep Learning to Find Bugs
 ====================================
 
