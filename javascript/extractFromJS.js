@@ -41,7 +41,7 @@ The <what> argument must be one of:
             cmd.on("close", (code) => {
                 console.log("Instance has finished with exit code " + code);
                 if (worklist.length > 0) {
-                    spawnSingleInstance(worklist, what);
+                    spawnSingleInstance(worklist, what, output);
                 }
             });
             cmd.stdout.on('data', (data) => {
