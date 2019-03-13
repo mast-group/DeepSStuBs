@@ -10,6 +10,7 @@ from os.path import join
 from os import getcwd
 from collections import Counter
 import math
+import time
 from multiprocessing import Pool
 
 kept_tokens = 10000
@@ -55,15 +56,15 @@ def analyze_histograms(all_tokens):
     print(str(covered_by_kept_tokens) + " most frequent terms cover " + str(perc_covered_by_kept_tokens) + " of all terms")
 
 def save_tokens(encoded_tokens):
-    # time_stamp = math.floor(time.time() * 1000)
-    file_name = "encoded_tokens_" + 'training' + ".json"
+    time_stamp = math.floor(time.time() * 1000)
+    file_name = "encoded_tokens_" + 'training_' + str(time_stamp) + ".json"
     with open(file_name, "w") as file:
         json.dump(encoded_tokens, file, indent=4)
     return file_name
 
 def save_token_numbers(token_to_number):
-    # time_stamp = math.floor(time.time() * 1000)
-    file_name = "token_to_number_" + 'training' + ".json"
+    time_stamp = math.floor(time.time() * 1000)
+    file_name = "token_to_number_" + 'training_' + str(time_stamp) + ".json"
     with open(file_name, 'w') as file:
         json.dump(token_to_number, file, sort_keys=True, indent=4)
 

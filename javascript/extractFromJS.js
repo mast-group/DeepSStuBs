@@ -154,7 +154,7 @@ The <what> argument must be one of:
                 extractor.visitFile(jsFile, allData);
             }
         }
-        const fileName = what + "_" + args[2] + ".json";
+        const fileName = what + "_" + args[2] + "_" + Date.now() + ".json";
         console.log("Writing " + allData.length + " items to file " + fileName);
         fs.writeFileSync(fileName, JSON.stringify(allData, null, 2));
     } else {
