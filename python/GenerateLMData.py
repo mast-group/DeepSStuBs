@@ -18,6 +18,7 @@ def instance_tokens_generator(tokens_files):
 
 def main(args):
     tokens_files = args[1]
+    print(tokens_files)
     for token_seq in instance_tokens_generator(tokens_files):
         print(token_seq)
 
