@@ -26,16 +26,20 @@ def instance_tokens_generator(tokens_files, keep_types=True):
             yield token_seq
         else: 
             yield token_seq
-    print('Sequences:%d', sequences)
+    print('Sequences: %d' % sequences)
         # break
 
 def main(args):
     export_file = args[1]
     tokens_files = args[2:]
     with open(export_file, 'w') as f:
+        yields = 0
         for token_seq in instance_tokens_generator(tokens_files):
+            yields += 1
             f.write(' '.join(token_seq))
             f.write('\n')
+    print('yields%d' % yields)
+    
 
 if __name__ == '__main__':
     main(sys.argv)
