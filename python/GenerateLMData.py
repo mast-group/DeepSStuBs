@@ -23,7 +23,9 @@ def instance_tokens_generator(tokens_files):
 def main(args):
     tokens_files = args[1:]
     for token_seq in instance_tokens_generator(tokens_files):
+        print(len(token_seq))
         print(token_seq)
+        print(token_seq[0])
 
 if __name__ == '__main__':
     main(sys.argv)
