@@ -18,6 +18,7 @@ def instance_tokens_generator(tokens_files, keep_types=True):
     
     for token_seq in EncodedSequenceReader(data_paths):
         token_seq = [token.replace(' ', 'U+0020') for token in token_seq]
+        token_seq = [token.replace('\\', '\\\\') for token in token_seq]
         if not keep_types:
             token_seq = [token[token.find(':') + 1: ] for token in token_seq]
             yield token_seq
