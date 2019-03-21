@@ -18,7 +18,7 @@ def instance_tokens_generator(tokens_files):
     
     for token_seq in EncodedSequenceReader(data_paths):
         yield token_seq
-        break
+        # break
 
 def main(args):
     tokens_files = args[1:]
