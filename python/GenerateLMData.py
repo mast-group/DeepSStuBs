@@ -11,12 +11,14 @@ from os import getcwd
 from os.path import join
 
 def instance_tokens_generator(tokens_files, keep_types=True):
+    sequences = 0
     data_paths = list(map(lambda f: join(getcwd(), f), tokens_files))
     if len(data_paths) is 0:
         print("Must pass token*.json files and at least one data file")
         sys.exit(1)
     
     for token_seq in EncodedSequenceReader(data_paths):
+        sequences += 1
         token_seq = [token.replace(' ', 'U+0020') for token in token_seq]
         token_seq = [token.replace('\\', '\\\\') for token in token_seq]
         if not keep_types:
@@ -24,6 +26,7 @@ def instance_tokens_generator(tokens_files, keep_types=True):
             yield token_seq
         else: 
             yield token_seq
+    print('Sequences:%d', sequences)
         # break
 
 def main(args):
