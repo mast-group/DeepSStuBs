@@ -10,7 +10,7 @@ from EmbeddingLearnerWord2Vec import EncodedSequenceReader
 from os import getcwd
 from os.path import join
 
-def instance_tokens_generator(tokens_files, keep_types=False):
+def instance_tokens_generator(tokens_files, keep_types=True):
     data_paths = list(map(lambda f: join(getcwd(), f), tokens_files))
     if len(data_paths) is 0:
         print("Must pass token*.json files and at least one data file")
