@@ -17,9 +17,10 @@ def instance_tokens_generator(tokens_files):
         break
 
 def main(args):
-    pass
-
-if __name__ == '__main__':
-    tokens_files = sys.argv[1]
+    tokens_files = args[1]
     for token_seq in instance_tokens_generator(tokens_files):
         print(token_seq)
+
+if __name__ == '__main__':
+    main(sys.argv)
+
