@@ -97,6 +97,7 @@ class LearningData(object):
         x_keep += base_vector + argument0_type_vector + argument1_type_vector
         x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
         y_keep = [0]
+        print(x_keep)
         xs.append(x_keep)
         ys.append(y_keep)
         if calls != None:
