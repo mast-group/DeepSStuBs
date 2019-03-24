@@ -97,14 +97,14 @@ class LearningData(object):
         x_keep += base_vector + argument0_type_vector + argument1_type_vector
         x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
         y_keep = [0]
-        print("callee_vector: " + callee_vector)
-        print("argument0_vector: " + argument0_vector)
-        print("argument1_vector: " + argument1_vector)
-        print("base_vector: " + base_vector)
-        print("argument0_type_vector: " + argument0_type_vector)
-        print("argument1_type_vector: " + argument1_type_vector)
-        print("parameter0_vector: " + parameter0_vector)
-        print("parameter1_vector: " + parameter1_vector)
+        print("callee_vector: ", callee_vector)
+        print("argument0_vector: ", argument0_vector)
+        print("argument1_vector: ", argument1_vector)
+        print("base_vector: ", base_vector)
+        print("argument0_type_vector: ", argument0_type_vector)
+        print("argument1_type_vector: ", argument1_type_vector)
+        print("parameter0_vector: ", parameter0_vector)
+        print("parameter1_vector: ", parameter1_vector)
         print("\n\n")
         xs.append(x_keep)
         ys.append(y_keep)
