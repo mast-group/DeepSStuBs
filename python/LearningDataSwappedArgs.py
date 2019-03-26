@@ -71,6 +71,7 @@ class LearningData(object):
         callee_vector = name_to_vector[callee_string]
         argument0_vector = name_to_vector[argument_strings[0]]
         argument1_vector = name_to_vector[argument_strings[1]]
+        print("callee string:" + callee_string)
         print(call["base"] + " " + callee_string + " " + argument_strings[0] + ", " + argument_strings[1])
         
         # optional information: base object, argument types, etc.
