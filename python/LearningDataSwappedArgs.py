@@ -71,8 +71,14 @@ class LearningData(object):
         callee_vector = name_to_vector[callee_string]
         argument0_vector = name_to_vector[argument_strings[0]]
         argument1_vector = name_to_vector[argument_strings[1]]
+
+        correct_code = ""
         print("callee string:" + callee_string)
+        if call["base"] != "":
+            correct_code += call["base"] + " . "
+        correct_code += " %s ( %s , %s )" % (callee_string, argument_strings[0], argument_strings[1])
         print(call["base"] + " " + callee_string + " " + argument_strings[0] + ", " + argument_strings[1])
+        print(correct_code)
         
         # optional information: base object, argument types, etc.
         base_string = call["base"]
