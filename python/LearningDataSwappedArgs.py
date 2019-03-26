@@ -72,14 +72,6 @@ class LearningData(object):
         argument0_vector = name_to_vector[argument_strings[0]]
         argument1_vector = name_to_vector[argument_strings[1]]
 
-        correct_code = ""
-        print("callee string:" + callee_string)
-        if call["base"] != "":
-            correct_code += call["base"] + " . "
-        correct_code += " %s ( %s , %s )" % (callee_string, argument_strings[0], argument_strings[1])
-        print(call["base"] + " " + callee_string + " " + argument_strings[0] + ", " + argument_strings[1])
-        print(correct_code)
-        
         # optional information: base object, argument types, etc.
         base_string = call["base"]
         base_vector = name_to_vector.get(base_string, [0]*name_embedding_size)
@@ -105,15 +97,15 @@ class LearningData(object):
         x_keep += base_vector + argument0_type_vector + argument1_type_vector
         x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
         y_keep = [0]
-        print("callee_vector: ", callee_vector)
-        print("argument0_vector: ", argument0_vector)
-        print("argument1_vector: ", argument1_vector)
-        print("base_vector: ", base_vector)
-        print("argument0_type_vector: ", argument0_type_vector)
-        print("argument1_type_vector: ", argument1_type_vector)
-        print("parameter0_vector: ", parameter0_vector)
-        print("parameter1_vector: ", parameter1_vector)
-        print("\n\n")
+        # print("callee_vector: ", callee_vector)
+        # print("argument0_vector: ", argument0_vector)
+        # print("argument1_vector: ", argument1_vector)
+        # print("base_vector: ", base_vector)
+        # print("argument0_type_vector: ", argument0_type_vector)
+        # print("argument1_type_vector: ", argument1_type_vector)
+        # print("parameter0_vector: ", parameter0_vector)
+        # print("parameter1_vector: ", parameter1_vector)
+        # print("\n\n")
         xs.append(x_keep)
         ys.append(y_keep)
         if calls != None:
@@ -149,6 +141,14 @@ class LearningData(object):
         argument0_vector = name_to_vector[argument_strings[0]]
         argument1_vector = name_to_vector[argument_strings[1]]
         
+        correct_code = ""
+        print("callee string:" + callee_string)
+        if call["base"] != "":
+            correct_code += call["base"] + " . "
+        correct_code += " %s ( %s , %s )" % (callee_string, argument_strings[0], argument_strings[1])
+        print(call["base"] + " " + callee_string + " " + argument_strings[0] + ", " + argument_strings[1])
+        print(correct_code)
+        
         # optional information: base object, argument types, etc.
         base_string = call["base"]
         base_vector = name_to_vector.get(base_string, [0]*name_embedding_size)
@@ -174,15 +174,15 @@ class LearningData(object):
         x_keep += base_vector + argument0_type_vector + argument1_type_vector
         x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
         y_keep = [0]
-        print("callee_vector: ", callee_vector)
-        print("argument0_vector: ", argument0_vector)
-        print("argument1_vector: ", argument1_vector)
-        print("base_vector: ", base_vector)
-        print("argument0_type_vector: ", argument0_type_vector)
-        print("argument1_type_vector: ", argument1_type_vector)
-        print("parameter0_vector: ", parameter0_vector)
-        print("parameter1_vector: ", parameter1_vector)
-        print("\n\n")
+        # print("callee_vector: ", callee_vector)
+        # print("argument0_vector: ", argument0_vector)
+        # print("argument1_vector: ", argument1_vector)
+        # print("base_vector: ", base_vector)
+        # print("argument0_type_vector: ", argument0_type_vector)
+        # print("argument1_type_vector: ", argument1_type_vector)
+        # print("parameter0_vector: ", parameter0_vector)
+        # print("parameter1_vector: ", parameter1_vector)
+        # print("\n\n")
         xs.append(x_keep)
         ys.append(y_keep)
         if calls != None:
