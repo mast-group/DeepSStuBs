@@ -1,7 +1,8 @@
 '''
 Created on Jun 23, 2017
 
-@author: Michael Pradel
+@author: Rafael Karampatsis
+Based on code by Michael Pradel
 '''
 
 import sys
@@ -22,6 +23,8 @@ import LearningDataSwappedBinOperands
 import LearningDataIncorrectBinaryOperand
 import LearningDataIncorrectAssignment
 import LearningDataMissingArg
+
+from ELMoClient import *
 
 name_embedding_size = 200
 file_name_embedding_size = 50
@@ -135,6 +138,9 @@ if __name__ == '__main__':
     print("Statistics on training data:")
     learning_data.pre_scan(training_data_paths, validation_data_paths)
     
+    # Connecting to ELMo server
+    socket = connect('localhost', PORT)
+
     # prepare x,y pairs for learning and validation
     print("Preparing xy pairs for training data:")
     learning_data.resetStats()
