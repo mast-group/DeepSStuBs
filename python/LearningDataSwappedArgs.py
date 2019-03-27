@@ -160,7 +160,7 @@ class LearningData(object):
         
         elmo_representations = query([correct_code, buggy_code], socket)
         correct_vectors = elmo_representations[0][0]
-        print(correct_vectors)
+        print('correct vector:', correct_vectors)
         wrong_vectors = elmo_representations[0][1]
         
 
