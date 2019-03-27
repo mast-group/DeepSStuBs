@@ -8,9 +8,10 @@ import Util
 from collections import Counter
 
 from ELMoClient import *
+import itertools
 
 
-name_embedding_size = 200
+name_embedding_size = 1024
 file_name_embedding_size = 50
 type_embedding_size = 5
 
@@ -145,22 +146,22 @@ class LearningData(object):
         argument1_vector = name_to_vector[argument_strings[1]]
         
         correct_code = ""
-        print("callee string:" + callee_string)
+        # print("callee string:" + callee_string)
         if call["base"] != "":
             correct_code += call["base"] + " . "
         buggy_code = correct_code
         correct_code += " %s ( %s , %s )" % (callee_string, \
             argument_strings[0].replace(' ', 'U+0020'), argument_strings[1].replace(' ', 'U+0020'))
-        print(call["base"] + " " + callee_string + " " + \
-            argument_strings[0].replace(' ', 'U+0020') + ", " + \
-                argument_strings[1].replace(' ', 'U+0020'))
-        print(len(correct_code.split()), correct_code)
+        # print(call["base"] + " " + callee_string + " " + \
+        #     argument_strings[0].replace(' ', 'U+0020') + ", " + \
+        #         argument_strings[1].replace(' ', 'U+0020'))
+        # print(len(correct_code.split()), correct_code)
         buggy_code += " %s ( %s , %s )" % (callee_string, \
             argument_strings[1].replace(' ', 'U+0020'), argument_strings[0].replace(' ', 'U+0020'))
         
         elmo_representations = query([correct_code, buggy_code], socket)
         correct_vectors = elmo_representations[0][0]
-        print('correct vector:', correct_vectors)
+        # print('correct vector:', correct_vectors)
         wrong_vectors = elmo_representations[0][1]
         
 
@@ -184,10 +185,11 @@ class LearningData(object):
         if (parameter_strings[0] in name_to_vector or parameter_strings[1] in name_to_vector):
             self.stats["calls_with_known_parameters"] += 1
         
+        x_keep = list(itertools.chain.from_iterable(correct_vectors))
         # for all xy-pairs: y value = probability that incorrect
-        x_keep = callee_vector + argument0_vector + argument1_vector
-        x_keep += base_vector + argument0_type_vector + argument1_type_vector
-        x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
+        # x_keep = callee_vector + argument0_vector + argument1_vector
+        # x_keep += base_vector + argument0_type_vector + argument1_type_vector
+        # x_keep += parameter0_vector + parameter1_vector #+ file_name_vector
         y_keep = [0]
         # print("callee_vector: ", callee_vector)
         # print("argument0_vector: ", argument0_vector)
@@ -203,9 +205,10 @@ class LearningData(object):
         if calls != None:
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
         
-        x_swap = callee_vector + argument1_vector + argument0_vector
-        x_swap += base_vector + argument1_type_vector + argument0_type_vector
-        x_swap += parameter0_vector + parameter1_vector #+ file_name_vector
+        x_swap = list(itertools.chain.from_iterable(wrong_vectors))
+        # x_swap = callee_vector + argument1_vector + argument0_vector
+        # x_swap += base_vector + argument1_type_vector + argument0_type_vector
+        # x_swap += parameter0_vector + parameter1_vector #+ file_name_vector
         y_swap = [1]
         xs.append(x_swap)
         ys.append(y_swap)
