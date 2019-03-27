@@ -142,8 +142,8 @@ class LearningData(object):
                 return
         self.stats["calls_with_known_names"] += 1
         callee_vector = name_to_vector[callee_string]
-        argument0_vector = name_to_vector[argument_strings[0]]
-        argument1_vector = name_to_vector[argument_strings[1]]
+        # argument0_vector = name_to_vector[argument_strings[0]]
+        # argument1_vector = name_to_vector[argument_strings[1]]
         
         correct_code = ""
         # print("callee string:" + callee_string)
@@ -180,8 +180,8 @@ class LearningData(object):
             self.stats["calls_with_both_known_types"] += 1
         
         parameter_strings = call["parameters"]
-        parameter0_vector = name_to_vector.get(parameter_strings[0], [0]*name_embedding_size)
-        parameter1_vector = name_to_vector.get(parameter_strings[1], [0]*name_embedding_size)
+        # parameter0_vector = name_to_vector.get(parameter_strings[0], [0]*name_embedding_size)
+        # parameter1_vector = name_to_vector.get(parameter_strings[1], [0]*name_embedding_size)
         if (parameter_strings[0] in name_to_vector or parameter_strings[1] in name_to_vector):
             self.stats["calls_with_known_parameters"] += 1
         
