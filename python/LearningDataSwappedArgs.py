@@ -7,6 +7,9 @@ Created on Nov 9, 2017
 import Util
 from collections import Counter
 
+from ELMoClient import *
+
+
 name_embedding_size = 200
 file_name_embedding_size = 50
 type_embedding_size = 5
@@ -121,7 +124,7 @@ class LearningData(object):
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
             
     
-    def code_to_ELMo_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, calls=None):
+    def code_to_ELMo_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, calls=None):
         arguments = call["arguments"]
         self.stats["calls"] += 1
         if len(arguments) != 2:
@@ -145,10 +148,22 @@ class LearningData(object):
         print("callee string:" + callee_string)
         if call["base"] != "":
             correct_code += call["base"] + " . "
-        correct_code += " %s ( %s , %s )" % (callee_string, argument_strings[0], argument_strings[1])
-        print(call["base"] + " " + callee_string + " " + argument_strings[0] + ", " + argument_strings[1])
-        print(correct_code)
+        buggy_code = correct_code
+        correct_code += " %s ( %s , %s )" % (callee_string, \
+            argument_strings[0].replace(' ', 'U+0020'), argument_strings[1].replace(' ', 'U+0020'))
+        print(call["base"] + " " + callee_string + " " + \
+            argument_strings[0].replace(' ', 'U+0020') + ", " + \
+                argument_strings[1].replace(' ', 'U+0020'))
+        print(len(correct_code.split()), correct_code)
+        buggy_code += " %s ( %s , %s )" % (callee_string, \
+            argument_strings[1].replace(' ', 'U+0020'), argument_strings[0].replace(' ', 'U+0020'))
         
+        elmo_representations = query([correct_code, buggy_code], socket)
+        correct_vectors = elmo_representations[0][0]
+        print(correct_vectors)
+        wrong_vectors = elmo_representations[0][1]
+        
+
         # optional information: base object, argument types, etc.
         base_string = call["base"]
         base_vector = name_to_vector.get(base_string, [0]*name_embedding_size)

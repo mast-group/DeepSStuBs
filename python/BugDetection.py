@@ -32,6 +32,10 @@ type_embedding_size = 5
 
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
+# Connecting to ELMo server
+socket = connect('localhost', PORT)
+
+
 def parse_data_paths(args):
     training_data_paths = []
     eval_data_paths = []
@@ -62,7 +66,7 @@ def prepare_xy_pairs(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths):
         # learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces)
         print(code_piece)
-        learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces)
+        learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces, socket)
     x_length = len(xs[0])
     
     print("Stats: " + str(learning_data.stats))
@@ -137,9 +141,6 @@ if __name__ == '__main__':
     
     print("Statistics on training data:")
     learning_data.pre_scan(training_data_paths, validation_data_paths)
-    
-    # Connecting to ELMo server
-    socket = connect('localhost', PORT)
 
     # prepare x,y pairs for learning and validation
     print("Preparing xy pairs for training data:")
@@ -246,5 +247,8 @@ if __name__ == '__main__':
             accuracy = 0.0
         print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4))+"  #Warnings: "+str(threshold_to_warnings_in_orig_code[threshold]))
     
+
+    socket.sendall(CONN_END)
+    socket.close()
     
     
