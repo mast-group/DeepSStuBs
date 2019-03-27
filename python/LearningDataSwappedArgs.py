@@ -186,6 +186,8 @@ class LearningData(object):
             self.stats["calls_with_known_parameters"] += 1
         
         x_keep = list(itertools.chain.from_iterable(correct_vectors))
+        if call["base"] == "":
+            x_keep = [0] * (2 * name_embedding_size) + x_keep
         # for all xy-pairs: y value = probability that incorrect
         # x_keep = callee_vector + argument0_vector + argument1_vector
         # x_keep += base_vector + argument0_type_vector + argument1_type_vector
@@ -206,6 +208,8 @@ class LearningData(object):
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
         
         x_swap = list(itertools.chain.from_iterable(wrong_vectors))
+        if call["base"] == "":
+            x_swap = [0] * (2 * name_embedding_size) + x_swap
         # x_swap = callee_vector + argument1_vector + argument0_vector
         # x_swap += base_vector + argument1_type_vector + argument0_type_vector
         # x_swap += parameter0_vector + parameter1_vector #+ file_name_vector
