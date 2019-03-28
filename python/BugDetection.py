@@ -68,6 +68,10 @@ def prepare_xy_pairs(data_paths, learning_data):
         # print(code_piece)
         learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, code_pieces)
     x_length = len(xs[0])
+
+    # Close the socket
+    socket.sendall(CONN_END)
+    socket.close()
     
     print("Stats: " + str(learning_data.stats))
     print("Number of x,y pairs: " + str(len(xs)))
@@ -250,7 +254,5 @@ if __name__ == '__main__':
         print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4))+"  #Warnings: "+str(threshold_to_warnings_in_orig_code[threshold]))
     
 
-    socket.sendall(CONN_END)
-    socket.close()
     
     
