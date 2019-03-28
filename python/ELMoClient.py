@@ -39,7 +39,7 @@ def connect(server, port):
 
 
 def query(code, socket, options={'top_layer_only' : False, 'token_embeddings_only' : False}, 
-    logging=false):
+    logging=False):
     """[summary]
     
     Arguments:

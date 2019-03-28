@@ -165,6 +165,8 @@ if __name__ == '__main__':
      
         # train
         model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+        for xs in xs_training:
+            print(len(xs))
         history = model.fit(xs_training, ys_training, batch_size=100, epochs=10, verbose=1)
         
         time_stamp = math.floor(time.time() * 1000)
