@@ -11,7 +11,7 @@ from ELMoClient import *
 import itertools
 
 
-name_embedding_size = 1024
+name_embedding_size = 200
 file_name_embedding_size = 50
 type_embedding_size = 5
 
