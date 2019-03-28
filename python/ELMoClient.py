@@ -38,7 +38,8 @@ def connect(server, port):
     return sock
 
 
-def query(code, socket, options={'top_layer_only' : False, 'token_embeddings_only' : False}):
+def query(code, socket, options={'top_layer_only' : False, 'token_embeddings_only' : False}, 
+    logging=false):
     """[summary]
     
     Arguments:
@@ -67,10 +68,10 @@ def query(code, socket, options={'top_layer_only' : False, 'token_embeddings_onl
         code_sequences = [code.split()]
     else: raise ValueError
     
-    eprint('Sending code sequence "%s"' % code_sequences)
+    # eprint('Sending code sequence "%s"' % code_sequences)
     query = json.dumps({'sequences': code_sequences, 'options': options})
     data = pickle.dumps(query)
-    # eprint("Pickled code sequences: ", data)
+    if logging: eprint("Pickled code sequences: ", data)
     socket.sendall(data)
     socket.sendall(END)
     
