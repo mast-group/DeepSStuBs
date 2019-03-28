@@ -210,6 +210,8 @@ class LearningData(object):
         x_swap = list(itertools.chain.from_iterable(wrong_vectors))
         if call["base"] == "":
             x_swap = [0] * (2 * name_embedding_size) + x_swap
+        
+        print(correct_code, len(x_keep), buggy_code, len(x_swap))
         # x_swap = callee_vector + argument1_vector + argument0_vector
         # x_swap += base_vector + argument1_type_vector + argument0_type_vector
         # x_swap += parameter0_vector + parameter1_vector #+ file_name_vector
