@@ -148,7 +148,7 @@ class LearningData(object):
         correct_code = ""
         # print("callee string:" + callee_string)
         if call["base"] != "":
-            correct_code += call["base"] + " . "
+            correct_code += call["base"].replace(' ', 'U+0020') + " . "
         buggy_code = correct_code
         correct_code += " %s ( %s , %s )" % (callee_string, \
             argument_strings[0].replace(' ', 'U+0020'), argument_strings[1].replace(' ', 'U+0020'))
