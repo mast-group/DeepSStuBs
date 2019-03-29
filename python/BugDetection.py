@@ -69,10 +69,6 @@ def prepare_xy_pairs(data_paths, learning_data):
         learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, code_pieces)
     x_length = len(xs[0])
 
-    # Close the socket
-    socket.sendall(CONN_END)
-    socket.close()
-    
     print("Stats: " + str(learning_data.stats))
     print("Number of x,y pairs: " + str(len(xs)))
     print("Length of x vectors: " + str(x_length))
@@ -184,6 +180,10 @@ if __name__ == '__main__':
     xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
     print("Validation examples : " + str(len(xs_validation)))
     print(learning_data.stats)
+
+    # All the representations were received so close the socket.
+    socket.sendall(CONN_END)
+    socket.close()
     
     # validate
     validation_loss = model.evaluate(xs_validation, ys_validation)
