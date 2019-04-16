@@ -182,8 +182,8 @@ if __name__ == '__main__':
     print(learning_data.stats)
 
     # All the representations were received so close the socket.
-    socket.sendall(CONN_END)
-    socket.close()
+    # socket.sendall(CONN_END)
+    # socket.close()
     
     # validate
     validation_loss = model.evaluate(xs_validation, ys_validation)
