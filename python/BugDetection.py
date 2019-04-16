@@ -33,7 +33,7 @@ type_embedding_size = 5
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Connecting to ELMo server
-socket = connect('localhost', PORT)
+# socket = connect('localhost', PORT)
 
 
 def parse_data_paths(args):
