@@ -24,7 +24,9 @@ import LearningDataIncorrectBinaryOperand
 import LearningDataIncorrectAssignment
 import LearningDataMissingArg
 import queue
+import threading
 
+from threading import Thread
 from ELMoClient import *
 
 name_embedding_size = 200
