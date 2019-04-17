@@ -94,7 +94,7 @@ def prepare_xy_pairs(data_paths, learning_data):
 def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths):
         code_pieces_queue.put((code_piece, learning_data))
-        # print(code_piece)
+        print('Queued code piece', code_piece)
 
 def batch_generator():
     try:
@@ -219,6 +219,7 @@ if __name__ == '__main__':
             t = threading.Thread(target=batch_generator)
             t.start()
             threads.append(t)
+        print("Created %d threads" % BATCHING_THREADS)
 
         # Train loop for requested number of epochs
         # Retrieve batches from the queue and train on the until they are exausted.
@@ -236,13 +237,14 @@ if __name__ == '__main__':
             while batches_queue.empty():
                 continue
             try:
-                batch = batches_queue.get(timeout=3)
-                batch_len = len(batch)
-                train_instances += batch_len
-                train_batches += 1
-                batch_loss, batch_accuracy = model.train_on_batch(batch)
-                train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
-                train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+                while True:
+                    batch = batches_queue.get(timeout=5)
+                    batch_len = len(batch)
+                    train_instances += batch_len
+                    train_batches += 1
+                    batch_loss, batch_accuracy = model.train_on_batch(batch)
+                    train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
+                    train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
             except queue.Empty:
                 pass
             finally:
@@ -285,13 +287,14 @@ if __name__ == '__main__':
     while batches_queue.empty():
         continue
     try:
-        batch = batches_queue.get(timeout=5)
-        batch_len = len(batch)
-        test_instances += batch_len
-        test_batches += 1
-        batch_loss, batch_accuracy = model.test_on_batch(batch)
-        test_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
-        test_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+        while True:
+            batch = batches_queue.get(timeout=5)
+            batch_len = len(batch)
+            test_instances += batch_len
+            test_batches += 1
+            batch_loss, batch_accuracy = model.test_on_batch(batch)
+            test_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
+            test_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
     except queue.Empty:
         pass
     finally:
