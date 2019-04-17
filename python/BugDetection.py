@@ -196,10 +196,15 @@ if __name__ == '__main__':
         model = load_model(model_file)
         print("Loaded model.")
     elif option == "--learn": 
+        # Calculate model dimensions
+
+
         # simple feedforward network
         model = Sequential()
-        model.add(Dropout(0.2, input_shape=(x_length,)))
-        model.add(Dense(200, input_dim=x_length, activation="relu", kernel_initializer='normal'))
+        # model.add(Dropout(0.2, input_shape=(x_length,)))
+        model.add(Dropout(0.2, input_shape=(448,)))
+        # model.add(Dense(200, input_dim=x_length, activation="relu", kernel_initializer='normal'))
+        model.add(Dense(200, input_dim=448, activation="relu", kernel_initializer='normal'))
         model.add(Dropout(0.2))
         #model.add(Dense(200, activation="relu"))
         model.add(Dense(1, activation="sigmoid", kernel_initializer='normal'))
