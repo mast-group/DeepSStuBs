@@ -98,8 +98,6 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 
 def batch_generator():
     try:
-        xs = []
-        ys = []    
         while True:
             code_piece, learning_data = code_pieces_queue.get()
             if code_piece is None:
@@ -108,13 +106,13 @@ def batch_generator():
                     batches_queue.put(batch)
                 break
             # Create minibatches
+            xs = []
+            ys = []    
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
-            if len(xs) == BATCH_SIZE:
-                batch = [np.array(xs), np.array(ys)]
+            for i in range(0, len(xs), BATCH_SIZE):
+                batch = [np.array(xs[i : i + BATCH_SIZE]), np.array(ys[i : i + BATCH_SIZE])]
                 batches_queue.put(batch)
-                xs = []
-                ys = []
             code_pieces_queue.task_done()
     except:
         code_pieces_queue.task_done()
