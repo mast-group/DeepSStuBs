@@ -43,7 +43,7 @@ BATCHING_THREADS = 8
 BATCH_SIZE = 100 #256
 assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
-code_pieces_queue = queue.Queue(maxsize=20)
+code_pieces_queue = queue.Queue(maxsize=65536)
 # Queue used to store generated minibatches
 batches_queue = queue.Queue(maxsize=4096)
 
@@ -98,18 +98,23 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 
 def batch_generator():
     try:
+        xs = []
+        ys = []    
         while True:
             code_piece, learning_data = code_pieces_queue.get()
             if code_piece is None:
+                if len(xs > 0):
+                    batch = [np.array(xs), np.array(ys)]
+                    batches_queue.put(batch)
                 break
             # Create minibatches
-            xs = []
-            ys = []    
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
-            for i in range(0, len(xs), BATCH_SIZE):
-                batch = [np.array(xs[i : i + BATCH_SIZE]), np.array(ys[i : i + BATCH_SIZE])]
+            if len(xs) == BATCH_SIZE:
+                batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
+                xs = []
+                ys = []
             code_pieces_queue.task_done()
     except:
         code_pieces_queue.task_done()
