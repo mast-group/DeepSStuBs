@@ -101,9 +101,6 @@ def batch_generator():
         while True:
             code_piece, learning_data = code_pieces_queue.get()
             if code_piece is None:
-                if len(xs > 0):
-                    batch = [np.array(xs), np.array(ys)]
-                    batches_queue.put(batch)
                 break
             # Create minibatches
             xs = []
