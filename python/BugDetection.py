@@ -224,7 +224,7 @@ if __name__ == '__main__':
         # Retrieve batches from the queue and train on the until they are exausted.
         # A timeout is used to check if the queue is empty.
         time_stamp = math.floor(time.time() * 1000)
-        for e in EPOCHS:
+        for e in enumerate(EPOCHS):
             train_loss = 0.0
             train_accuracy = 0.0
             train_instances = 0
