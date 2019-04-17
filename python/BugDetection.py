@@ -23,6 +23,7 @@ import LearningDataSwappedBinOperands
 import LearningDataIncorrectBinaryOperand
 import LearningDataIncorrectAssignment
 import LearningDataMissingArg
+import queue
 
 from ELMoClient import *
 
@@ -31,6 +32,18 @@ file_name_embedding_size = 50
 type_embedding_size = 5
 
 Anomaly = namedtuple("Anomaly", ["message", "score"])
+
+# Number of training epochs
+EPOCHS = 10
+# Number of threads 
+BATCHING_THREADS = 8
+# Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
+BATCH_SIZE = 100 #256
+assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
+# Queue used to store code_pieces from_which minibatches are generated
+code_pieces_queue = queue.Queue(maxsize=20)
+# Queue used to store generated minibatches
+batches_queue = queue.Queue(maxsize=4096)
 
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
@@ -75,6 +88,34 @@ def prepare_xy_pairs(data_paths, learning_data):
     xs = np.array(xs)
     ys = np.array(ys)
     return [xs, ys, code_pieces]
+
+def prepare_xy_pairs_batches(data_paths, learning_data):
+    for code_piece in Util.DataReader(data_paths):
+        code_pieces_queue.put((code_piece, learning_data))
+        # print(code_piece)
+
+def batch_generator():
+    try:
+        xs = []
+        ys = []    
+        while True:
+            code_piece, learning_data = code_pieces_queue.get()
+            if code_piece is None:
+                if len(xs > 0):
+                    batch = [np.array(xs), np.array(ys)]
+                    batches_queue.put(batch)
+                break
+            # Create minibatches
+            # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
+            learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
+            if len(xs) == BATCH_SIZE:
+                batch = [np.array(xs), np.array(ys)]
+                batches_queue.put(batch)
+                xs = []
+                ys = []
+            code_pieces_queue.task_done()
+    except:
+        code_pieces_queue.task_done()
 
 def sample_xy_pairs(xs, ys, number_buggy):
     sampled_xs = []
@@ -143,12 +184,12 @@ if __name__ == '__main__':
     learning_data.pre_scan(training_data_paths, validation_data_paths)
 
     # prepare x,y pairs for learning and validation
-    print("Preparing xy pairs for training data:")
-    learning_data.resetStats()
-    xs_training, ys_training, _ = prepare_xy_pairs(training_data_paths, learning_data)
-    x_length = len(xs_training[0])
-    print("Training examples   : " + str(len(xs_training)))
-    print(learning_data.stats)
+    
+    # prepare_xy_pairs_batches(training_data_paths, learning_data)
+    # xs_training, ys_training, _ = prepare_xy_pairs_batches(training_data_paths, learning_data)
+    # x_length = len(xs_training[0])
+    # print("Training examples   : " + str(len(xs_training)))
+    # print(learning_data.stats)
     
     # manual validation of stored model (for debugging)
     if option == "--load":
@@ -162,14 +203,56 @@ if __name__ == '__main__':
         model.add(Dropout(0.2))
         #model.add(Dense(200, activation="relu"))
         model.add(Dense(1, activation="sigmoid", kernel_initializer='normal'))
-     
-        # train
+
         model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-        for xs in xs_training:
-            print(len(xs))
-        history = model.fit(xs_training, ys_training, batch_size=100, epochs=10, verbose=1)
         
+        # Create threads for batch generation
+        threads = []
+        for i in range(BATCHING_THREADS):
+            t = threading.Thread(target=batch_generator)
+            t.start()
+            threads.append(t)
+
+        # Train loop for requested number of epochs
+        # Retrieve batches from the queue and train on the until they are exausted.
+        # A timeout is used to check if the queue is empty.
         time_stamp = math.floor(time.time() * 1000)
+        for e in EPOCHS:
+            train_loss = 0.0
+            train_accuracy = 0.0
+            train_instances = 0
+            train_batches = 0
+            print("Preparing xy pairs for training data:")
+            learning_data.resetStats()
+            prepare_xy_pairs_batches(training_data_paths, learning_data)
+            # Wait until the batches queue is not empty
+            while batches_queue.empty():
+                continue
+            try:
+                batch = batches_queue.get(timeout=3)
+                batch_len = len(batch)
+                train_instances += batch_len
+                train_batches += 1
+                batch_loss, batch_accuracy = model.train_on_batch(batch)
+                train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
+                train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+            except queue.Empty:
+                pass
+            finally:
+                # block untill all minibatches have been assigned to a batch_generator thread
+                code_pieces_queue.join()
+                print(learning_data.stats)
+                print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
+                    (e, train_instances, train_loss / train_batches, train_accuracy / train_batches))
+        # stop workers
+        for i in range(BATCHING_THREADS):
+            code_pieces_queue.put(None)
+        for t in threads:
+            t.join()
+
+        # for xs in xs_training:
+        #     print(len(xs))
+        # history = model.fit(xs_training, ys_training, batch_size=100, epochs=10, verbose=1)
         model.save("bug_detection_model_"+str(time_stamp))
     
     time_learning_done = time.time()
@@ -177,9 +260,47 @@ if __name__ == '__main__':
     
     print("Preparing xy pairs for validation data:")
     learning_data.resetStats()
-    xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
-    print("Validation examples : " + str(len(xs_validation)))
-    print(learning_data.stats)
+
+    # Evaluate the model on test data.
+    # Create threads for batch generation
+    threads = []
+    for i in range(BATCHING_THREADS):
+        t = threading.Thread(target=batch_generator)
+        t.start()
+        threads.append(t)
+    
+    test_loss = 0.0
+    test_accuracy = 0.0
+    test_instances = 0
+    test_batches = 0
+    prepare_xy_pairs_batches(validation_data_paths, learning_data)
+    # Wait until the batches queue is not empty
+    while batches_queue.empty():
+        continue
+    try:
+        batch = batches_queue.get(timeout=5)
+        batch_len = len(batch)
+        test_instances += batch_len
+        test_batches += 1
+        batch_loss, batch_accuracy = model.test_on_batch(batch)
+        test_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
+        test_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+    except queue.Empty:
+        pass
+    finally:
+        # block untill all minibatches have been assigned to a batch_generator thread
+        code_pieces_queue.join()
+        print(learning_data.stats)
+        print("Epoch %d Test instances %d - Loss & Accuracy [%f, %f]" % \
+                    (e, test_instances, test_loss / test_batches, test_accuracy / test_batches))
+    # stop workers
+    for i in range(BATCHING_THREADS):
+        code_pieces_queue.put(None)
+    for t in threads:
+        t.join()
+
+    # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
+    # print("Validation examples : " + str(len(xs_validation)))
 
     # All the representations were received so close the socket.
     # socket.sendall(CONN_END)
@@ -189,7 +310,8 @@ if __name__ == '__main__':
     validation_loss = model.evaluate(xs_validation, ys_validation)
     print()
     print("Validation loss & accuracy: " + str(validation_loss))
-    
+    sys.exit(0)
+
     # compute precision and recall with different thresholds for reporting anomalies
     # assumption: correct and swapped arguments are alternating in list of x-y pairs
     threshold_to_correct = Counter()
