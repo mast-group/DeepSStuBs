@@ -109,6 +109,7 @@ def batch_generator():
             # Create minibatches
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
+            print(len(xs))
             if len(xs) == BATCH_SIZE:
                 batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
