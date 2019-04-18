@@ -70,6 +70,44 @@ def analyze_histograms(counter):
             else:
                 done = True
 
+
+def mean(values, weights=None):
+    """[summary]
+    
+    Arguments:
+        values {[type]} -- [description]
+    
+    Keyword Arguments:
+        weights {[type]} -- [description] (default: {None})
+    
+    Returns:
+        [type] -- [description]
+    """
+    if weights is None:
+        mean = 0.0
+        for n, value in enumerate(values, start=1):
+            mean = mean + (value - mean) / n
+        return mean
+    else:
+        weighted_mean(values, weights)
+    return 0
+
+
+def weighted_mean(values, weights):
+    """[summary]
+    
+    Arguments:
+        values {[type]} -- [description]
+        weights {[type]} -- [description]
+    """
+    weight_sum = 0.0
+    mean = 0.0
+    for n, (value, weight) in enumerate((values, weights), start=1):
+        weight_sum += weight
+        mean = mean + weight / weight_sum * (value - mean)
+    return mean
+
+
 def print_exception():
     exc_type, exc_obj, tb = sys.exc_info()
     f = tb.tb_frame
