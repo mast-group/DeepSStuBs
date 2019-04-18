@@ -94,7 +94,6 @@ def prepare_xy_pairs(data_paths, learning_data):
 def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths):
         code_pieces_queue.put((code_piece, learning_data))
-        print('Queued code piece', code_piece)
 
 def batch_generator():
     try:
