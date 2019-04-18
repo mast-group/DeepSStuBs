@@ -39,12 +39,13 @@ def out_group_similarity(vector_group, other_vectors):
     return out_group_simil
 
 class DataReader(object):
-    def __init__(self, data_paths):
+    def __init__(self, data_paths, logging=True):
         self.data_paths = data_paths
+        self.logging = logging
          
     def __iter__(self):
         for data_path in self.data_paths:
-            print("Reading file " + data_path)
+            if self.logging: print("Reading file " + data_path)
             with open(data_path) as file:
                 calls = json.load(file)
                 for call in calls:
