@@ -103,13 +103,15 @@ def batch_generator():
         ys = []    
         while True:
             # print('Asked for code_piece')
-            code_piece, learning_data = code_pieces_queue.get()
-            # print('Got code piece:', code_piece)
-            if code_piece is None:
+            queue_entry = code_pieces_queue.get()
+            if queue_entry is None:
                 if len(xs > 0):
                     batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
                 break
+            code_piece, learning_data = queue_entry
+            # print('Got code piece:', code_piece)
+            
             # Create minibatches
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
@@ -253,7 +255,7 @@ if __name__ == '__main__':
                     train_instances += batch_len
                     train_batches += 1
                     batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                    # print(batch_loss, batch_accuracy)
+                    if train_batches % 100 == 0: print(batch_loss, batch_accuracy)
                     train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
                     train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
                     batches_queue.task_done()
@@ -303,10 +305,11 @@ if __name__ == '__main__':
     try:
         while True:
             batch = batches_queue.get(timeout=5)
+            batch_x, batch_y = batch
             batch_len = len(batch)
             test_instances += batch_len
             test_batches += 1
-            batch_loss, batch_accuracy = model.test_on_batch(batch)
+            batch_loss, batch_accuracy = model.test_on_batch((batch_x, batch_y))
             test_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
             test_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
             batches_queue.task_done()
