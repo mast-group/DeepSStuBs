@@ -275,7 +275,7 @@ if __name__ == '__main__':
                 code_pieces_queue.join()
                 print(train_accuracies)
                 train_loss = mean(train_losses, train_batch_sizes)
-                train_accuracy = mean(train_accuracies)
+                train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
                     (e, train_instances, train_loss, train_accuracy))
         # stop workers
