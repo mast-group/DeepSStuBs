@@ -248,10 +248,11 @@ if __name__ == '__main__':
             try:
                 while True:
                     batch = batches_queue.get(timeout=5)
+                    batch_x, batch_y = batch
                     batch_len = len(batch)
                     train_instances += batch_len
                     train_batches += 1
-                    batch_loss, batch_accuracy = model.train_on_batch(batch)
+                    batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                     print(batch_loss, batch_accuracy)
                     train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
                     train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
