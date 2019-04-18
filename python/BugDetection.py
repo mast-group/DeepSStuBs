@@ -40,7 +40,7 @@ Anomaly = namedtuple("Anomaly", ["message", "score"])
 # Number of training epochs
 EPOCHS = 10
 # Number of threads 
-BATCHING_THREADS = 8
+BATCHING_THREADS = 16
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
 BATCH_SIZE = 100 #256
 assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
