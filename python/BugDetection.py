@@ -231,7 +231,8 @@ if __name__ == '__main__':
             train_batches = 0
             print("Preparing xy pairs for training data:")
             learning_data.resetStats()
-            prepare_xy_pairs_batches(training_data_paths, learning_data)
+            t = threading.Thread(target=prepare_xy_pairs_batches, args=(training_data_paths, learning_data,))
+            t.start()
             # Wait until the batches queue is not empty
             while batches_queue.empty():
                 continue
@@ -281,7 +282,9 @@ if __name__ == '__main__':
     test_accuracy = 0.0
     test_instances = 0
     test_batches = 0
-    prepare_xy_pairs_batches(validation_data_paths, learning_data)
+    t = threading.Thread(target=prepare_xy_pairs_batches, args=(validation_data_paths, learning_data,))
+    t.start()
+    # prepare_xy_pairs_batches(validation_data_paths, learning_data)
     # Wait until the batches queue is not empty
     while batches_queue.empty():
         continue
