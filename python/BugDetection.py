@@ -102,6 +102,7 @@ def batch_generator():
         while True:
             print('Asked for code_piece')
             code_piece, learning_data = code_pieces_queue.get()
+            print('Got code piece:', code_piece)
             if code_piece is None:
                 if len(xs > 0):
                     batch = [np.array(xs), np.array(ys)]
