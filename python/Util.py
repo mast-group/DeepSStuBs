@@ -102,7 +102,7 @@ def weighted_mean(values, weights):
     """
     weight_sum = 0.0
     mean = 0.0
-    for n, (value, weight) in enumerate((values, weights), start=1):
+    for n, (value, weight) in enumerate(zip(values, weights), start=1):
         weight_sum += weight
         mean = mean + weight / weight_sum * (value - mean)
     return mean
