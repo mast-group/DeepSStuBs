@@ -89,8 +89,7 @@ def mean(values, weights=None):
             mean = mean + (value - mean) / n
         return mean
     else:
-        weighted_mean(values, weights)
-    return 0
+        return weighted_mean(values, weights)
 
 
 def weighted_mean(values, weights):
@@ -105,7 +104,6 @@ def weighted_mean(values, weights):
     for n, (value, weight) in enumerate(zip(values, weights), start=1):
         weight_sum += weight
         mean = mean + weight / weight_sum * (value - mean)
-        print(mean)
     return mean
 
 
