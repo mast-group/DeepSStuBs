@@ -105,7 +105,7 @@ def batch_generator():
             # print('Asked for code_piece')
             queue_entry = code_pieces_queue.get()
             if queue_entry is None:
-                if len(xs > 0):
+                if len(xs) > 0:
                     batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
                 break
