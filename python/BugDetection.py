@@ -261,6 +261,9 @@ if __name__ == '__main__':
                     train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                     train_accuracies.append(batch_accuracy)
                     
+                    if train_batches > 10000:
+                        batches_queue.task_done()
+                        break
                     # if train_batches % 100 == 0: 
                     #     print(batch_loss, batch_accuracy, train_loss / train_batches, train_accuracy / train_batches)
 
