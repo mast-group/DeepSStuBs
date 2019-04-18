@@ -193,6 +193,7 @@ if __name__ == '__main__':
     
     print("Statistics on training data:")
     learning_data.pre_scan(training_data_paths, validation_data_paths)
+    print(learning_data.stats)
 
     # prepare x,y pairs for learning and validation
     
@@ -269,7 +270,6 @@ if __name__ == '__main__':
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 code_pieces_queue.join()
-                print(learning_data.stats)
                 train_loss = mean(train_losses, train_batch_sizes)
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
