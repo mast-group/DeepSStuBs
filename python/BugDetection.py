@@ -261,9 +261,6 @@ if __name__ == '__main__':
                     train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                     train_accuracies.append(batch_accuracy)
                     
-                    if train_batches > 10000:
-                        batches_queue.task_done()
-                        break
                     # if train_batches % 100 == 0: 
                     #     print(batch_loss, batch_accuracy, train_loss / train_batches, train_accuracy / train_batches)
 
@@ -273,7 +270,6 @@ if __name__ == '__main__':
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 code_pieces_queue.join()
-                print(train_accuracies)
                 train_loss = mean(train_losses, train_batch_sizes)
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
