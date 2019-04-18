@@ -256,6 +256,7 @@ if __name__ == '__main__':
                     train_batches += 1
                     batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                     train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
+                    print('look', batch_accuracy, batch_len, float(BATCH_SIZE))
                     train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
                     
                     if train_batches % 100 == 0: 
