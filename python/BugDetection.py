@@ -25,6 +25,7 @@ import LearningDataIncorrectAssignment
 import LearningDataMissingArg
 import queue
 import threading
+import traceback
 
 from threading import Thread
 from Util import *
