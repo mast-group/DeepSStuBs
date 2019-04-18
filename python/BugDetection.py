@@ -100,6 +100,7 @@ def batch_generator():
         xs = []
         ys = []    
         while True:
+            print('Asked for code_piece')
             code_piece, learning_data = code_pieces_queue.get()
             if code_piece is None:
                 if len(xs > 0):
