@@ -120,6 +120,7 @@ def batch_generator():
             code_pieces_queue.task_done()
     except Exception as e:
         print('Exception:', str(e))
+        print(sys.exc_info())
         code_pieces_queue.task_done()
 
 def sample_xy_pairs(xs, ys, number_buggy):
