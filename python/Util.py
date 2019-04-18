@@ -7,7 +7,9 @@ Created on Oct 26, 2017
 from scipy.spatial.distance import cosine
 import random
 import json
+import linecache
 import sys
+
 
 def in_group_similarity(vector_group):
     vector_group = list(vector_group)
