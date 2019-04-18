@@ -117,8 +117,8 @@ def batch_generator():
                 xs = []
                 ys = []
             code_pieces_queue.task_done()
-    except:
-        print('Exception')
+    except Exception as e:
+        print('Exception:', str(e))
         code_pieces_queue.task_done()
 
 def sample_xy_pairs(xs, ys, number_buggy):
