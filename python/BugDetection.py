@@ -27,6 +27,7 @@ import queue
 import threading
 
 from threading import Thread
+from Util import *
 from ELMoClient import *
 
 name_embedding_size = 200
@@ -120,7 +121,8 @@ def batch_generator():
             code_pieces_queue.task_done()
     except Exception as e:
         print('Exception:', str(e))
-        print(sys.exc_info())
+        exc_type, exc_obj, tb = sys.exc_info()
+        print_exception()
         code_pieces_queue.task_done()
 
 def sample_xy_pairs(xs, ys, number_buggy):
