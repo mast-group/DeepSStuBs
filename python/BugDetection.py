@@ -245,6 +245,7 @@ if __name__ == '__main__':
                     batch_loss, batch_accuracy = model.train_on_batch(batch)
                     train_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
                     train_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+                    batches_queue.task_done()
             except queue.Empty:
                 pass
             finally:
@@ -297,6 +298,7 @@ if __name__ == '__main__':
             batch_loss, batch_accuracy = model.test_on_batch(batch)
             test_loss += batch_loss #* (batch_len / float(BATCH_SIZE))
             test_accuracy += batch_accuracy * (batch_len / float(BATCH_SIZE))
+            batches_queue.task_done()
     except queue.Empty:
         pass
     finally:
