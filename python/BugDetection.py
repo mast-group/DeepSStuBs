@@ -102,9 +102,9 @@ def batch_generator():
         xs = []
         ys = []    
         while True:
-            print('Asked for code_piece')
+            # print('Asked for code_piece')
             code_piece, learning_data = code_pieces_queue.get()
-            print('Got code piece:', code_piece)
+            # print('Got code piece:', code_piece)
             if code_piece is None:
                 if len(xs > 0):
                     batch = [np.array(xs), np.array(ys)]
@@ -113,7 +113,7 @@ def batch_generator():
             # Create minibatches
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
-            print(code_piece, len(xs))
+            # print(code_piece, len(xs))
             if len(xs) == BATCH_SIZE:
                 batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
