@@ -273,6 +273,7 @@ if __name__ == '__main__':
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 code_pieces_queue.join()
+                print(train_accuracies)
                 train_loss = mean(train_losses, train_batch_sizes)
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
