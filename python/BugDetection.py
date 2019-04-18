@@ -47,7 +47,7 @@ assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
 code_pieces_queue = queue.Queue(maxsize=65536)
 # Queue used to store generated minibatches
-batches_queue = queue.Queue(maxsize=4096)
+batches_queue = queue.Queue(maxsize=262144)
 
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
