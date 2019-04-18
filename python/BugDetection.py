@@ -251,7 +251,7 @@ if __name__ == '__main__':
                 while True:
                     batch = batches_queue.get(timeout=5)
                     batch_x, batch_y = batch
-                    batch_len = len(batch)
+                    batch_len = len(batch_x)
                     train_instances += batch_len
                     train_batches += 1
                     batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
@@ -310,7 +310,7 @@ if __name__ == '__main__':
         while True:
             batch = batches_queue.get(timeout=5)
             batch_x, batch_y = batch
-            batch_len = len(batch)
+            batch_len = len(batch_x)
             test_instances += batch_len
             test_batches += 1
             batch_loss, batch_accuracy = model.test_on_batch((batch_x, batch_y))
