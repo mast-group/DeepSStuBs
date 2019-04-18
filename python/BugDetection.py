@@ -235,6 +235,7 @@ if __name__ == '__main__':
             t.start()
             # Wait until the batches queue is not empty
             while batches_queue.empty():
+                print('Empty batch queue')
                 continue
             try:
                 while True:
