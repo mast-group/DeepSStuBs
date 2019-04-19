@@ -261,7 +261,7 @@ if __name__ == '__main__':
                     batch_x, batch_y = batch
                     if e == 1 and not created_model:
                         dimensions = len(batch_x[0])
-                        create_keras_network(dimensions)
+                        model = create_keras_network(dimensions)
                         created_model = True
 
                     batch_len = len(batch_x)
