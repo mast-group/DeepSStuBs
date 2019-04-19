@@ -312,6 +312,7 @@ if __name__ == '__main__':
         continue
     try:
         while True:
+            print('Asked for batch')
             batch = batches_queue.get(timeout=5)
             batch_x, batch_y = batch
             batch_len = len(batch_x)
