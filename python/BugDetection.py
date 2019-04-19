@@ -45,9 +45,11 @@ BATCHING_THREADS = 32
 BATCH_SIZE = 100 #256
 assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
-code_pieces_queue = queue.Queue(maxsize=65536)
+CODE_PIECES_QUEUE_SIZE = 262144
+code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
 # Queue used to store generated minibatches
-batches_queue = queue.Queue(maxsize=262144)
+BATCHES_QUEUE_SIZE = 65536
+batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
@@ -292,8 +294,8 @@ if __name__ == '__main__':
     learning_data.resetStats()
 
     # Restart the queues
-    code_pieces_queue = queue.Queue(maxsize=65536)
-    batches_queue = queue.Queue(maxsize=262144)
+    code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
+    batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
     # Evaluate the model on test data.
     # Create threads for batch generation
@@ -343,9 +345,9 @@ if __name__ == '__main__':
         t.join()
 
     # Restart the queues
-    code_pieces_queue = queue.Queue(maxsize=65536)
-    batches_queue = queue.Queue(maxsize=262144)
-    
+    code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
+    batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
+
     # Evaluate the model on test data.
     # Create threads for batch generation
     threads = []
