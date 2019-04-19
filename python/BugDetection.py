@@ -291,6 +291,10 @@ if __name__ == '__main__':
     print("Preparing xy pairs for validation data:")
     learning_data.resetStats()
 
+    # Restart the queues
+    code_pieces_queue = queue.Queue(maxsize=65536)
+    batches_queue = queue.Queue(maxsize=262144)
+
     # Evaluate the model on test data.
     # Create threads for batch generation
     threads = []
@@ -314,6 +318,7 @@ if __name__ == '__main__':
         while True:
             print('Asked for batch')
             batch = batches_queue.get(timeout=5)
+            print('Hello batchness my old friend')
             batch_x, batch_y = batch
             batch_len = len(batch_x)
             test_instances += batch_len
