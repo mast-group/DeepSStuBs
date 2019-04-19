@@ -342,6 +342,54 @@ if __name__ == '__main__':
     for t in threads:
         t.join()
 
+
+    # Evaluate the model on test data.
+    # Create threads for batch generation
+    threads = []
+    for i in range(BATCHING_THREADS):
+        t = threading.Thread(target=batch_generator)
+        t.start()
+        threads.append(t)
+    
+    test_losses = []
+    test_accuracies = []
+    test_batch_sizes = []
+    test_instances = 0
+    test_batches = 0
+    t = threading.Thread(target=prepare_xy_pairs_batches, args=(training_data_paths, learning_data,))
+    t.start()
+    # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+    # Wait until the batches queue is not empty
+    while batches_queue.empty():
+        continue
+    try:
+        while True:
+            batch = batches_queue.get(timeout=5)
+            batch_x, batch_y = batch
+            batch_len = len(batch_x)
+            test_instances += batch_len
+            test_batches += 1
+            test_batch_sizes.append(batch_len)
+            batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+            test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+            test_accuracies.append(batch_accuracy)
+            batches_queue.task_done()
+    except queue.Empty:
+        pass
+    finally:
+        # block untill all minibatches have been assigned to a batch_generator thread
+        code_pieces_queue.join()
+        print(learning_data.stats)
+        test_loss = mean(test_losses, test_batch_sizes)
+        test_accuracy = mean(test_accuracies, test_batch_sizes)
+        print("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                    (test_instances, test_loss, test_accuracy))
+    # stop workers
+    for i in range(BATCHING_THREADS):
+        code_pieces_queue.put(None)
+    for t in threads:
+        t.join()
+
     # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
     # print("Validation examples : " + str(len(xs_validation)))
 
