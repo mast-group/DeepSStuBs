@@ -38,14 +38,14 @@ type_embedding_size = 5
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 1
+EPOCHS = 10
 # Number of threads 
-BATCHING_THREADS = 32
+BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
-BATCH_SIZE = 100 #256
+BATCH_SIZE = 512 #256
 assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
-CODE_PIECES_QUEUE_SIZE = 262144
+CODE_PIECES_QUEUE_SIZE = 1000000
 code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
 # Queue used to store generated minibatches
 BATCHES_QUEUE_SIZE = 65536
@@ -145,6 +145,22 @@ def sample_xy_pairs(xs, ys, number_buggy):
             sampled_ys.append(y)
     return sampled_xs, sampled_ys
 
+def create_keras_network(dimensions):
+    # simple feedforward network
+    model = Sequential()
+    # model.add(Dropout(0.2, input_shape=(x_length,)))
+    model.add(Dropout(0.2, input_shape=(dimensions,)))
+    # model.add(Dense(200, input_dim=x_length, activation="relu", kernel_initializer='normal'))
+    model.add(Dense(200, input_dim=dimensions, activation="relu", kernel_initializer='normal'))
+    model.add(Dropout(0.2))
+    #model.add(Dense(200, activation="relu"))
+    model.add(Dense(1, activation="sigmoid", kernel_initializer='normal'))
+
+    model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    return model
+
+
+
 if __name__ == '__main__':
     # arguments (for learning new model): what --learn <name to vector file> <type to vector file> <AST node type to vector file> --trainingData <list of call data files> --validationData <list of call data files>
     # arguments (for learning new model): what --load <model file> <name to vector file> <type to vector file> <AST node type to vector file> --trainingData <list of call data files> --validationData <list of call data files>
@@ -211,19 +227,6 @@ if __name__ == '__main__':
         print("Loaded model.")
     elif option == "--learn": 
         # Calculate model dimensions
-
-
-        # simple feedforward network
-        model = Sequential()
-        # model.add(Dropout(0.2, input_shape=(x_length,)))
-        model.add(Dropout(0.2, input_shape=(448,)))
-        # model.add(Dense(200, input_dim=x_length, activation="relu", kernel_initializer='normal'))
-        model.add(Dense(200, input_dim=448, activation="relu", kernel_initializer='normal'))
-        model.add(Dropout(0.2))
-        #model.add(Dense(200, activation="relu"))
-        model.add(Dense(1, activation="sigmoid", kernel_initializer='normal'))
-
-        model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
         
         # Create threads for batch generation
         threads = []
@@ -252,9 +255,15 @@ if __name__ == '__main__':
                 # print('Empty batch queue')
                 continue
             try:
+                created_model = False
                 while True:
                     batch = batches_queue.get(timeout=5)
                     batch_x, batch_y = batch
+                    if e == 1 and not created_model:
+                        dimensions = len(batch_x[0])
+                        create_keras_network(dimensions)
+                        created_model = True
+
                     batch_len = len(batch_x)
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
