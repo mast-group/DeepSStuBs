@@ -324,7 +324,7 @@ if __name__ == '__main__':
             test_instances += batch_len
             test_batches += 1
             test_batch_sizes.append(batch_len)
-            batch_loss, batch_accuracy = model.test_on_batch((batch_x, batch_y))
+            batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
             test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
             test_accuracies.append(batch_accuracy)
             batches_queue.task_done()
