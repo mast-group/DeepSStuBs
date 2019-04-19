@@ -38,7 +38,7 @@ type_embedding_size = 5
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 10
+EPOCHS = 1
 # Number of threads 
 BATCHING_THREADS = 32
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
@@ -330,8 +330,8 @@ if __name__ == '__main__':
         print(learning_data.stats)
         test_loss = mean(test_losses, test_batch_sizes)
         test_accuracy = mean(test_accuracies, test_batch_sizes)
-        print("Epoch %d Test instances %d - Loss & Accuracy [%f, %f]" % \
-                    (e, test_instances, test_loss, test_accuracy))
+        print("Test instances %d - Loss & Accuracy [%f, %f]" % \
+                    (test_instances, test_loss, test_accuracy))
     # stop workers
     for i in range(BATCHING_THREADS):
         code_pieces_queue.put(None)
@@ -345,10 +345,8 @@ if __name__ == '__main__':
     # socket.sendall(CONN_END)
     # socket.close()
     
-    # validate
-    validation_loss = model.evaluate(xs_validation, ys_validation)
-    print()
-    print("Validation loss & accuracy: " + str(validation_loss))
+    # print()
+    # print("Validation loss & accuracy: " + str(validation_loss))
     sys.exit(0)
 
     # compute precision and recall with different thresholds for reporting anomalies
