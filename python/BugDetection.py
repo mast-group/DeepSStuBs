@@ -342,7 +342,10 @@ if __name__ == '__main__':
     for t in threads:
         t.join()
 
-
+    # Restart the queues
+    code_pieces_queue = queue.Queue(maxsize=65536)
+    batches_queue = queue.Queue(maxsize=262144)
+    
     # Evaluate the model on test data.
     # Create threads for batch generation
     threads = []
