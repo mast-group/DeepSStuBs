@@ -211,8 +211,6 @@ if __name__ == '__main__':
     
     print("Statistics on training data:")
     learning_data.pre_scan(training_data_paths, validation_data_paths)
-    print(learning_data.stats)
-
     # prepare x,y pairs for learning and validation
     
     # prepare_xy_pairs_batches(training_data_paths, learning_data)
@@ -285,6 +283,7 @@ if __name__ == '__main__':
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
                     (e, train_instances, train_loss, train_accuracy))
+            if e == 1: print(learning_data.stats)
         # stop workers
         for i in range(BATCHING_THREADS):
             code_pieces_queue.put(None)
