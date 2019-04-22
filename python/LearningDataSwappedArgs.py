@@ -67,10 +67,12 @@ class LearningData(object):
         callee_string = call["callee"]
         argument_strings = call["arguments"]
         if not (callee_string in name_to_vector):
-            return
-        for argument_string in argument_strings:
+            call["callee"] = 'UNK'
+            # return
+        for e, argument_string in enumerate(argument_strings):
             if not (argument_string in name_to_vector):
-                return
+                argument_strings[e] = 'UNK'
+                # return
         # print('will calculate feats')
         self.stats["calls_with_known_names"] += 1
         callee_vector = name_to_vector[callee_string]
