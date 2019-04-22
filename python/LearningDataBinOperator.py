@@ -47,9 +47,11 @@ class LearningData(object):
         grand_parent = bin_op["grandParent"]
         src = bin_op["src"]
         if not (left in name_to_vector):
-            return
+            left = 'UNK'
+            # return
         if not (right in name_to_vector):
-            return
+            right = 'UNK'
+            # return
     
         left_vector = name_to_vector[left]
         right_vector = name_to_vector[right]
@@ -82,7 +84,7 @@ class LearningData(object):
         ys.append(y_incorrect)
         if code_pieces != None:
             code_pieces.append(CodePiece(left, right, other_operator, src))
-    
+
 
     def anomaly_score(self, y_prediction_orig, y_prediction_changed):
         return y_prediction_orig
