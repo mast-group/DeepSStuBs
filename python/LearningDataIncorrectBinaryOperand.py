@@ -63,9 +63,11 @@ class LearningData(object):
         grand_parent = bin_op["grandParent"]
         src = bin_op["src"]
         if not (left in name_to_vector):
-            return
+            left = 'UNK'
+            # return
         if not (right in name_to_vector):
-            return
+            right = 'UNK'
+            # return
         
         left_vector = name_to_vector[left]
         right_vector = name_to_vector[right]
