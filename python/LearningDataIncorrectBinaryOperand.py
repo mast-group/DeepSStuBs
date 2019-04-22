@@ -53,7 +53,7 @@ class LearningData(object):
             all_operators_set.add(bin_op["op"])
         self.all_operators = list(all_operators_set)
     
-    def code_to_xy_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces):
+    def code_to_xy_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
         left = bin_op["left"]
         right = bin_op["right"]
         operator = bin_op["op"]
@@ -102,7 +102,8 @@ class LearningData(object):
         y_correct = [0]
         xs.append(x_correct)
         ys.append(y_correct)
-        code_pieces.append(CodePiece(left, right, operator, src))
+        if code_pieces != None:
+            code_pieces.append(CodePiece(left, right, operator, src))
         
         other_operand_vector = name_to_vector[other_operand.op]
         other_operand_type_vector = type_to_vector[other_operand.type]
@@ -114,7 +115,8 @@ class LearningData(object):
         y_incorrect = [1]
         xs.append(x_incorrect)
         ys.append(y_incorrect)
-        code_pieces.append(CodePiece(right, left, operator, src))
+        if code_pieces != None:
+            code_pieces.append(CodePiece(right, left, operator, src))
         
     def anomaly_score(self, y_prediction_orig, y_prediction_changed):
         return y_prediction_orig
