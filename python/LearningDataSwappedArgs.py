@@ -67,7 +67,7 @@ class LearningData(object):
         callee_string = call["callee"]
         argument_strings = call["arguments"]
         if not (callee_string in name_to_vector):
-            call["callee"] = 'UNK'
+           callee_string = 'UNK'
             # return
         for e, argument_string in enumerate(argument_strings):
             if not (argument_string in name_to_vector):
