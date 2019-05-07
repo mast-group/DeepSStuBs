@@ -3,6 +3,7 @@
 (function() {
 
     const fs = require("fs");
+    const escodegen = require("escodegen")
     const estraverse = require("estraverse");
     const util = require("./jsExtractionUtil");
 
@@ -115,7 +116,8 @@
                             argumentTypes:argumentTypes,
                             parameters:parameters,
                             src:locString,
-                            filename:path
+                            filename:path,
+                            tokens:util.tokensToStrings(util.getTokens(escodegen.generate(node)))
                         });
                     }
                 }
