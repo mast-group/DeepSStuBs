@@ -3,6 +3,7 @@
 (function() {
 
     const fs = require("fs");
+    const escodegen = require("escodegen")
     const estraverse = require("estraverse");
     const util = require("./jsExtractionUtil");
 
