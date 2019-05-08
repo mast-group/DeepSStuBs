@@ -22,13 +22,13 @@ def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
     max_query = 0
     max_code_piece = {}
     for code_piece in Util.DataReader(training_data_paths, False):
-        if len(code_piece['tokens']) > 100:
+        if len(code_piece['tokens']) > 50:
             long += 1
         if len(code_piece['tokens']) > max_query:
             max_query = len(code_piece['tokens'])
             max_code_piece = code_piece
     for code_piece in Util.DataReader(validation_data_paths, False):
-        if len(code_piece['tokens']) > 100:
+        if len(code_piece['tokens']) > 50:
             long += 1
         if len(code_piece['tokens']) > max_query:
             max_query = len(code_piece['tokens'])
