@@ -48,7 +48,6 @@ def create_token_ELMo(options_file, weight_file, token_embedding_file, use_top_o
 
 if __name__ == '__main__':
     training_data_paths, validation_data_paths = parse_data_paths(sys.argv[1:])
-    print(training_data_paths)
     vocab = create_ELMo_vocabulary(training_data_paths, validation_data_paths)
     vocab_file = 'ELMoVocab.txt'
     save_vocab('ELMoVocab.txt')
@@ -60,10 +59,14 @@ if __name__ == '__main__':
     
     # Dump the token embeddings to a file. Run this once for your dataset.
     token_embedding_file = 'elmo_token_embeddings.hdf5'
-    save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
+    # save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
 
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
+
+    # Create ELMo Token operation
+    elmo_token_op = create_token_ELMo(options_file, weight_file, \
+        token_embedding_file, True)
 
     with tf.Session() as sess:
         # It is necessary to initialize variables once before running inference.
@@ -71,3 +74,4 @@ if __name__ == '__main__':
 
         tokenized_context = ['ID:func', '(', ')', ';']
         context_ids = batcher.batch_sentences(tokenized_context)
+        print(context_ids)
