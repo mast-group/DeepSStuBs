@@ -50,7 +50,7 @@ if __name__ == '__main__':
     training_data_paths, validation_data_paths = parse_data_paths(sys.argv[1:])
     vocab = create_ELMo_vocabulary(training_data_paths, validation_data_paths)
     vocab_file = 'ELMoVocab.txt'
-    save_vocab('ELMoVocab.txt')
+    # save_vocab('ELMoVocab.txt')
 
     # Location of pretrained LM.  Here we use the test fixtures.
     model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     
     # Dump the token embeddings to a file. Run this once for your dataset.
     token_embedding_file = 'elmo_token_embeddings.hdf5'
-    save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
+    # save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
 
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
@@ -82,3 +82,22 @@ if __name__ == '__main__':
             feed_dict={code_token_ids: context_ids}
         )
         print(elmo_represenations_)
+
+        tokenized_context = [
+            ['ID:func', '(', ')', ';'],
+            ['ID:func', '(', ')', ';'],
+            ['ID:func', '(', ')', ';'],
+            ['ID:func', '(', ')', ';'],
+            ['ID:func', '(', ')', ';'],
+            ['ID:func', '(', ')', ';']
+        ]
+        context_ids = batcher.batch_sentences(tokenized_context)
+        print(context_ids)
+
+        # Compute ELMo representations.
+        elmo_represenations_ = sess.run(
+            elmo_token_op['weighted_op'],
+            feed_dict={code_token_ids: context_ids}
+        )
+        print(elmo_represenations_)
+
