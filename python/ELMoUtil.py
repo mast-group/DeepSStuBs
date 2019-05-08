@@ -30,6 +30,7 @@ def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
             max_code_piece = code_piece
     print('Maximum query:', max_query)
     print(max_code_piece['tokens'])
+    print(max_code_piece)
     return vocab
 
 
