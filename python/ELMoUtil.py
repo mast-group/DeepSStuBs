@@ -72,6 +72,6 @@ if __name__ == '__main__':
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
 
-        tokenized_context = ['ID:func', '(', ')', ';']
+        tokenized_context = [['ID:func', '(', ')', ';']]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
