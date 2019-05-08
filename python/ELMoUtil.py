@@ -48,6 +48,7 @@ def create_token_ELMo(options_file, weight_file, token_embedding_file, use_top_o
 
 if __name__ == '__main__':
     training_data_paths, validation_data_paths = parse_data_paths(sys.argv[1:])
+    print(training_data_paths)
     vocab = create_ELMo_vocabulary(training_data_paths, validation_data_paths)
     vocab_file = 'ELMoVocab.txt'
     save_vocab('ELMoVocab.txt')
