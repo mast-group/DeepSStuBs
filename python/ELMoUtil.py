@@ -43,7 +43,7 @@ def create_token_ELMo(options_file, weight_file, token_embedding_file, use_top_o
 
     code_embeddings_op = bilm(code_token_ids)
     elmo_token_op = weight_layers('ELMo', code_embeddings_op, l2_coef=0.0, use_top_only=use_top_only)
-    return elmo_token_op
+    return elmo_token_op, code_token_ids
 
 
 if __name__ == '__main__':
@@ -59,13 +59,13 @@ if __name__ == '__main__':
     
     # Dump the token embeddings to a file. Run this once for your dataset.
     token_embedding_file = 'elmo_token_embeddings.hdf5'
-    # save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
+    save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
 
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
 
     # Create ELMo Token operation
-    elmo_token_op = create_token_ELMo(options_file, weight_file, \
+    elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
         token_embedding_file, True)
 
     with tf.Session() as sess:
@@ -75,3 +75,10 @@ if __name__ == '__main__':
         tokenized_context = [['ID:func', '(', ')', ';']]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
+
+        # Compute ELMo representations.
+        elmo_represenations_ = sess.run(
+            elmo_token_op['weighted_op'],
+            feed_dict={code_token_ids: context_ids}
+        )
+        print(elmo_represenations_)
