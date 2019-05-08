@@ -4,6 +4,7 @@ import Util
 
 from bilm import TokenBatcher, BidirectionalLanguageModel, weight_layers, \
     dump_token_embeddings
+from BugDetection import parse_data_paths
 
 
 def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
-    
+
     with tf.Session() as sess:
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
