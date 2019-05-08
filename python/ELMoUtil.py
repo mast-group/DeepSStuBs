@@ -11,6 +11,7 @@ from BugDetection import parse_data_paths
 def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
     vocab = set(['<S>', '</S>'])
     for code_piece in Util.DataReader(training_data_paths, False):
+        print(code_piece)
         for token in code_piece['tokens']:
             vocab.add('token'.replace(' ', 'U+0020'))
     for code_piece in Util.DataReader(validation_data_paths, False):
