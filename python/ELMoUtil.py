@@ -19,13 +19,17 @@ def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
     
     # Calculate maximum query size
     max_query = 0
+    max_code_piece = {}
     for code_piece in Util.DataReader(training_data_paths, False):
         if len(code_piece['tokens']) > max_query:
             max_query = len(code_piece['tokens'])
+            max_code_piece = code_piece
     for code_piece in Util.DataReader(validation_data_paths, False):
         if len(code_piece['tokens']) > max_query:
             max_query = len(code_piece['tokens'])
+            max_code_piece = code_piece
     print('Maximum query:', max_query)
+    print(code_piece['tokens'])
     return vocab
 
 
