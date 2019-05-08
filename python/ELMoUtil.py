@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     # Location of pretrained LM.  Here we use the test fixtures.
     model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
-    options_file = os.path.join(model_dir, 'query_options.json')
+    options_file = os.path.join(model_dir, 'options.json')
     weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
     
     # Dump the token embeddings to a file. Run this once for your dataset.
