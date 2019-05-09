@@ -17,26 +17,6 @@ def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
         for token in code_piece['tokens']:
             vocab.add(token.replace(' ', 'U+0020'))
     
-    # Calculate maximum query size
-    long = 0
-    max_query = 0
-    max_code_piece = {}
-    for code_piece in Util.DataReader(training_data_paths, False):
-        if len(code_piece['tokens']) > 50:
-            long += 1
-        if len(code_piece['tokens']) > max_query:
-            max_query = len(code_piece['tokens'])
-            max_code_piece = code_piece
-    for code_piece in Util.DataReader(validation_data_paths, False):
-        if len(code_piece['tokens']) > 50:
-            long += 1
-        if len(code_piece['tokens']) > max_query:
-            max_query = len(code_piece['tokens'])
-            max_code_piece = code_piece
-    print('Maximum query:', max_query)
-    print(max_code_piece['tokens'])
-    print(max_code_piece)
-    print(long)
     return vocab
 
 
@@ -71,7 +51,7 @@ if __name__ == '__main__':
     training_data_paths, validation_data_paths = parse_data_paths(sys.argv[1:])
     vocab = create_ELMo_vocabulary(training_data_paths, validation_data_paths)
     vocab_file = 'ELMoVocab.txt'
-    # save_vocab('ELMoVocab.txt')
+    save_vocab('ELMoVocab.txt')
 
     # Location of pretrained LM.  Here we use the test fixtures.
     model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -80,7 +60,7 @@ if __name__ == '__main__':
     
     # Dump the token embeddings to a file. Run this once for your dataset.
     token_embedding_file = 'elmo_token_embeddings.hdf5'
-    # save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
+    save_token_embeddings(vocab_file, options_file, weight_file, token_embedding_file)
 
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
