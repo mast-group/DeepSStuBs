@@ -136,9 +136,9 @@ class LearningData(object):
         
         elmo_representations = ELMoModel.query([call["tokens"], call["swappedTokens"]])
         print(elmo_representations)
-        correct_vectors = elmo_representations[0][0]
+        correct_vectors = elmo_representations[0]
         print(correct_vectors)
-        wrong_vectors = elmo_representations[0][1]
+        wrong_vectors = elmo_representations[1]
         
         x_keep = list(itertools.chain.from_iterable(correct_vectors))
         y_keep = [0]
