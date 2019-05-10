@@ -106,7 +106,34 @@
                     baseString = baseString.slice(0, maxLengthOfCalleeAndArguments);
 
                     let locString = path + " : " + node.loc.start.line + " - " + node.loc.end.line;
-                    if (argumentStrings.length >= minArgs) {
+                    if (argumentStrings.length === minArgs) {
+                        swappedArgTokens = ["("].concat(util.getTokens(escodegen.generate(node.callee)));
+                        swappedArgTokens.concat("(");
+                        swappedArgTokens.concat(util.getTokens(escodegen.generate(node.arguments[1])));
+                        swappedArgTokens.concat(",");
+                        swappedArgTokens.concat(util.getTokens(escodegen.generate(node.arguments[0])));
+                        swappedArgTokens.concat(")");
+                        if (node.callee.type === "MemberExpression") {
+                            if (node.callee.computed === false) {
+                                swappedArgTokens = [util.getTokens(escodegen.generate(node.callee.object))].concat(swappedArgTokens);
+                            }
+                        }
+                        swappedArgTokens = util.tokenToString(swappedArgTokens);
+                        calls.push({
+                            base:baseString,
+                            callee:calleeString,
+                            calleeLocation:calleeLocation,
+                            arguments:argumentStrings,
+                            argumentLocations:argumentLocations,
+                            argumentTypes:argumentTypes,
+                            parameters:parameters,
+                            src:locString,
+                            filename:path,
+                            tokens:util.tokensToStrings(util.getTokens(escodegen.generate(node))),
+                            swappedTokens:swappedArgTokens
+                        });
+                    }
+                    else if (argumentStrings.length > minArgs) {
                         calls.push({
                             base:baseString,
                             callee:calleeString,
