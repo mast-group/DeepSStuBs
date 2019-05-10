@@ -127,9 +127,9 @@ class LearningData(object):
         if calls != None:
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
 
-    def code_to_ELMo_xy_pairs(self, calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+    def code_to_ELMo_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
         queries = []
-        for call in calls:
+        for call in func_calls:
             arguments = call["arguments"]
             self.stats["calls"] += 1
             if len(arguments) != 2:
