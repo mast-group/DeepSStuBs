@@ -126,9 +126,33 @@ class LearningData(object):
         ys.append(y_swap)
         if calls != None:
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
-            
+
+    def code_to_ELMo_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+        arguments = call["arguments"]
+        self.stats["calls"] += 1
+        if len(arguments) != 2:
+            return
+        self.stats["calls_with_two_args"] += 1
+        
+        elmo_representations = ELMoModel.query([call["tokens"], call["swappedTokens"]])
+        correct_vectors = elmo_representations[0][0]
+        wrong_vectors = elmo_representations[0][1]
+        
+        x_keep = list(itertools.chain.from_iterable(correct_vectors))
+        y_keep = [0]
+        x_swap = list(itertools.chain.from_iterable(wrong_vectors))
+        y_swap = [1]
+
+        xs.append(x_keep)
+        ys.append(y_keep)
+        
+        xs.append(x_swap)
+        ys.append(y_swap)
+        # if calls != None:
+        #     calls.append(CodePiece(callee_string, argument_strings, call["src"]))
+
     
-    def code_to_ELMo_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, calls=None):
+    def code_to_ELMo_server_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, calls=None):
         arguments = call["arguments"]
         self.stats["calls"] += 1
         if len(arguments) != 2:

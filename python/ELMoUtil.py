@@ -47,6 +47,23 @@ def create_token_ELMo(options_file, weight_file, token_embedding_file, use_top_o
     return elmo_token_op, code_token_ids
 
 
+class ELMoModel(object):
+    def __init__(self, sess, batcher, elmo_token_op, code_token_ids):
+        self.sess = sess
+        self.batcher = batcher
+        self.elmo_token_op = elmo_token_op
+        self.code_token_ids = code_token_ids
+
+    def query(self, queries):
+        context_ids = self.batcher.batch_sentences(queries)
+        # Compute ELMo representations.
+        elmo_represenations_ = self.sess.run(
+            self.elmo_token_op['weighted_op'],
+            feed_dict={self.code_token_ids: context_ids}
+        )
+        return elmo_represenations_
+
+
 if __name__ == '__main__':
     training_data_paths, validation_data_paths = parse_data_paths(sys.argv[1:])
     vocab = create_ELMo_vocabulary(training_data_paths, validation_data_paths)
@@ -73,7 +90,7 @@ if __name__ == '__main__':
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
 
-        tokenized_context = [['ID:func', '(', ')', ';']]
+        tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
 
@@ -85,12 +102,12 @@ if __name__ == '__main__':
         print(elmo_represenations_)
 
         tokenized_context = [
-            ['ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';']
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;']
         ]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
@@ -104,8 +121,8 @@ if __name__ == '__main__':
 
 
         tokenized_context = [
-            ['ID:func', '(', ')', ';', 'ID:func', '(', ')', ';'],
-            ['ID:func', '(', ')', ';']
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;', 'ID:func', 'STD:(', 'STD:)', 'STD:;'],
+            ['ID:func', 'STD:(', 'STD:)', 'STD:;']
         ]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
