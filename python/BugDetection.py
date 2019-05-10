@@ -132,7 +132,7 @@ def batch_generator(ELMoModel):
                     code_pieces = []
                     batch = [np.array(xs), np.array(ys)]
                     print(batch)
-                    print(batch[0])
+                    print(batch[0], len(batch[0]))
                     batches_queue.put(batch)
                     xs = []
                     ys = []
