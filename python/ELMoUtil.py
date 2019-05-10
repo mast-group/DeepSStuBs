@@ -85,7 +85,7 @@ class ELMoModel(object):
             self.elmo_token_op['weighted_op'],
             feed_dict={self.code_token_ids: context_ids}
         )
-        return elmo_represenations_
+        return np.mean(elmo_represenations_.reshape(-1, 200), axis=1)
 
 
 if __name__ == '__main__':
@@ -159,7 +159,7 @@ if __name__ == '__main__':
         print(elmo_represenations_)
 
         for i in range(100):
-            tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']*8] * 128
+            tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;'] * 8] * 128
             context_ids = batcher.batch_sentences(tokenized_context)
             print(context_ids)
             # Compute ELMo representations.
