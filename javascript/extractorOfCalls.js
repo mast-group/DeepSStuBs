@@ -111,7 +111,7 @@
                         temp = swappedArgsNode.arguments[0];
                         swappedArgsNode.arguments[0] = swappedArgsNode.arguments[1];
                         swappedArgsNode.arguments[1] = swappedArgsNode.arguments[0];
-                        swappedArgTokens = util.tokensToString(util.getTokens(
+                        swappedArgTokens = util.tokensToStrings(util.getTokens(
                             escodegen.generate(swappedArgsNode)));
                         calls.push({
                             base:baseString,
