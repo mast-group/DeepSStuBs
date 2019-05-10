@@ -279,7 +279,7 @@ if __name__ == '__main__':
         # Create threads for batch generation
         threads = []
         for i in range(BATCHING_THREADS):
-            t = threading.Thread(target=batch_generator, args=ELMoModel)
+            t = threading.Thread(target=batch_generator, args=(ELMoModel,))
             t.start()
             threads.append(t)
         print("Created %d threads" % BATCHING_THREADS)
@@ -359,7 +359,7 @@ if __name__ == '__main__':
     # Create threads for batch generation
     threads = []
     for i in range(BATCHING_THREADS):
-        t = threading.Thread(target=batch_generator, args=ELMoModel)
+        t = threading.Thread(target=batch_generator, args=(ELMoModel,))
         t.start()
         threads.append(t)
     
@@ -410,7 +410,7 @@ if __name__ == '__main__':
     # Create threads for batch generation
     threads = []
     for i in range(BATCHING_THREADS):
-        t = threading.Thread(target=batch_generator, args=ELMoModel)
+        t = threading.Thread(target=batch_generator, args=(ELMoModel,))
         t.start()
         threads.append(t)
     
