@@ -70,14 +70,17 @@ def parse_data_paths(args):
 
 
 class ELMoModel(object):
-    def __init__(self, sess, batcher, elmo_token_op, code_token_ids):
+    def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30):
         self.sess = sess
         self.batcher = batcher
         self.elmo_token_op = elmo_token_op
         self.code_token_ids = code_token_ids
-
+        self.threshold = threshold
+    
     def query(self, queries):
         context_ids = self.batcher.batch_sentences(queries)
+        context_ids = [context_id + [0] * (threshold - len(context_id)) for context_id in context_ids]
+
         # Compute ELMo representations.
         elmo_represenations_ = self.sess.run(
             self.elmo_token_op['weighted_op'],
