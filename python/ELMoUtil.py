@@ -158,11 +158,13 @@ if __name__ == '__main__':
         )
         print(elmo_represenations_)
 
-        tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']*8] * 128
-        context_ids = batcher.batch_sentences(tokenized_context)
-        print(context_ids)
-        # Compute ELMo representations.
-        elmo_represenations_ = sess.run(
-            elmo_token_op['weighted_op'],
-            feed_dict={code_token_ids: context_ids}
-        )
+        for i in range(100):
+            tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']*8] * 128
+            context_ids = batcher.batch_sentences(tokenized_context)
+            print(context_ids)
+            # Compute ELMo representations.
+            elmo_represenations_ = sess.run(
+                elmo_token_op['weighted_op'],
+                feed_dict={code_token_ids: context_ids}
+            )
+            print(len(elmo_represenations_))
