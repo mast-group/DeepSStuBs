@@ -56,6 +56,7 @@ code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
 BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
+max_tokens_threshold = 30
 USE_ELMO = True
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
@@ -108,7 +109,8 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 def batch_generator(ELMoModel):
     try:
         xs = []
-        ys = []    
+        ys = []
+        code_pieces = []
         while True:
             # print('Asked for code_piece')
             queue_entry = code_pieces_queue.get()
@@ -118,20 +120,24 @@ def batch_generator(ELMoModel):
                     batches_queue.put(batch)
                 break
             code_piece, learning_data = queue_entry
+            if len(code_piece["tokens"]) <= max_tokens_threshold:
+                code_pieces.append(code_piece)
+                if len(code_pieces) == BATCH_SIZE:
+                    if USE_ELMO:
+                        learning_data.code_to_ELMo_xy_pairs(code_pieces, xs, ys, name_to_vector, \
+                            type_to_vector, node_type_to_vector, ELMoModel, None)
+                    else:
+                        for code in code_pieces:
+                            learning_data.code_to_xy_pairs(code, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
+                    code_pieces = []
+                    batch = [np.array(xs), np.array(ys)]
+                    batches_queue.put(batch)
+                    xs = []
+                    ys = []
             # print('Got code piece:', code_piece)
             
             # Create minibatches
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
-            if USE_ELMO:
-                learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, None)
-            else:
-                learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
-            # print(code_piece, len(xs))
-            if len(xs) == BATCH_SIZE:
-                batch = [np.array(xs), np.array(ys)]
-                batches_queue.put(batch)
-                xs = []
-                ys = []
             code_pieces_queue.task_done()
     except Exception as e:
         print('Exception:', str(e))
@@ -221,8 +227,6 @@ if __name__ == '__main__':
     print("Statistics on training data:")
     learning_data.pre_scan(training_data_paths, validation_data_paths)
     # prepare x,y pairs for learning and validation
-
-    max_tokens_threshold = 30
     
     # prepare_xy_pairs_batches(training_data_paths, learning_data)
     # xs_training, ys_training, _ = prepare_xy_pairs_batches(training_data_paths, learning_data)
