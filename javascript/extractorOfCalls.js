@@ -107,18 +107,12 @@
 
                     let locString = path + " : " + node.loc.start.line + " - " + node.loc.end.line;
                     if (argumentStrings.length === minArgs) {
-                        swappedArgTokens = ["("].concat(util.getTokens(escodegen.generate(node.callee)));
-                        swappedArgTokens.concat("(");
-                        swappedArgTokens.concat(util.getTokens(escodegen.generate(node.arguments[1])));
-                        swappedArgTokens.concat(",");
-                        swappedArgTokens.concat(util.getTokens(escodegen.generate(node.arguments[0])));
-                        swappedArgTokens.concat(")");
-                        if (node.callee.type === "MemberExpression") {
-                            if (node.callee.computed === false) {
-                                swappedArgTokens = [util.getTokens(escodegen.generate(node.callee.object))].concat(swappedArgTokens);
-                            }
-                        }
-                        swappedArgTokens = util.tokenToString(swappedArgTokens);
+                        swappedArgsNode = node
+                        temp = swappedArgsNode.arguments[0];
+                        swappedArgsNode.arguments[0] = swappedArgsNode.arguments[1];
+                        swappedArgsNode.arguments[1] = swappedArgsNode.arguments[0];
+                        swappedArgTokens = util.tokensToString(util.getTokens(
+                            escodegen.generate(swappedArgsNode)));
                         calls.push({
                             base:baseString,
                             callee:calleeString,
