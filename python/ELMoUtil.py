@@ -5,7 +5,6 @@ import Util
 
 from bilm import TokenBatcher, BidirectionalLanguageModel, weight_layers, \
     dump_token_embeddings
-from BugDetection import parse_data_paths
 
 
 def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
@@ -45,6 +44,29 @@ def create_token_ELMo(options_file, weight_file, token_embedding_file, use_top_o
     code_embeddings_op = bilm(code_token_ids)
     elmo_token_op = weight_layers('ELMo', code_embeddings_op, l2_coef=0.0, use_top_only=use_top_only)
     return elmo_token_op, code_token_ids
+
+
+def parse_data_paths(args):
+    training_data_paths = []
+    eval_data_paths = []
+    mode = None
+    for arg in args:
+        if arg == "--trainingData":
+            assert mode == None
+            mode = "trainingData"
+        elif arg == "--validationData":
+            assert mode == "trainingData"
+            mode = "validationData"
+        else:
+            path = join(getcwd(), arg)
+            if mode == "trainingData":
+                training_data_paths.append(path)
+            elif mode == "validationData":
+                eval_data_paths.append(path)
+            else:
+                print("Incorrect arguments")
+                sys.exit(0)
+    return [training_data_paths, eval_data_paths]
 
 
 class ELMoModel(object):
