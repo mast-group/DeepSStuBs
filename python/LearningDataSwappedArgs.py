@@ -140,7 +140,7 @@ class LearningData(object):
         queries.append([""] * 30)
         
         elmo_representations = ELMoModel.query(queries)
-        for i, representation in elmo_representations:
+        for i, representation in enumerate(elmo_representations):
             if i == len(elmo_representations) - 1: break
             xs.append(representation)
             ys.append([i % 2])
