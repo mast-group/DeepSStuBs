@@ -312,6 +312,7 @@ if __name__ == '__main__':
                 while True:
                     batch = batches_queue.get(timeout=5)
                     batch_x, batch_y = batch
+                    print("a batch")
                     # if e == 1 and not created_model:
                     #     dimensions = len(batch_x[0])
                     #     model = create_keras_network(dimensions)
@@ -321,12 +322,13 @@ if __name__ == '__main__':
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
                     train_batches += 1
-                    batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                    train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-                    train_accuracies.append(batch_accuracy)
+                    # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                    # train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                    # train_accuracies.append(batch_accuracy)
                     
-                    if train_batches % 100 == 0: 
-                        print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
+                    if train_batches % 100 == 0:
+                        print("100 batches") 
+                        # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
 
                     batches_queue.task_done()
             except queue.Empty:
