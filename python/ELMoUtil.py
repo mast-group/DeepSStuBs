@@ -79,9 +79,7 @@ class ELMoModel(object):
     
     def query(self, queries):
         context_ids = self.batcher.batch_sentences(queries)
-        context_ids = [context_id + [0] * (self.threshold - len(context_id)) \
-            for context_id in context_ids]
-
+        
         # Compute ELMo representations.
         elmo_represenations_ = self.sess.run(
             self.elmo_token_op['weighted_op'],

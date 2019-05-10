@@ -243,7 +243,7 @@ if __name__ == '__main__':
         model_dimensions = 0
         if what == "SwappedArgs":
             if USE_ELMO:
-                dimensions = max_tokens_threshold * name_embedding_size #+ 2 * type_embedding_size
+                dimensions = (max_tokens_threshold + 2) * name_embedding_size #+ 2 * type_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
         elif what == "BinOperator":

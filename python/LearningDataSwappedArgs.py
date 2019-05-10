@@ -137,9 +137,11 @@ class LearningData(object):
             self.stats["calls_with_two_args"] += 1
             queries.append(call["tokens"])
             queries.append(call["swappedTokens"])
+        queries.append([""] * 30)
         
         elmo_representations = ELMoModel.query(queries)
         for i, representation in elmo_representations:
+            if i == len(elmo_representations) - 1: break
             xs.append(representation)
             ys.append([i % 2])
         
