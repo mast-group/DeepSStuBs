@@ -272,10 +272,11 @@ if __name__ == '__main__':
         elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
             token_embedding_file, True)
         ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
-        
+        session.run(tf.global_variables_initializer())
+
         # Create the model
         model = create_keras_network(dimensions)
-
+        
         # Create threads for batch generation
         threads = []
         for i in range(BATCHING_THREADS):
