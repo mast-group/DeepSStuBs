@@ -32,7 +32,7 @@ import traceback
 from threading import Thread
 from Util import *
 from bilm import TokenBatcher
-
+from ELMoUtil import *
 from ELMoClient import *
 
 name_embedding_size = 200
