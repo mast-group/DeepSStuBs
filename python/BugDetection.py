@@ -11,6 +11,7 @@ from os.path import join
 from os import getcwd
 from collections import Counter, namedtuple
 import math
+import tensorflow as tf
 from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Dropout
 import random
@@ -101,7 +102,7 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths, False):
         code_pieces_queue.put((code_piece, learning_data))
 
-def batch_generator():
+def batch_generator(ELMoModel):
     try:
         xs = []
         ys = []    
@@ -119,7 +120,7 @@ def batch_generator():
             # Create minibatches
             # code_pieces = None #[] # keep calls in addition to encoding as x,y pairs (to report detected anomalies)        
             if USE_ELMO:
-                learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
+                learning_data.code_to_ELMo_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, None)
             else:
                 learning_data.code_to_xy_pairs(code_piece, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
             # print(code_piece, len(xs))
@@ -252,13 +253,30 @@ if __name__ == '__main__':
         if dimensions == 0:
             sys.exit(1)
         
+        session = tf.keras.backend.get_session()
+        vocab_file = 'ELMoVocab.txt'
+        # Location of pretrained LM.  Here we use the test fixtures.
+        model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
+        options_file = os.path.join(model_dir, 'query_options.json')
+        weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
+        
+        # Dump the token embeddings to a file. Run this once for your dataset.
+        token_embedding_file = 'elmo_token_embeddings.hdf5'
+        # Create a TokenBatcher to map text to token ids.
+        batcher = TokenBatcher(vocab_file)
+
+        # Create ELMo Token operation
+        elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
+            token_embedding_file, True)
+        ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
+        
         # Create the model
         model = create_keras_network(dimensions)
 
         # Create threads for batch generation
         threads = []
         for i in range(BATCHING_THREADS):
-            t = threading.Thread(target=batch_generator)
+            t = threading.Thread(target=batch_generator, args=ELMoModel)
             t.start()
             threads.append(t)
         print("Created %d threads" % BATCHING_THREADS)
@@ -338,7 +356,7 @@ if __name__ == '__main__':
     # Create threads for batch generation
     threads = []
     for i in range(BATCHING_THREADS):
-        t = threading.Thread(target=batch_generator)
+        t = threading.Thread(target=batch_generator, args=ELMoModel)
         t.start()
         threads.append(t)
     
@@ -389,7 +407,7 @@ if __name__ == '__main__':
     # Create threads for batch generation
     threads = []
     for i in range(BATCHING_THREADS):
-        t = threading.Thread(target=batch_generator)
+        t = threading.Thread(target=batch_generator, args=ELMoModel)
         t.start()
         threads.append(t)
     
