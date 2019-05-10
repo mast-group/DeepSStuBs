@@ -7,6 +7,7 @@ Based on code by Michael Pradel
 
 import sys
 import json
+import os
 from os.path import join
 from os import getcwd
 from collections import Counter, namedtuple
