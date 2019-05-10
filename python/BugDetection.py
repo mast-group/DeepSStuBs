@@ -47,7 +47,7 @@ EPOCHS = 10
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
-BATCH_SIZE = 128 #256
+BATCH_SIZE = 64 #256
 assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
 CODE_PIECES_QUEUE_SIZE = 1000000
