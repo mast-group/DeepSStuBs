@@ -321,8 +321,8 @@ if __name__ == '__main__':
                     train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                     train_accuracies.append(batch_accuracy)
                     
-                    # if train_batches % 100 == 0: 
-                    #     print(batch_loss, batch_accuracy, train_loss / train_batches, train_accuracy / train_batches)
+                    if train_batches % 100 == 0: 
+                        print(batch_loss, batch_accuracy, train_loss / train_batches, train_accuracy / train_batches)
 
                     batches_queue.task_done()
             except queue.Empty:
