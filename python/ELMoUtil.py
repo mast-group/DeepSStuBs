@@ -86,7 +86,7 @@ class ELMoModel(object):
         self.code_token_ids = code_token_ids
         self.threshold = threshold
     
-    def query(self, queries, ElMoMode=ELMoMode.CENTROID):
+    def query(self, queries, ElMoMode=ELMoMode.ALL):
         context_ids = self.batcher.batch_sentences(queries)
         
         # Compute ELMo representations.
@@ -97,7 +97,9 @@ class ELMoModel(object):
 
         if ElMoMode is ElMoMode.CENTROID:
             return np.mean(elmo_represenations_, axis=1)
-        return elmo_represenations_
+        elif ElMoMode is ElMoMode.SUM:
+            return np.sum(elmo_represenations_, axis=1)
+        return elmo_represenations_.reshape(len(context_ids), -1)
 
 
 if __name__ == '__main__':
@@ -150,7 +152,7 @@ if __name__ == '__main__':
             ['ID:func', 'STD:(', 'STD:)', 'STD:;']
         ]
         context_ids = batcher.batch_sentences(tokenized_context)
-        print(context_ids)
+        print(context_ids, len(context_ids))
 
         # Compute ELMo representations.
         elmo_represenations_ = sess.run(
