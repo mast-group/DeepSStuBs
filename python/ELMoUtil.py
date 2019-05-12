@@ -136,7 +136,7 @@ if __name__ == '__main__':
             feed_dict={code_token_ids: context_ids}
         )
         print(elmo_represenations_)
-        print(elmo_represenations_).shape
+        print(elmo_represenations_.shape)
 
         print(np.mean(elmo_represenations_, axis=1))
         print(np.mean(elmo_represenations_, axis=1).shape)
