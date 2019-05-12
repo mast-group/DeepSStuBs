@@ -146,6 +146,7 @@ if __name__ == '__main__':
             feed_dict={code_token_ids: context_ids}
         )
         print(elmo_represenations_)
+        print(np.mean(elmo_represenations_, axis=1).shape)
 
 
         tokenized_context = [
