@@ -131,8 +131,8 @@ def batch_generator(ELMoModel):
                             learning_data.code_to_xy_pairs(code, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
                     code_pieces = []
                     batch = [np.array(xs), np.array(ys)]
-                    print(batch)
-                    print(batch[0], len(batch[0]))
+                    # print(batch)
+                    # print(batch[0], len(batch[0]))
                     batches_queue.put(batch)
                     xs = []
                     ys = []
@@ -315,7 +315,7 @@ if __name__ == '__main__':
                 while True:
                     batch = batches_queue.get(timeout=5)
                     batch_x, batch_y = batch
-                    print("a batch")
+                    # print("a batch")
                     # if e == 1 and not created_model:
                     #     dimensions = len(batch_x[0])
                     #     model = create_keras_network(dimensions)
