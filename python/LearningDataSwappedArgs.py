@@ -4,11 +4,12 @@ Created on Nov 9, 2017
 @author: Michael Pradel
 '''
 
+import itertools
 import Util
 from collections import Counter
 
 from ELMoClient import *
-import itertools
+from ELMoUtil import ELMoMode
 
 
 name_embedding_size = 200
@@ -139,7 +140,7 @@ class LearningData(object):
             queries.append(call["swappedTokens"])
         queries.append([""] * 32)
         
-        elmo_representations = ELMoModel.query(queries)
+        elmo_representations = ELMoModel.query(queries, ELMoMode.CENTROID)
         for i, representation in enumerate(elmo_representations):
             if i == len(elmo_representations) - 1: break
             xs.append(representation)
