@@ -7,6 +7,8 @@ import Util
 from bilm import TokenBatcher, BidirectionalLanguageModel, weight_layers, \
     dump_token_embeddings
 
+from enum import Enum, unique
+
 
 def create_ELMo_vocabulary(training_data_paths, validation_data_paths):
     vocab = set(['<S>', '</S>'])
@@ -70,6 +72,12 @@ def parse_data_paths(args):
     return [training_data_paths, eval_data_paths]
 
 
+@unique
+class ELMoMode(Enum):
+    ALL = 1
+    CENTROID = 2
+    SUM = 3
+
 class ELMoModel(object):
     def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30):
         self.sess = sess
@@ -78,7 +86,7 @@ class ELMoModel(object):
         self.code_token_ids = code_token_ids
         self.threshold = threshold
     
-    def query(self, queries):
+    def query(self, queries, ElMoMode=ELMoMode.CENTROID):
         context_ids = self.batcher.batch_sentences(queries)
         
         # Compute ELMo representations.
@@ -86,6 +94,9 @@ class ELMoModel(object):
             self.elmo_token_op['weighted_op'],
             feed_dict={self.code_token_ids: context_ids}
         )
+
+        if ElMoMode is ElMoMode.CENTROID:
+            return np.mean(elmo_represenations_, axis=1)
         return elmo_represenations_
 
 
@@ -125,6 +136,7 @@ if __name__ == '__main__':
             feed_dict={code_token_ids: context_ids}
         )
         print(elmo_represenations_)
+        print(elmo_represenations_).shape
 
         print(np.mean(elmo_represenations_, axis=1))
         print(np.mean(elmo_represenations_, axis=1).shape)
