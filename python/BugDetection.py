@@ -130,10 +130,9 @@ def batch_generator(ELMoModel):
                         for code in code_pieces:
                             learning_data.code_to_xy_pairs(code, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, None)
                     code_pieces = []
-                    batch = [np.array(xs), np.array(ys)]
-                    # print(batch)
-                    # print(batch[0], len(batch[0]))
-                    batches_queue.put(batch)
+                    if len(xs) > 0:
+                        batch = [np.array(xs), np.array(ys)]
+                        batches_queue.put(batch)
                     xs = []
                     ys = []
             # print('Got code piece:', code_piece)
