@@ -118,6 +118,7 @@ def batch_generator(ELMoModel):
                 if len(xs) > 0:
                     batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
+                code_pieces_queue.task_done()
                 break
             code_piece, learning_data = queue_entry
             if len(code_piece["tokens"]) <= max_tokens_threshold:
