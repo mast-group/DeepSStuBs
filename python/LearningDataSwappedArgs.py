@@ -140,7 +140,7 @@ class LearningData(object):
             queries.append(call["swappedTokens"])
         queries.append([""] * 32)
         
-        elmo_representations = ELMoModel.query(queries, ELMoMode.CENTROID)
+        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
         for i, representation in enumerate(elmo_representations):
             if i == len(elmo_representations) - 1: break
             xs.append(representation)
