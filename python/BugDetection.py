@@ -313,7 +313,7 @@ if __name__ == '__main__':
             try:
                 created_model = False
                 while True:
-                    batch = batches_queue.get(timeout=5)
+                    batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
                     # print("a batch")
                     # if e == 1 and not created_model:
@@ -343,6 +343,8 @@ if __name__ == '__main__':
                 # block untill all minibatches have been assigned to a batch_generator thread
                 print('Before join in finally')
                 code_pieces_queue.join()
+                print('After join in finally')
+
                 train_loss = mean(train_losses, train_batch_sizes)
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
                 print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
