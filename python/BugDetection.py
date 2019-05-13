@@ -392,7 +392,7 @@ if __name__ == '__main__':
         continue
     try:
         while True:
-            batch = batches_queue.get(timeout=5)
+            batch = batches_queue.get(timeout=30)
             batch_x, batch_y = batch
             batch_len = len(batch_x)
             test_instances += batch_len
