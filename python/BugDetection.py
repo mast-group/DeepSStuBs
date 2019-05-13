@@ -340,6 +340,7 @@ if __name__ == '__main__':
                 pass
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
+                print('Before join in finally')
                 code_pieces_queue.join()
                 train_loss = mean(train_losses, train_batch_sizes)
                 train_accuracy = mean(train_accuracies, train_batch_sizes)
