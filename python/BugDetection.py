@@ -322,6 +322,7 @@ if __name__ == '__main__':
                     #     created_model = True
 
                     batch_len = len(batch_x)
+                    print('Batch len:', batch_len)
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
                     train_batches += 1
