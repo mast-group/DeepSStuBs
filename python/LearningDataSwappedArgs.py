@@ -158,7 +158,7 @@ class LearningData(object):
         for i, features in enumerate(zip(elmo_representations, type_representations)):
             representation, type_feats = features
             if i == len(elmo_representations) - 1: break
-            xs.append(np.concatenate(representation, np.array(type_feats)))
+            xs.append(np.append(representation, np.array(type_feats)))
             ys.append([i % 2])
         
         # if calls != None:
