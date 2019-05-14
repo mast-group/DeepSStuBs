@@ -332,8 +332,8 @@ if __name__ == '__main__':
                     train_accuracies.append(batch_accuracy)
                     # print('Batch accuracy:', batch_accuracy)
                     
-                    if train_batches % 100 == 0:
-                        print("100 batches") 
+                    if train_batches % 1000 == 0:
+                        print("1000 batches") 
                         # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
 
                     batches_queue.task_done()
