@@ -139,7 +139,8 @@ if __name__ == '__main__':
         )
         print(elmo_represenations_.reshape(len(context_ids), -1))
         print(elmo_represenations_.reshape(len(context_ids), -1).shape)
-        print(np.concatenate(elmo_represenations_.reshape(len(context_ids), -1), np.array(range(10))))
+        print(np.concatenate(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0), \
+            np.array(range(10))))
 
         print(np.mean(elmo_represenations_, axis=1))
         print(np.mean(elmo_represenations_, axis=1).shape)
