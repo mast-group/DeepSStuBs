@@ -139,6 +139,7 @@ if __name__ == '__main__':
         )
         print(elmo_represenations_)
         print(elmo_represenations_.shape)
+        print(np.concatenate(elmo_represenations_, np.array(range(10))))
 
         print(np.mean(elmo_represenations_, axis=1))
         print(np.mean(elmo_represenations_, axis=1).shape)
