@@ -5,6 +5,7 @@ Created on Nov 9, 2017
 '''
 
 import itertools
+import numpy as np
 import Util
 from collections import Counter
 
@@ -157,7 +158,7 @@ class LearningData(object):
         for i, features in enumerate(zip(elmo_representations, type_representations)):
             representation, type_feats = features
             if i == len(elmo_representations) - 1: break
-            xs.append(representation + type_feats)
+            xs.append(np.concatenate(representation, type_feats))
             ys.append([i % 2])
         
         # if calls != None:
