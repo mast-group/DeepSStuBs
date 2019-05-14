@@ -130,6 +130,7 @@ class LearningData(object):
 
     def code_to_ELMo_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
         queries = []
+        type_representations = []
         for call in func_calls:
             arguments = call["arguments"]
             self.stats["calls"] += 1
@@ -138,17 +139,31 @@ class LearningData(object):
             self.stats["calls_with_two_args"] += 1
             queries.append(call["tokens"])
             queries.append(call["swappedTokens"])
+
+            argument_type_strings = call["argumentTypes"]
+            argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0]*type_embedding_size)
+            argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
+            if (self.is_known_type(argument_type_strings[0]) or self.is_known_type(argument_type_strings[1])):
+                self.stats["calls_with_known_types"] += 1
+            if (self.is_known_type(argument_type_strings[0]) and self.is_known_type(argument_type_strings[1])):
+                self.stats["calls_with_both_known_types"] += 1
+            type_representations.append(argument0_type_vector + argument1_type_vector)
+            type_representations.append(argument1_type_vector + argument0_type_vector)
+        type_representations.append(None)
+
         queries.append([""] * 32)
         
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
-        for i, representation in enumerate(elmo_representations):
+        for i, representation, type_feats in enumerate(zip(elmo_representations, type_representations)):
             if i == len(elmo_representations) - 1: break
-            xs.append(representation)
+            xs.append(representation + type_feats)
             ys.append([i % 2])
         
         # if calls != None:
         #     calls.append(CodePiece(callee_string, argument_strings, call["src"]))
 
+    def code_to_ELMo_token_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+        pass
     
     def code_to_ELMo_server_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, calls=None):
         arguments = call["arguments"]

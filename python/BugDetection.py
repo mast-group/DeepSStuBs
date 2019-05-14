@@ -57,7 +57,7 @@ BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = False
+USE_ELMO = True
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
 
@@ -245,8 +245,8 @@ if __name__ == '__main__':
         model_dimensions = 0
         if what == "SwappedArgs":
             if USE_ELMO:
-                dimensions = (max_tokens_threshold + 2) * name_embedding_size #+ 2 * type_embedding_size
-                # dimensions = 200
+                dimensions = (max_tokens_threshold + 2) * name_embedding_size + 2 * type_embedding_size
+                # dimensions = 200 + 2 * type_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
         elif what == "BinOperator":
