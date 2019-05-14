@@ -85,6 +85,48 @@ class LearningData(object):
         if code_pieces != None:
             code_pieces.append(CodePiece(left, right, other_operator, src))
 
+    def code_to_ELMo_xy_pairs(self, bin_ops, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, ops=None):        
+        queries = []
+        type_representations = []
+        for bin_op in bin_ops:
+            left = bin_op["left"]
+            right = bin_op["right"]
+            operator = bin_op["op"]
+            left_type = bin_op["leftType"]
+            right_type = bin_op["rightType"]
+            parent = bin_op["parent"]
+            grand_parent = bin_op["grandParent"]
+            src = bin_op["src"]
+            tokens = bin_op["tokens"]
+            op_position = int(bin_op["opPosition"])
+
+            queries.append(call["tokens"])
+            other_operator = None
+            while other_operator == None or other_operator == operator:
+                other_operator = random.choice(self.all_operators)
+            wrong_query = call["tokens"].copy()
+            wrong_query[op_position] = "STD:" + other_operator
+            queries.append(wrong_query)
+
+            left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
+            right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
+            parent_vector = node_type_to_vector[parent]
+            grand_parent_vector = node_type_to_vector[grand_parent]
+
+        #     type_representations.append(argument0_type_vector + argument1_type_vector)
+        #     type_representations.append(argument1_type_vector + argument0_type_vector)
+        # type_representations.append(None)
+
+        queries.append([""] * 32)
+        
+        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
+        for i, features in enumerate(zip(elmo_representations, type_representations)):
+            representation, type_feats = features
+            if i == len(elmo_representations) - 1: break
+            # xs.append(np.append(representation, np.array(type_feats)))
+            xs.append(representation)
+            ys.append([i % 2])
+        pass
 
     def anomaly_score(self, y_prediction_orig, y_prediction_changed):
         return y_prediction_orig
