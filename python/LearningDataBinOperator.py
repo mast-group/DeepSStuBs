@@ -100,11 +100,11 @@ class LearningData(object):
             tokens = bin_op["tokens"]
             op_position = int(bin_op["opPosition"])
 
-            queries.append(call["tokens"])
+            queries.append(tokens)
             other_operator = None
             while other_operator == None or other_operator == operator:
                 other_operator = random.choice(self.all_operators)
-            wrong_query = call["tokens"].copy()
+            wrong_query = tokens.copy()
             wrong_query[op_position] = "STD:" + other_operator
             queries.append(wrong_query)
 
