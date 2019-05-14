@@ -38,7 +38,8 @@
                             parent:parentName,
                             grandParent:grandParentName,
                             src:locString,
-                            tokens:util.tokensToStrings(util.getTokens(escodegen.generate(node)))
+                            tokens:util.tokensToStrings(util.getTokens(escodegen.generate(node))),
+                            opPosition:util.tokensToStrings(util.getTokens(escodegen.generate(node.left))).length
                         };
                         binOps.push(binOp);
                         totalBinOpsConsidered += 1;
