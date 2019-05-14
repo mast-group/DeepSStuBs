@@ -154,7 +154,8 @@ class LearningData(object):
         queries.append([""] * 32)
         
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
-        for i, representation, type_feats in enumerate(zip(elmo_representations, type_representations)):
+        for i, features in enumerate(zip(elmo_representations, type_representations)):
+            representation, type_feats = features
             if i == len(elmo_representations) - 1: break
             xs.append(representation + type_feats)
             ys.append([i % 2])
