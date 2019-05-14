@@ -253,7 +253,7 @@ if __name__ == '__main__':
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
         elif what == "BinOperator":
             if USE_ELMO:
-                dimensions = max_tokens_threshold * name_embedding_size + 2 * type_embedding_size + 2 * node_type_embedding_size
+                dimensions = max_tokens_threshold * name_embedding_size #+ 2 * type_embedding_size + 2 * node_type_embedding_size
             else:
                 dimensions = 2 * name_embedding_size + len(learning_data.all_operators) + 2 * type_embedding_size + 2 * node_type_embedding_size
         elif what == "IncorrectBinaryOperand":
