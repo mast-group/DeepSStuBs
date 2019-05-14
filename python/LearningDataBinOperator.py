@@ -5,8 +5,12 @@ Created on Nov 9, 2017
 '''
 
 import Util
+import numpy as np
 from collections import Counter
 import random
+
+from ELMoClient import *
+from ELMoUtil import ELMoMode
 
 type_embedding_size = 5
 node_type_embedding_size = 8 # if changing here, then also change in LearningDataBinOperator
