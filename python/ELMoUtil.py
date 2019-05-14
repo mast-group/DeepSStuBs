@@ -137,10 +137,10 @@ if __name__ == '__main__':
             elmo_token_op['weighted_op'],
             feed_dict={code_token_ids: context_ids}
         )
-        print(elmo_represenations_.reshape(len(context_ids), -1))
-        print(elmo_represenations_.reshape(len(context_ids), -1).shape)
-        print(np.concatenate(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0), \
-            np.array(range(10))))
+        print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0))
+        print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1).shape, 0))
+        ar = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,])
+        print(np.concatenate(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0), ar))
 
         print(np.mean(elmo_represenations_, axis=1))
         print(np.mean(elmo_represenations_, axis=1).shape)
