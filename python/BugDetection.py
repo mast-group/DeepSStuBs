@@ -248,7 +248,8 @@ if __name__ == '__main__':
         model_dimensions = 0
         if what == "SwappedArgs":
             if USE_ELMO:
-                dimensions = (max_tokens_threshold + 2) * name_embedding_size + 2 * type_embedding_size
+                # dimensions = (max_tokens_threshold + 2) * name_embedding_size + 2 * type_embedding_size
+                dimensions = 200
                 # dimensions = 200 + 2 * type_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
@@ -280,13 +281,19 @@ if __name__ == '__main__':
 
         # Create ELMo Token operation
         elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
-            token_embedding_file, USE_ELMO_TOP_ONLY)
-        ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
-        session.run(tf.global_variables_initializer())
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915embedding_file, USE_ELMO_TOP_ONLY)
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915= ELMoModel(session, batcher, elmo_token_op, code_token_ids)
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915n(tf.global_variables_initializer())
 
-        # Create the model
-        model = create_keras_network(dimensions)
-        
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915he model
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915eate_keras_network(dimensions)
+        056 -0.18929955 -1.184308    1.1174296   1.1307129
+ -0.8495883   0.9885915
         # Create threads for batch generation
         threads = []
         for i in range(BATCHING_THREADS):
