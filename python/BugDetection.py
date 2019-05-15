@@ -330,14 +330,15 @@ if __name__ == '__main__':
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
                     train_batches += 1
-                    print('Batches done:', train_batches)
+                    # print('Batches done:', train_batches)
                     batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                     train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                     train_accuracies.append(batch_accuracy)
-                    print('Batch accuracy:', batch_accuracy)
+                    # print('Batch accuracy:', batch_accuracy)
                     
                     if train_batches % 1000 == 0:
                         print("1000 batches") 
+                        print('acc:', mean(train_accuracies, train_batch_sizes))
                         # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
 
                     batches_queue.task_done()
