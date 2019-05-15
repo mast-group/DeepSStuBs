@@ -87,7 +87,7 @@ class ELMoModel(object):
         self.threshold = threshold
         self.dims = dims
     
-    def query(self, queries, ElMoMode=ELMoMode.ALL):
+    def query(self, queries, mode=ELMoMode.ALL):
         context_ids = self.batcher.batch_sentences(queries)
         
         # Compute ELMo representations.
@@ -96,7 +96,7 @@ class ELMoModel(object):
             feed_dict={self.code_token_ids: context_ids}
         )
 
-        if ElMoMode == ElMoMode.CENTROID:
+        if mode == ELMoMode.CENTROID:
             elmo_represenations = []
             for i, query in enumerate(queries):
                 elmo_represenation = elmo_represenations_[i]
@@ -105,7 +105,7 @@ class ELMoModel(object):
                 elmo_represenations.append(elmo_represenation)
             return np.array(elmo_represenations).reshape(len(context_ids), -1)
             # return np.mean(elmo_represenations_, axis=1)
-        elif ElMoMode == ElMoMode.SUM:
+        elif mode == ELMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
         return elmo_represenations_.reshape(len(context_ids), -1)
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         print(context_ids)
 
         # Compute ELMo representations.
-        elmo_represenations_ = ELMoModel.query(context_ids, 2)
+        elmo_represenations_ = ELMoModel.query(context_ids, ELMoMode.CENTROID)
         # elmo_represenations_ = sess.run(
         #     elmo_token_op['weighted_op'],
         #     feed_dict={code_token_ids: context_ids}
