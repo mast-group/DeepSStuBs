@@ -164,8 +164,8 @@ def sample_xy_pairs(xs, ys, number_buggy):
     return sampled_xs, sampled_ys
 
 def create_keras_network(dimensions):
-    # dense_dims = 200
-    dense_dims = 1200
+    dense_dims = 200
+    # dense_dims = 1200
     # simple feedforward network
     model = Sequential()
     # model.add(Dropout(0.2, input_shape=(x_length,)))
