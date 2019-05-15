@@ -147,7 +147,7 @@ if __name__ == '__main__':
         print(context_ids)
 
         # Compute ELMo representations.
-        elmo_represenations_ = ELMoModel.query(tokenized_context, ELMoMode.ALL)
+        elmo_represenations_ = ELMoModel.query(tokenized_context, ELMoMode.CENTROID)
         # elmo_represenations_ = sess.run(
         #     elmo_token_op['weighted_op'],
         #     feed_dict={code_token_ids: context_ids}
