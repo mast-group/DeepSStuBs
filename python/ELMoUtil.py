@@ -132,20 +132,23 @@ if __name__ == '__main__':
     # Create ELMo Token operation
     elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
         token_embedding_file, USE_ELMO_TOP_ONLY)
+    
 
     with tf.Session() as sess:
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
+        ELMoModel = ELMoModel(sess, batcher, elmo_token_op, code_token_ids)
 
         tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
 
         # Compute ELMo representations.
-        elmo_represenations_ = sess.run(
-            elmo_token_op['weighted_op'],
-            feed_dict={code_token_ids: context_ids}
-        )
+        elmo_represenations_ = ELMoModel.query(context_ids, ElMoMode.CENTROID)
+        # elmo_represenations_ = sess.run(
+        #     elmo_token_op['weighted_op'],
+        #     feed_dict={code_token_ids: context_ids}
+        # )
         print(elmo_represenations_)
         print(elmo_represenations_.shape)
 
