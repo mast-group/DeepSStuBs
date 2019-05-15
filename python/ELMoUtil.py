@@ -79,12 +79,13 @@ class ELMoMode(Enum):
     SUM = 3
 
 class ELMoModel(object):
-    def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30):
+    def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30, dims=200):
         self.sess = sess
         self.batcher = batcher
         self.elmo_token_op = elmo_token_op
         self.code_token_ids = code_token_ids
         self.threshold = threshold
+        self.dims = dims
     
     def query(self, queries, ElMoMode=ELMoMode.ALL):
         context_ids = self.batcher.batch_sentences(queries)
@@ -96,7 +97,14 @@ class ELMoModel(object):
         )
 
         if ElMoMode is ElMoMode.CENTROID:
-            return np.mean(elmo_represenations_, axis=1)
+            elmo_represenations = []
+            for i, query in enumerate(queries):
+                elmo_represenation = elmo_represenations_[i]
+                tokens = len(query)
+                elmo_represenation = np.mean(elmo_represenation[: dims * tokens])
+                elmo_represenations.append(elmo_represenation)
+            return np.array(elmo_represenations).reshape(len(context_ids), -1)
+            # return np.mean(elmo_represenations_, axis=1)
         elif ElMoMode is ElMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
         return elmo_represenations_.reshape(len(context_ids), -1)
@@ -120,6 +128,7 @@ if __name__ == '__main__':
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
 
+    USE_ELMO_TOP_ONLY = False
     # Create ELMo Token operation
     elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
         token_embedding_file, True)
@@ -137,47 +146,50 @@ if __name__ == '__main__':
             elmo_token_op['weighted_op'],
             feed_dict={code_token_ids: context_ids}
         )
-        print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0))
-        print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0).shape)
-        ar = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,])
-        print(np.append(elmo_represenations_.reshape(len(context_ids), -1), ar))
-
-        print(np.mean(elmo_represenations_, axis=1))
-        print(np.mean(elmo_represenations_, axis=1).shape)
-
-        tokenized_context = [
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;']
-        ]
-        context_ids = batcher.batch_sentences(tokenized_context)
-        print(context_ids, len(context_ids))
-
-        # Compute ELMo representations.
-        elmo_represenations_ = sess.run(
-            elmo_token_op['weighted_op'],
-            feed_dict={code_token_ids: context_ids}
-        )
         print(elmo_represenations_)
-        print(np.mean(elmo_represenations_, axis=1).shape)
+        print(elmo_represenations_.shape)
+
+        # print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0))
+        # print(np.squeeze(elmo_represenations_.reshape(len(context_ids), -1), 0).shape)
+        # ar = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,])
+        # print(np.append(elmo_represenations_.reshape(len(context_ids), -1), ar))
+
+        # print(np.mean(elmo_represenations_, axis=1))
+        # print(np.mean(elmo_represenations_, axis=1).shape)
+
+        # tokenized_context = [
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;']
+        # ]
+        # context_ids = batcher.batch_sentences(tokenized_context)
+        # print(context_ids, len(context_ids))
+
+        # # Compute ELMo representations.
+        # elmo_represenations_ = sess.run(
+        #     elmo_token_op['weighted_op'],
+        #     feed_dict={code_token_ids: context_ids}
+        # )
+        # print(elmo_represenations_)
+        # print(np.mean(elmo_represenations_, axis=1).shape)
 
 
-        tokenized_context = [
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;', 'ID:func', 'STD:(', 'STD:)', 'STD:;'],
-            ['ID:func', 'STD:(', 'STD:)', 'STD:;']
-        ]
-        context_ids = batcher.batch_sentences(tokenized_context)
-        print(context_ids)
+        # tokenized_context = [
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;', 'ID:func', 'STD:(', 'STD:)', 'STD:;'],
+        #     ['ID:func', 'STD:(', 'STD:)', 'STD:;']
+        # ]
+        # context_ids = batcher.batch_sentences(tokenized_context)
+        # print(context_ids)
 
-        # Compute ELMo representations.
-        elmo_represenations_ = sess.run(
-            elmo_token_op['weighted_op'],
-            feed_dict={code_token_ids: context_ids}
-        )
-        print(elmo_represenations_)
+        # # Compute ELMo representations.
+        # elmo_represenations_ = sess.run(
+        #     elmo_token_op['weighted_op'],
+        #     feed_dict={code_token_ids: context_ids}
+        # )
+        # print(elmo_represenations_)
 
         # for i in range(100):
         #     tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;'] * 8] * 128
