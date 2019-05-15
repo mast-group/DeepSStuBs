@@ -101,7 +101,7 @@ class ELMoModel(object):
             for i, query in enumerate(queries):
                 elmo_represenation = elmo_represenations_[i]
                 tokens = len(query)
-                elmo_represenation = np.mean(elmo_represenation[: dims * tokens])
+                elmo_represenation = np.mean(elmo_represenation[: self.dims * tokens])
                 elmo_represenations.append(elmo_represenation)
             return np.array(elmo_represenations).reshape(len(context_ids), -1)
             # return np.mean(elmo_represenations_, axis=1)
