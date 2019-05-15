@@ -58,6 +58,7 @@ batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
 USE_ELMO = True
+USE_ELMO_TOP_ONLY = False
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
 
@@ -164,7 +165,7 @@ def sample_xy_pairs(xs, ys, number_buggy):
 
 def create_keras_network(dimensions):
     # dense_dims = 200
-    dense_dims = 1000
+    dense_dims = 1200
     # simple feedforward network
     model = Sequential()
     # model.add(Dropout(0.2, input_shape=(x_length,)))
@@ -279,7 +280,7 @@ if __name__ == '__main__':
 
         # Create ELMo Token operation
         elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
-            token_embedding_file, True)
+            token_embedding_file, USE_ELMO_TOP_ONLY)
         ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
         session.run(tf.global_variables_initializer())
 
