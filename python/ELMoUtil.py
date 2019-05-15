@@ -131,7 +131,7 @@ if __name__ == '__main__':
     USE_ELMO_TOP_ONLY = False
     # Create ELMo Token operation
     elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
-        token_embedding_file, True)
+        token_embedding_file, USE_ELMO_TOP_ONLY)
 
     with tf.Session() as sess:
         # It is necessary to initialize variables once before running inference.
