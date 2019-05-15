@@ -107,6 +107,7 @@ class ELMoModel(object):
             # return np.mean(elmo_represenations_, axis=1)
         elif mode == ELMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
+        print('all case')
         return elmo_represenations_#.reshape(len(context_ids), -1)
 
 
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     # Create a TokenBatcher to map text to token ids.
     batcher = TokenBatcher(vocab_file)
 
-    USE_ELMO_TOP_ONLY = False
+    USE_ELMO_TOP_ONLY = True
     # Create ELMo Token operation
     elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
         token_embedding_file, USE_ELMO_TOP_ONLY)
