@@ -154,7 +154,7 @@ class LearningData(object):
 
         queries.append([""] * 30)
         
-        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
+        elmo_representations = ELMoModel.query(queries, ELMoMode.CENTROID)
         for i, features in enumerate(zip(elmo_representations, type_representations)):
             representation, type_feats = features
             if i == len(elmo_representations) - 1: break
