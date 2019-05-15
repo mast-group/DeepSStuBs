@@ -89,6 +89,7 @@ class ELMoModel(object):
     
     def query(self, queries, mode=ELMoMode.ALL):
         context_ids = self.batcher.batch_sentences(queries)
+        print(context_ids)
         
         # Compute ELMo representations.
         elmo_represenations_ = self.sess.run(
