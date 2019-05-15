@@ -342,7 +342,10 @@ if __name__ == '__main__':
 
                     batches_queue.task_done()
             except queue.Empty:
+                print('Empty queue')
                 pass
+            except Exception as e:
+                print(e)
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 print('Before join in finally')
