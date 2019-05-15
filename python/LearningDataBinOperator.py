@@ -121,7 +121,7 @@ class LearningData(object):
         #     type_representations.append(argument1_type_vector + argument0_type_vector)
         # type_representations.append(None)
 
-        queries.append([""] * 32)
+        queries.append([""] * 30)
         
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
         for i, features in enumerate(zip(elmo_representations, type_representations)):
