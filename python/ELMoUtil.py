@@ -89,30 +89,30 @@ class ELMoModel(object):
     
     def query(self, queries, mode=ELMoMode.ALL):
         context_ids = self.batcher.batch_sentences(queries)
-        print(context_ids)
+        # print(context_ids)
         
         # Compute ELMo representations.
         elmo_represenations_ = self.sess.run(
             self.elmo_token_op['weighted_op'],
             feed_dict={self.code_token_ids: context_ids}
         )
-        print(elmo_represenations_)
+        # print(elmo_represenations_)
 
         if mode == ELMoMode.CENTROID:
             elmo_represenations = []
             for i, query in enumerate(queries):
                 elmo_represenation = elmo_represenations_[i]
                 tokens = len(query)
-                print(elmo_represenation[: tokens], tokens)
+                # print(elmo_represenation[: tokens], tokens)
                 elmo_represenation = elmo_represenation[: tokens]
                 elmo_represenation = np.mean(elmo_represenation, axis=0)
-                print(elmo_represenation)
+                # print(elmo_represenation)
                 elmo_represenations.append(elmo_represenation)
             return np.array(elmo_represenations).reshape(len(context_ids), -1)
             # return np.mean(elmo_represenations_, axis=1)
         elif mode == ELMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
-        print('all case')
+        # print('all case')
         return elmo_represenations_#.reshape(len(context_ids), -1)
 
 
