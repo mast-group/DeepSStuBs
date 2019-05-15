@@ -113,7 +113,7 @@ class ELMoModel(object):
         elif mode == ELMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
         # print('all case')
-        return elmo_represenations_#.reshape(len(context_ids), -1)
+        return elmo_represenations_.reshape(len(context_ids), -1)
 
 
 if __name__ == '__main__':
