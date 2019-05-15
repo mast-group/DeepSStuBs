@@ -96,7 +96,7 @@ class ELMoModel(object):
             feed_dict={self.code_token_ids: context_ids}
         )
 
-        if ElMoMode is ElMoMode.CENTROID:
+        if ElMoMode == ElMoMode.CENTROID:
             elmo_represenations = []
             for i, query in enumerate(queries):
                 elmo_represenation = elmo_represenations_[i]
@@ -105,7 +105,7 @@ class ELMoModel(object):
                 elmo_represenations.append(elmo_represenation)
             return np.array(elmo_represenations).reshape(len(context_ids), -1)
             # return np.mean(elmo_represenations_, axis=1)
-        elif ElMoMode is ElMoMode.SUM:
+        elif ElMoMode == ElMoMode.SUM:
             return np.sum(elmo_represenations_, axis=1)
         return elmo_represenations_.reshape(len(context_ids), -1)
 
