@@ -118,9 +118,9 @@ class LearningData(object):
             parent_vector = node_type_to_vector[parent]
             grand_parent_vector = node_type_to_vector[grand_parent]
 
-        #     type_representations.append(argument0_type_vector + argument1_type_vector)
-        #     type_representations.append(argument1_type_vector + argument0_type_vector)
-        # type_representations.append(None)
+            type_representations.append(argument0_type_vector + argument1_type_vector)
+            type_representations.append(argument1_type_vector + argument0_type_vector)
+        type_representations.append(None)
 
         queries.append([""] * 30)
         
