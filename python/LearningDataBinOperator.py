@@ -108,6 +108,7 @@ class LearningData(object):
             other_operator = None
             while other_operator == None or other_operator == operator:
                 other_operator = random.choice(self.all_operators)
+                print(operator, other_operator)
             wrong_query = tokens.copy()
             wrong_query[op_position] = "STD:" + other_operator
             queries.append(wrong_query)
