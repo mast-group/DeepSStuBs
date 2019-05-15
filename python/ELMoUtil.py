@@ -96,6 +96,7 @@ class ELMoModel(object):
             self.elmo_token_op['weighted_op'],
             feed_dict={self.code_token_ids: context_ids}
         )
+        print(elmo_represenations_)
 
         if mode == ELMoMode.CENTROID:
             elmo_represenations = []
@@ -139,18 +140,18 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
-        # ELMoModel = ELMoModel(sess, batcher, elmo_token_op, code_token_ids)
+        ELMoModel = ELMoModel(sess, batcher, elmo_token_op, code_token_ids)
 
         tokenized_context = [['ID:func', 'STD:(', 'STD:)', 'STD:;']]
         context_ids = batcher.batch_sentences(tokenized_context)
         print(context_ids)
 
         # Compute ELMo representations.
-        # elmo_represenations_ = ELMoModel.query(context_ids, ELMoMode.ALL)
-        elmo_represenations_ = sess.run(
-            elmo_token_op['weighted_op'],
-            feed_dict={code_token_ids: context_ids}
-        )
+        elmo_represenations_ = ELMoModel.query(context_ids, ELMoMode.ALL)
+        # elmo_represenations_ = sess.run(
+        #     elmo_token_op['weighted_op'],
+        #     feed_dict={code_token_ids: context_ids}
+        # )
         print(elmo_represenations_)
         print(elmo_represenations_.shape)
 
