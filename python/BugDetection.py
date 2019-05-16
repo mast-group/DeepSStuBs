@@ -57,7 +57,7 @@ BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = False
+USE_ELMO = True
 USE_ELMO_TOP_ONLY = True
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
