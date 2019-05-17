@@ -134,7 +134,7 @@ class LearningData(object):
             ys.append([i % 2])
     
 
-    def code_to_ELMo_baseline_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+    def code_to_ELMo_baseline_xy_pairs(self, bin_ops, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, ops=None):
         queries = []
         type_representations = []
         for bin_op in bin_ops:
