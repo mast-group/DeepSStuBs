@@ -153,6 +153,8 @@ class LearningData(object):
             type_representations.append(argument1_type_vector + argument0_type_vector)
         type_representations.append(None)
 
+        if len(queries) == 0:
+            return
         queries.append([""] * 30)
         
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
@@ -195,6 +197,9 @@ class LearningData(object):
             else:
                 queries.append(["", "."] + correct_code.split())
                 queries.append(["", "."] + buggy_code.split())
+        
+        if len(queries) == 0:
+            return
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
         # print(queries)
         # for i, query in enumerate(queries):
