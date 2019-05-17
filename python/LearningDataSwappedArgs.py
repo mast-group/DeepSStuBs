@@ -191,20 +191,20 @@ class LearningData(object):
                 clean_string(argument_strings[0]), clean_string(argument_strings[1]))
             buggy_code += " %s ( %s , %s )" % (clean_string(callee_string), \
                 clean_string(argument_strings[1]), clean_string(argument_strings[0]))
+            # correct_query = []
+            # buggy_query = []
             if call["base"] != "":
-                queries.append(correct_code.split())
-                queries.append(buggy_code.split())
+                correct_query = correct_code.split()
+                buggy_query = buggy_code.split()
             else:
-                queries.append(["", "."] + correct_code.split())
-                queries.append(["", "."] + buggy_code.split())
+                correct_query = ["", "."] + correct_code.split()
+                buggy_query = ["", "."] + buggy_code.split()
+            queries.append(correct_query)
+            queries.appen(buggy_query)
         
         if len(queries) == 0:
             return
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
-        # print(queries)
-        for i, query in enumerate(queries):
-            if len(query) > 8:
-                print(query, func_calls[int(i/2)])
 
         for i, features in enumerate(elmo_representations):
             # representation, type_feats = features
