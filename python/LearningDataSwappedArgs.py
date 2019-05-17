@@ -154,7 +154,7 @@ class LearningData(object):
 
         queries.append([""] * 30)
         
-        elmo_representations = ELMoModel.query(queries, ELMoMode.CENTROID)
+        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
         for i, features in enumerate(zip(elmo_representations, type_representations)):
             representation, type_feats = features
             if i == len(elmo_representations) - 1: break
@@ -164,8 +164,40 @@ class LearningData(object):
         # if calls != None:
         #     calls.append(CodePiece(callee_string, argument_strings, call["src"]))
 
-    def code_to_ELMo_token_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
-        pass
+    def code_to_ELMo_baseline_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+        queries = []
+        type_representations = []
+        for call in func_calls:
+            arguments = call["arguments"]
+            self.stats["calls"] += 1
+            if len(arguments) != 2:
+                return
+            self.stats["calls_with_two_args"] += 1
+            
+            # mandatory information: callee and argument names        
+            callee_string = call["callee"]
+            argument_strings = call["arguments"]
+            if not (callee_string in name_to_vector):
+                self.stats["calls_with_known_names"] += 1
+            
+            correct_code = ""
+            if call["base"] != "":
+                correct_code += call["base"].replace(' ', 'U+0020') + " . "
+            buggy_code = correct_code
+            correct_code += " %s ( %s , %s )" % (callee_string, \
+                argument_strings[0].replace(' ', 'U+0020'), argument_strings[1].replace(' ', 'U+0020'))
+            buggy_code += " %s ( %s , %s )" % (callee_string, \
+                argument_strings[1].replace(' ', 'U+0020'), argument_strings[0].replace(' ', 'U+0020'))
+            queries.append(correct_code.split())
+            queries.append(buggy_code.split())
+        queries.append([""] * 30)
+        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
+        for i, features in enumerate(elmo_representations):
+            # representation, type_feats = features
+            if i == len(elmo_representations) - 1: break
+            xs.append(features)
+            ys.append([i % 2])
+    
     
     def code_to_ELMo_server_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, socket, calls=None):
         arguments = call["arguments"]

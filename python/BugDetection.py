@@ -126,7 +126,7 @@ def batch_generator(ELMoModel):
                 code_pieces.append(code_piece)
                 if len(code_pieces) == BATCH_SIZE:
                     if USE_ELMO:
-                        learning_data.code_to_ELMo_xy_pairs(code_pieces, xs, ys, name_to_vector, \
+                        learning_data.code_to_ELMo_baseline_xy_pairs(code_pieces, xs, ys, name_to_vector, \
                             type_to_vector, node_type_to_vector, ELMoModel, None)
                     else:
                         for code in code_pieces:
