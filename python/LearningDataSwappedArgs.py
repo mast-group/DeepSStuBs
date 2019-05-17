@@ -184,10 +184,10 @@ class LearningData(object):
             if call["base"] != "":
                 correct_code += call["base"].replace(' ', 'U+0020') + " . "
             buggy_code = correct_code
-            correct_code += " %s ( %s , %s )" % (callee_string, \
-                argument_strings[0].replace(' ', 'U+0020'), argument_strings[1].replace(' ', 'U+0020'))
-            buggy_code += " %s ( %s , %s )" % (callee_string, \
-                argument_strings[1].replace(' ', 'U+0020'), argument_strings[0].replace(' ', 'U+0020'))
+            correct_code += " %s ( %s , %s )" % (clean_string(callee_string), \
+                clean_string(argument_strings[0]), clean_string(argument_strings[1]))
+            buggy_code += " %s ( %s , %s )" % (clean_string(callee_string), \
+                clean_string(argument_strings[1]), clean_string(argument_strings[0]))
             if call["base"] != "":
                 queries.append(correct_code.split())
                 queries.append(buggy_code.split())

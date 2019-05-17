@@ -117,3 +117,8 @@ def print_exception():
     print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
 
 
+def clean_string(str):
+    str = str.replace(' ', 'U+0020')
+    str = str.replace('\n', '\\n')
+    str = str.replace('\r', '\\r')
+    str = str.replace('\t', '\\t')
