@@ -172,7 +172,7 @@ class LearningData(object):
             arguments = call["arguments"]
             self.stats["calls"] += 1
             if len(arguments) != 2:
-                return
+                continue
             self.stats["calls_with_two_args"] += 1
             
             # mandatory information: callee and argument names        
