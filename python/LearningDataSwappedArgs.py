@@ -194,11 +194,11 @@ class LearningData(object):
             # correct_query = []
             # buggy_query = []
             if call["base"] != "":
-                correct_query = correct_code.split()
-                buggy_query = buggy_code.split()
+                correct_query = correct_code.split(' ')
+                buggy_query = buggy_code.split(' ')
             else:
-                correct_query = ["", "."] + correct_code.split()
-                buggy_query = ["", "."] + buggy_code.split()
+                correct_query = ["", "."] + correct_code.split(' ')
+                buggy_query = ["", "."] + buggy_code.split(' ')
             queries.append(correct_query)
             queries.appen(buggy_query)
         
