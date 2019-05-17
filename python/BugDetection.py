@@ -126,7 +126,7 @@ def batch_generator(ELMoModel):
                 code_pieces.append(code_piece)
                 if len(code_pieces) == BATCH_SIZE:
                     if USE_ELMO:
-                        learning_data.code_to_ELMo_xy_pairs(code_pieces, xs, ys, name_to_vector, \
+                        learning_data.code_to_ELMo_baseline_xy_pairs(code_pieces, xs, ys, name_to_vector, \
                             type_to_vector, node_type_to_vector, ELMoModel, None)
                     else:
                         for code in code_pieces:
@@ -248,10 +248,10 @@ if __name__ == '__main__':
         model_dimensions = 0
         if what == "SwappedArgs":
             if USE_ELMO:
-                dimensions = max_tokens_threshold * name_embedding_size + 2 * type_embedding_size
+                # dimensions = max_tokens_threshold * name_embedding_size + 2 * type_embedding_size
                 # dimensions = name_embedding_size
                 # dimensions = name_embedding_size + 2 * type_embedding_size
-                # dimensions = 8 * name_embedding_size
+                dimensions = 8 * name_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
         elif what == "BinOperator":
