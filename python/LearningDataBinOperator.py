@@ -11,6 +11,7 @@ import random
 
 from ELMoClient import *
 from ELMoUtil import ELMoMode
+from Util import clean_string
 
 type_embedding_size = 5
 node_type_embedding_size = 8 # if changing here, then also change in LearningDataBinOperator
@@ -131,7 +132,42 @@ class LearningData(object):
             # xs.append(np.append(representation, np.array(type_feats)))
             xs.append(representation)
             ys.append([i % 2])
-        pass
+    
+
+    def code_to_ELMo_baseline_xy_pairs(self, func_calls, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, ELMoModel, calls=None):
+        queries = []
+        type_representations = []
+        for bin_op in bin_ops:
+            left = bin_op["left"]
+            right = bin_op["right"]
+            operator = bin_op["op"]
+            left_type = bin_op["leftType"]
+            right_type = bin_op["rightType"]
+            parent = bin_op["parent"]
+            grand_parent = bin_op["grandParent"]
+            src = bin_op["src"]
+            tokens = bin_op["tokens"]
+            op_position = int(bin_op["opPosition"])
+
+            other_operator = None
+            while other_operator == None or other_operator == operator:
+                other_operator = random.choice(self.all_operators)
+            
+            correct_code = '%s %s %s' % (clean_string(left), operator, clean_string(right))
+            buggy_code = '%s %s %s' % (clean_string(left), other_operator, clean_string(right))
+            queries.append( correct_code.split(' ') )
+            queries.append( buggy_code.split(' ') )
+        
+        if len(queries) == 0:
+            return
+        elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
+        for i, features in enumerate(elmo_representations):#zip(elmo_representations, type_representations)):
+            # representation, type_feats = features
+            # if i == len(elmo_representations) - 1: break
+            # xs.append(np.append(representation, np.array(type_feats)))
+            xs.append(features)
+            ys.append([i % 2])
+
 
     def anomaly_score(self, y_prediction_orig, y_prediction_changed):
         return y_prediction_orig
