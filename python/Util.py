@@ -122,3 +122,4 @@ def clean_string(str):
     str = str.replace('\n', '\\n')
     str = str.replace('\r', '\\r')
     str = str.replace('\t', '\\t')
+    return str
