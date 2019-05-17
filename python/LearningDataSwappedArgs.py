@@ -200,7 +200,7 @@ class LearningData(object):
                 correct_query = ["", "."] + correct_code.split(' ')
                 buggy_query = ["", "."] + buggy_code.split(' ')
             queries.append(correct_query)
-            queries.appen(buggy_query)
+            queries.append(buggy_query)
         
         if len(queries) == 0:
             return
