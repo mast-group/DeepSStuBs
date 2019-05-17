@@ -11,6 +11,7 @@ from collections import Counter
 
 from ELMoClient import *
 from ELMoUtil import ELMoMode
+from Util import clean_string
 
 
 name_embedding_size = 200
