@@ -185,7 +185,7 @@ class LearningData(object):
             
             correct_code = ""
             if call["base"] != "":
-                correct_code += call["base"].replace(' ', 'U+0020') + " . "
+                correct_code += call["base"].replace(' ', 'U+0020') + " ."
             buggy_code = correct_code
             correct_code += " %s ( %s , %s )" % (clean_string(callee_string), \
                 clean_string(argument_strings[0]), clean_string(argument_strings[1]))
