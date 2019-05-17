@@ -199,6 +199,8 @@ class LearningData(object):
             else:
                 correct_query = ["", "."] + correct_code.split(' ')
                 buggy_query = ["", "."] + buggy_code.split(' ')
+            if len(correct_query) > 8:
+                print(correct_query, call)
             queries.append(correct_query)
             queries.append(buggy_query)
         
