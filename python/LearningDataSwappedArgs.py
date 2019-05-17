@@ -195,7 +195,7 @@ class LearningData(object):
                 queries.append(["", "."] + correct_code.split())
                 queries.append(["", "."] + buggy_code.split())
         elmo_representations = ELMoModel.query(queries, ELMoMode.ALL)
-        print(queries)
+        # print(queries)
         for i, features in enumerate(elmo_representations):
             # representation, type_feats = features
             xs.append(features)
