@@ -169,10 +169,10 @@ def create_keras_network(dimensions):
     # simple feedforward network
     model = Sequential()
     # model.add(Dropout(0.2, input_shape=(x_length,)))
-    # model.add(Dropout(0.5, input_shape=(dimensions,)))
+    model.add(Dropout(0.2, input_shape=(dimensions,)))
     # model.add(Dense(200, input_dim=x_length, activation="relu", kernel_initializer='normal'))
     model.add(Dense(dense_dims, input_dim=dimensions, activation="relu", kernel_initializer='normal'))
-    # model.add(Dropout(0.5))
+    model.add(Dropout(0.2))
     #model.add(Dense(200, activation="relu"))
     model.add(Dense(1, activation="sigmoid", kernel_initializer='normal'))
 
