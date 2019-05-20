@@ -6,6 +6,10 @@
 /data/js/programs_5000
 /data/js/programs_all
 /data/tokens
+
+/cleanData/js/programs_all
+/cleanData/tokens
+
 *.swp
 *~
 __pycache__
