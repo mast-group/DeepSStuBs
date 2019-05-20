@@ -5,10 +5,8 @@
 /data/js/programs_5
 /data/js/programs_5000
 /data/js/programs_all
+/data/js/programs_clean_all
 /data/tokens
-
-/cleanData/js/programs_all
-/cleanData/tokens
 
 *.swp
 *~
@@ -35,3 +33,4 @@ HyperExp*
 /node_modules
 /package-lock.json
 *_training.json
+
