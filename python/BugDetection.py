@@ -122,7 +122,8 @@ def batch_generator(ELMoModel):
                 code_pieces_queue.task_done()
                 break
             code_piece, learning_data = queue_entry
-            if len(code_piece["tokens"]) <= max_tokens_threshold:
+            if True:
+            # if len(code_piece["tokens"]) <= max_tokens_threshold:
                 code_pieces.append(code_piece)
                 if len(code_pieces) == BATCH_SIZE:
                     if USE_ELMO:
