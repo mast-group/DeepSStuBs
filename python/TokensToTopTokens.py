@@ -15,7 +15,7 @@ from multiprocessing import Pool
 
 kept_tokens = 10000
 
-nb_processes = 30
+nb_processes = 4
 
 class RawDataReader(object):
     def __init__(self, data_paths):
