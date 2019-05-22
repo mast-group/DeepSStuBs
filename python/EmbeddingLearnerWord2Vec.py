@@ -50,9 +50,9 @@ if __name__ == '__main__':
         token_to_nb = json.load(file)
     token_to_vector = dict()
     for token in model.wv.vocab:
-        if token.startswith("ID:") or token.startswith("LIT:"):
-            vector = model[token].tolist()
-            token_to_vector[token] = vector
+        # if token.startswith("ID:") or token.startswith("LIT:"):
+        vector = model[token].tolist()
+        token_to_vector[token] = vector
     token_to_vector_file_name = "w2v/" + "token_to_vector_" + 'training' + ".json"
     with open(token_to_vector_file_name, "w") as file:
         json.dump(token_to_vector, file, sort_keys=True, indent=4)
