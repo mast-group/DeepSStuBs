@@ -53,10 +53,10 @@ class LearningData(object):
         src = bin_op["src"]
         if not (left in name_to_vector):
             left = 'UNK'
-            # return
+            return
         if not (right in name_to_vector):
             right = 'UNK'
-            # return
+            return
     
         left_vector = name_to_vector[left]
         right_vector = name_to_vector[right]
