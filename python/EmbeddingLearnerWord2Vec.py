@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     # store the model
     # time_stamp = math.floor(time.time() * 1000)
-    model.save("embedding_model_" + 'training')
+    model.save("w2v/" + "embedding_model_" + 'training')
 
     # after training the model, write token-to-vector map (= learned embedding) to file
     with open(token_to_nb_file, "r") as file:
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         if token.startswith("ID:") or token.startswith("LIT:"):
             vector = model[token].tolist()
             token_to_vector[token] = vector
-    token_to_vector_file_name = "token_to_vector_" + 'training' + ".json"
+    token_to_vector_file_name = "w2v/" + "token_to_vector_" + 'training' + ".json"
     with open(token_to_vector_file_name, "w") as file:
         json.dump(token_to_vector, file, sort_keys=True, indent=4)
        
