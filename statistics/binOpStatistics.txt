@@ -1,0 +1,50 @@
+A BinOp is: LeftOperand op RightOperand
+----------------------------------------
+
+python python/VocabularyAnalysis.py DBw2v/embedding_model_training DBbinOps/ binOps train
+BinOps: 1075175
+Left Operand OOV: 273081 25.398749%
+Right Operand  OOV: 219056 20.373986%
+Both Operands OOV: 84062 7.818448%
+Left Operand Type Unknown: 896218 83.355547%
+Right Operand Type Unknown: 521243 48.479829%
+Both Operand Types Unknown: 358485 33.342014%
+Everything OOV or Unknown: 38548 3.585277%
+
+
+python python/VocabularyAnalysis.py w2v/embedding_model_training binOps/ binOps train
+BinOps: 1578776
+Left Operand OOV: 455319 28.840000%
+Right Operand  OOV: 378562 23.978196%
+Both Operands OOV: 178247 11.290202%
+Left Operand Type Unknown: 1386139 87.798332%
+Right Operand Type Unknown: 745671 47.230956%
+Both Operand Types Unknown: 569233 36.055337%
+Everything OOV or Unknown: 63597 4.028247%
+
+
+
+
+
+
+
+python python/VocabularyAnalysis.py DBw2v/embedding_model_training DBbinOps/ binOps eval
+BinOps: 540823
+Left Operand OOV: 140815 26.037169%
+Right Operand  OOV: 112179 20.742276%
+Both Operands OOV: 44585 8.243917%
+Left Operand Type Unknown: 449635 83.139031%
+Right Operand Type Unknown: 262148 48.472051%
+Both Operand Types Unknown: 179567 33.202545%
+Everything OOV or Unknown: 20588 3.806791%
+
+
+python python/VocabularyAnalysis.py w2v/embedding_model_training binOps/ binOps eval
+BinOps: 797108
+Left Operand OOV: 235506 29.545055%
+Right Operand  OOV: 195719 24.553636%
+Both Operands OOV: 94678 11.877688%
+Left Operand Type Unknown: 699382 87.739930%
+Right Operand Type Unknown: 375042 47.050337%
+Both Operand Types Unknown: 285923 35.870045%
+Everything OOV or Unknown: 34253 4.297159%

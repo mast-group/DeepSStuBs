@@ -1,0 +1,62 @@
+A call is: base.callee(arg1, arg2)
+----------------------------------
+
+python python/VocabularyAnalysis.py DBw2v/embedding_model_training DBcalls calls train
+Calls with two arguments: 574656
+No Base Object: 144065 25.069781%
+Base Object OOV: 198578 34.555978%
+Callee OOV: 118910 20.692379%
+First Argument OOV: 178198 31.009508%
+Second Argument OOV: 156578 27.247257%
+Both Arguments OOV: 65118 11.331649%
+Base and Callee OOV: 58592 10.196013%
+Base and Args OOV: 24183 4.208257%
+Callee and ARGs OOV: 16432 2.859450%
+Everything OOV: 8773 1.526652%
+
+
+python python/VocabularyAnalysis.py w2v/embedding_model_training calls calls train
+Calls with two arguments: 888526
+No Base Object: 254378 28.629213%
+Base Object OOV: 332094 37.375834%
+Callee OOV: 151698 17.072995%
+First Argument OOV: 328669 36.990364%
+Second Argument OOV: 203123 22.860670%
+Both Arguments OOV: 85060 9.573158%
+Base and Callee OOV: 73898 8.316920%
+Base and Args OOV: 29398 3.308626%
+Callee and ARGs OOV: 20051 2.256659%
+Everything OOV: 10520 1.183983%
+
+
+
+
+
+
+python python/VocabularyAnalysis.py DBw2v/embedding_model_training DBcalls calls eval
+Calls with two arguments: 289061
+No Base Object: 74080 25.627809%
+Base Object OOV: 102806 35.565503%
+Callee OOV: 58768 20.330657%
+First Argument OOV: 91467 31.642802%
+Second Argument OOV: 80769 27.941853%
+Both Arguments OOV: 34572 11.960105%
+Base and Callee OOV: 30043 10.393308%
+Base and Args OOV: 14108 4.880631%
+Callee and ARGs OOV: 8252 2.854761%
+Everything OOV: 4657 1.611079%
+
+
+python python/VocabularyAnalysis.py w2v/embedding_model_training calls calls eval
+Calls with two arguments: 453486
+No Base Object: 130597 28.798463%
+Base Object OOV: 172634 38.068209%
+Callee OOV: 76808 16.937237%
+First Argument OOV: 168460 37.147784%
+Second Argument OOV: 106512 23.487384%
+Both Arguments OOV: 46057 10.156212%
+Base and Callee OOV: 39027 8.605999%
+Base and Args OOV: 17081 3.766599%
+Callee and ARGs OOV: 10361 2.284745%
+Everything OOV: 5778 1.274130%
+
