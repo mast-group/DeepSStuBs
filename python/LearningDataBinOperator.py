@@ -42,6 +42,57 @@ class LearningData(object):
             all_operators_set.add(bin_op["op"])
         self.all_operators = list(all_operators_set)
     
+
+    def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
+        left = bin_op["left"]
+        right = bin_op["right"]
+        operator = bin_op["op"]
+        left_type = bin_op["leftType"]
+        right_type = bin_op["rightType"]
+        parent = bin_op["parent"]
+        grand_parent = bin_op["grandParent"]
+        src = bin_op["src"]
+        if not (left in name_to_vector):
+            left = 'UNK'
+            # return
+        if not (right in name_to_vector):
+            right = 'UNK'
+            # return
+    
+        left_vector = list(name_to_vector[left])
+        right_vector = list(name_to_vector[right])
+        operator_vector = [0] * len(self.all_operators)
+        operator_vector[self.all_operators.index(operator)] = 1
+        left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
+        right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
+        parent_vector = node_type_to_vector[parent]
+        grand_parent_vector = node_type_to_vector[grand_parent]
+        
+        # for all xy-pairs: y value = probability that incorrect
+        x_correct = left_vector + right_vector + operator_vector
+        x_correct += left_type_vector + right_type_vector + parent_vector + grand_parent_vector
+        y_correct = [0]
+        xs.append(x_correct)
+        ys.append(y_correct)
+        if code_pieces != None:
+            code_pieces.append(CodePiece(left, right, operator, src))
+        
+        # pick some other, likely incorrect operator
+        other_operator_vector = None
+        while other_operator_vector == None:
+            other_operator = random.choice(self.all_operators)
+            if other_operator != operator:
+                other_operator_vector = [0] * len(self.all_operators)
+                other_operator_vector[self.all_operators.index(other_operator)] = 1
+        
+        x_incorrect = left_vector + right_vector + other_operator_vector + left_type_vector + right_type_vector + parent_vector + grand_parent_vector
+        y_incorrect = [1]
+        xs.append(x_incorrect)
+        ys.append(y_incorrect)
+        if code_pieces != None:
+            code_pieces.append(CodePiece(left, right, other_operator, src))
+
+
     def code_to_xy_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
         left = bin_op["left"]
         right = bin_op["right"]
@@ -64,8 +115,8 @@ class LearningData(object):
         operator_vector[self.all_operators.index(operator)] = 1
         left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
         right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
-        parent_vector = node_type_to_vector[parent]
-        grand_parent_vector = node_type_to_vector[grand_parent]
+        parent_vector = node_type_to_vector.get(parent, [0] * node_type_embedding_size)
+        grand_parent_vector = node_type_to_vector.get(grand_parent, [0] * node_type_embedding_size)
         
         # for all xy-pairs: y value = probability that incorrect
         x_correct = left_vector + right_vector + operator_vector + left_type_vector + right_type_vector + parent_vector + grand_parent_vector
