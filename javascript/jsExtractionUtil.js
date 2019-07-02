@@ -3,8 +3,10 @@
 (function() {
 
     const acorn = require("acorn");
+    const escodegen = require("escodegen")
 
     const maxLengthOfTokens = 200;
+    const maxLengthOfFunctionExpressions = 1000;
 
     function getTokens(code) {
         try {
@@ -36,6 +38,99 @@
         else if (node.type === "Literal") return "LIT:" + String(node.value);
         else if (node.type === "ThisExpression") return "LIT:this";
         else if (node.type === "UpdateExpression") return getNameOfASTNode(node.argument);
+        else if (node.type === "Property") {
+            key = getNameOfASTNode(node.key);
+            value = getNameOfASTNode(node.value);
+            if (key === "undefined") return value;
+            if (value === "undefined") return key;
+            if (randChoice > 0.5) return key;
+            else return value;
+        }
+        else if (node.type === "BinaryExpression" || node.type === "LogicalExpression" 
+                || node.type === "AssignmentExpression") {
+            var randChoice = Math.random();
+            left = getNameOfASTNode(node.left);
+            right = getNameOfASTNode(node.right);
+            if (left === "undefined") return right;
+            if (right === "undefined") return left;
+            if (randChoice > 0.5) return left;
+            else return right;
+        }
+        else if (node.type === "UnaryExpression") {
+            return getNameOfASTNode(node.argument);
+        }
+        else if (node.type === "ArrayExpression") {
+            if (escodegen.generate(node).length < maxLengthOfFunctionExpressions) {
+                elements = node.elements.length
+                if (elements > 0) {
+                    var choices = []
+                    for(let i = 0; i < elements; i++) {
+                        if (typeof node.elements[i] != "undefined") {
+                            // console.log("Arr Element: " + node.elements[i]);
+                            // console.log(escodegen.generate(node.elements[i]));
+                            // console.log("Arr Element Type: " + node.elements[i].type);
+                            let name = getNameOfASTNode(node.elements[i]);
+                            if (name != "undefined")
+                                choices.push(name);
+                        }
+                    }
+                    if (choices.length > 0) return getRandomChoice(choices);
+                    return "[]"
+                }
+                return "[]"
+            }
+        }
+        else if (node.type === "ConditionalExpression") {
+            var choices = []
+            
+            test = getNameOfASTNode(node.test);
+            if (test != "undefined") choices.push(test);
+
+            cons = getNameOfASTNode(node.consequent);
+            if (cons != "undefined") choices.push(cons);
+
+            alt = getNameOfASTNode(node.alternate);
+            if (alt != "undefined") choices.push(alt);
+            
+            return getRandomChoice(choices);
+        }
+        else if (node.type === "FunctionExpression") {
+            if (escodegen.generate(node).length < maxLengthOfFunctionExpressions) {
+                if (node.id != null) {
+                    // console.log(node.id)
+                    return getNameOfASTNode(node.id);
+                }
+                return "STD:" + "function"
+            }
+        }
+        else if (node.type === "ObjectExpression") {
+            if (escodegen.generate(node).length < maxLengthOfFunctionExpressions) {
+                if (node.properties.length > 0) {
+                    // console.log("Properties are:" + node.properties + " " + node.properties[0] + " " + node.properties[0].type)
+                    names = []
+                    for (let i = 0; i < node.properties.length; i++) {
+                        names.push(getNameOfASTNode(node.properties[i]));
+                    }
+                    return getRandomChoice(names);
+                }
+                return "{}"
+            }
+        }
+        else if (node.type === "NewExpression") {
+            callee = getNameOfASTNode(node.callee);
+            return callee;
+            // arguments ???
+        }
+        
+        // console.log("Node is: " +  node)
+        // console.log("Type is: " + node.type)
+    }
+
+    function getRandomChoice(arr) {
+        if (arr.length > 0){
+            let randChoice = Math.floor(Math.random() * arr.length);
+            return arr[randChoice];
+        }
     }
 
     function getKindOfASTNode(node) {

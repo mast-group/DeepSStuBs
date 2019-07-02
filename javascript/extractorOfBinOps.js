@@ -19,8 +19,11 @@
         estraverse.traverse(ast, {
             enter:function(node, parent) {
                 if (parent) parentStack.push(parent);
+                // console.log(escodegen.generate(node));
+                // console.log(node.type);
                 if (node.type === "BinaryExpression") {
                     totalBinOps += 1;
+                    // console.log(escodegen.generate(node));
                     const leftName = util.getNameOfASTNode(node.left);
                     const rightName = util.getNameOfASTNode(node.right);
                     const leftType = util.getTypeOfASTNode(node.left);

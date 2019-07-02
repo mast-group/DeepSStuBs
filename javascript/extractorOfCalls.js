@@ -54,6 +54,7 @@
                     let baseString;
                     let calleeNode;
                     if (node.callee.type === "MemberExpression") {
+                        // console.log("MemberExpression: " + escodegen.generate(node));
                         if (node.callee.computed === false) {
                             calleeNode = node.callee.property;
                             calleeString = util.getNameOfASTNode(calleeNode);
@@ -64,12 +65,20 @@
                             baseString = "";
                         }
                     } else {
+                        // console.log(node.type);
                         calleeNode = node.callee;
                         calleeString = util.getNameOfASTNode(calleeNode);
                         baseString = "";
+                        // console.log("Not member: " + (typeof calleeString) + " " + typeof baseString);
                     }
-
-                    if (typeof calleeString === "undefined" || typeof baseString === "undefined") return;
+                    
+                    // if (calleeNode.type === "ArrayExpression"){
+                    //     console.log("ArrayExpression text: " + escodegen.generate(calleeNode));
+                    // }
+                    if (typeof calleeString === "undefined" || typeof baseString === "undefined") {
+                        // console.log("Skipping: " + escodegen.generate(node));
+                        return;
+                    }
 
                     const calleeLocation = fileID + util.getLocationOfASTNode(calleeNode, locationMap);
 
@@ -81,7 +90,13 @@
                         const argumentString = util.getNameOfASTNode(argument);
                         const argumentLocation = fileID + util.getLocationOfASTNode(argument, locationMap);
                         const argumentType = util.getTypeOfASTNode(argument);
-                        if (typeof argumentString === "undefined") return;
+                        if (typeof argumentString === "undefined") {
+                            // if (argument.type === "ArrayExpression"){
+                            //     console.log("ArrayExpression text: " + escodegen.generate(argument));
+                            // }
+                            // console.log("Skipping: " + escodegen.generate(node));
+                            return;
+                        }
                         argumentStrings.push(argumentString.slice(0, maxLengthOfCalleeAndArguments));
                         argumentLocations.push(argumentLocation);
                         argumentTypes.push(argumentType);
