@@ -12,9 +12,16 @@ from os.path import join
 from os import getcwd
 from collections import Counter, namedtuple
 import math
+
 import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True  # dynamically grow the memory used on the GPU
+# config.log_device_placement = True  # to log device placement (on which device the operation ran)
+
 from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Dropout
+from keras.backend.tensorflow_backend import set_session
+
 import random
 import time
 import numpy as np
@@ -29,6 +36,7 @@ import queue
 import threading
 import traceback
 
+from gensim.models import FastText
 from threading import Thread
 from Util import *
 from bilm import TokenBatcher
@@ -47,7 +55,7 @@ EPOCHS = 10
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
-BATCH_SIZE = 63 #256
+BATCH_SIZE = 100#63 #256
 # assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
 CODE_PIECES_QUEUE_SIZE = 1000000
@@ -57,7 +65,7 @@ BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = True
+USE_ELMO = False#True
 USE_ELMO_TOP_ONLY = True
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
@@ -209,6 +217,8 @@ if __name__ == '__main__':
     
     with open(name_to_vector_file) as f:
         name_to_vector = json.load(f)
+    # m = FastText.load(name_to_vector_file)
+    # name_to_vector = m.wv
     with open(type_to_vector_file) as f:
         type_to_vector = json.load(f)
     with open(node_type_to_vector_file) as f:
@@ -270,7 +280,10 @@ if __name__ == '__main__':
         if dimensions == 0:
             sys.exit(1)
         
-        session = tf.keras.backend.get_session()
+        session = tf.Session(config=config)
+        set_session(session)  # set this TensorFlow session as the default session for Keras
+        # session = tf.keras.backend.get_session()
+        
         vocab_file = 'ELMoVocab.txt'
         # Location of pretrained LM.  Here we use the test fixtures.
         model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -390,6 +403,8 @@ if __name__ == '__main__':
         t.start()
         threads.append(t)
     
+    predictions = []
+    code_pieces_validation = []
     test_losses = []
     test_accuracies = []
     test_batch_sizes = []
@@ -410,6 +425,9 @@ if __name__ == '__main__':
             test_batches += 1
             test_batch_sizes.append(batch_len)
             batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+            # batch_predictions = model.predict(batch_x)
+            # predictions.extend([pred for pred in batch_predictions])
+            predictions.extend(model.predict(batch_x))
             test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
             test_accuracies.append(batch_accuracy)
             batches_queue.task_done()
@@ -428,7 +446,12 @@ if __name__ == '__main__':
         code_pieces_queue.put(None)
     for t in threads:
         t.join()
+    
+    time_prediction_done = time.time()
+    print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
 
+    
+    learning_data.resetStats()
     # Restart the queues
     code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
     batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
@@ -489,7 +512,8 @@ if __name__ == '__main__':
     
     # print()
     # print("Validation loss & accuracy: " + str(validation_loss))
-    sys.exit(0)
+    
+    # sys.exit(0)
 
     # compute precision and recall with different thresholds for reporting anomalies
     # assumption: correct and swapped arguments are alternating in list of x-y pairs
@@ -497,11 +521,13 @@ if __name__ == '__main__':
     threshold_to_incorrect = Counter()
     threshold_to_found_seeded_bugs = Counter()
     threshold_to_warnings_in_orig_code = Counter()
-    ys_prediction = model.predict(xs_validation)
+    # ys_prediction = model.predict(xs_validation)
     poss_anomalies = []
-    for idx in range(0, len(xs_validation), 2):
-        y_prediction_orig = ys_prediction[idx][0] # probab(original code should be changed), expect 0
-        y_prediction_changed = ys_prediction[idx + 1][0] # probab(changed code should be changed), expect 1
+    # for idx in range(0, len(xs_validation), 2):
+    print(predictions[: 100])
+    for idx in range(0, len(predictions), 2):
+        y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
+        y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
         anomaly_score = learning_data.anomaly_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be anomaly in current code
         normal_score = learning_data.normal_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be correct in current code
         is_anomaly = False
@@ -526,33 +552,32 @@ if __name__ == '__main__':
             if suggests_change_of_orig:
                 is_anomaly = True
                 
-        if is_anomaly:
-            code_piece = code_pieces_validation[idx]
-            message = "Score : " + str(anomaly_score) + " | " + code_piece.to_message()
-#             print("Possible anomaly: "+message)
-            # Log the possible anomaly for future manual inspection
-            poss_anomalies.append(Anomaly(message, anomaly_score))
+#         if is_anomaly:
+#             code_piece = code_pieces_validation[idx]
+#             message = "Score : " + str(anomaly_score) + " | " + code_piece.to_message()
+# #             print("Possible anomaly: "+message)
+#             # Log the possible anomaly for future manual inspection
+#             poss_anomalies.append(Anomaly(message, anomaly_score))
     
-    f_inspect = open('poss_anomalies.txt', 'w+')
-    poss_anomalies = sorted(poss_anomalies, key=lambda a: -a.score)
-    for anomaly in poss_anomalies:
-        f_inspect.write(anomaly.message + "\n")
-    print("Possible Anomalies written to file : poss_anomalies.txt")
-    f_inspect.close()
-
-    time_prediction_done = time.time()
-    print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
+#     f_inspect = open('poss_anomalies.txt', 'w+')
+#     poss_anomalies = sorted(poss_anomalies, key=lambda a: -a.score)
+#     for anomaly in poss_anomalies:
+#         f_inspect.write(anomaly.message + "\n")
+#     print("Possible Anomalies written to file : poss_anomalies.txt")
+#     f_inspect.close()
     
     print()
     for threshold_raw in range(1, 20, 1):
         threshold = threshold_raw / 20.0
-        recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(xs_validation) / 2)
-        precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(xs_validation) / 2))
+        recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
+        precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
         if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
             accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
         else:
             accuracy = 0.0
-        print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4))+"  #Warnings: "+str(threshold_to_warnings_in_orig_code[threshold]))
+        print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+            "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+                + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
     
 
     
