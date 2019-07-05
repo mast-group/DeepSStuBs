@@ -13,7 +13,7 @@ function processFile(inputFile) {
     rl = readline.createInterface(instream, outstream);
 
     var writer = fs.createWriteStream(tokenFile, {
-        flags: 'a' // 'a' means appending (old data will be preserved)
+        // flags: 'a' // 'a' means appending (old data will be preserved)
     })
 
     rl.on('line', function (line) {
