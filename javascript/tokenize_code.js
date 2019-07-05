@@ -19,20 +19,25 @@ function processFile(inputFile) {
     rl.on('line', function (line) {
         // lines.push(line);
         // console.log(line);
-        var js = fs.readFileSync(jsFilesHome + line, {encoding: "utf8"});
-        var tokens = esprima.tokenize(js);
-        // console.log(tokens);
-        for(var i = 0; i < tokens.length; i++) {
-            var token = tokens[i]["value"];
-            token.replace(' ', '<SP>')
-            token.replace('\n', '\\n')
-            token.replace('\r', '\\r')
-            token.replace('\t', '\\t')
-            writer.write(token);
-            writer.write(" ");
+        try{
+            var js = fs.readFileSync(jsFilesHome + line, {encoding: "utf8"});
+            var tokens = esprima.tokenize(js);
+            // console.log(tokens);
+            for(var i = 0; i < tokens.length; i++) {
+                var token = tokens[i]["value"];
+                token.replace(' ', '<SP>')
+                token.replace('\n', '\\n')
+                token.replace('\r', '\\r')
+                token.replace('\t', '\\t')
+                writer.write(token);
+                writer.write(" ");
+            }
+            // console.log("\n");
+            writer.write("\n");
         }
-        // console.log("\n");
-        writer.write("\n");
+        catch(error) {
+            
+        }
     });
     
     rl.on('close', function (line) {
