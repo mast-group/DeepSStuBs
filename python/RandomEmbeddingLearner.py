@@ -51,7 +51,7 @@ if __name__ == '__main__':
                 done = True 
     
     time_stamp = math.floor(time.time() * 1000)
-    token_to_vector_file_name = "token_to_vector_" + str(time_stamp) + ".json"
+    token_to_vector_file_name = "token_to_vector_" + 'random' + ".json"
     with open(token_to_vector_file_name, "w") as file:
         json.dump(token_to_vector, file, sort_keys=True, indent=4)
 
