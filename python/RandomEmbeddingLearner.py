@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 used_embeddings.add(str(embedding))
                 done = True 
             # make sure there is an UNK embedding
-            if not token_to_vector['UNK']:
+            if not 'UNK' in token_to_vector:
                 done = False
                 while not done:
                     embedding = create_random_embedding()
