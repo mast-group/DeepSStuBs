@@ -202,7 +202,8 @@ if __name__ == '__main__':
         name_to_vector_file = join(getcwd(), sys.argv[3])
         type_to_vector_file = join(getcwd(), sys.argv[4])
         node_type_to_vector_file = join(getcwd(), sys.argv[5])
-        training_data_paths, validation_data_paths = parse_data_paths(sys.argv[6:])
+        metrics_file = join(getcwd(), sys.argv[6])
+        training_data_paths, validation_data_paths = parse_data_paths(sys.argv[7:])
     elif option == "--load":
         print("--load option is buggy and currently disabled")
         sys.exit(1)
@@ -567,18 +568,22 @@ if __name__ == '__main__':
 #     f_inspect.close()
     
     print()
-    for threshold_raw in range(1, 20, 1):
-        threshold = threshold_raw / 20.0
-        recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
-        precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
-        if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
-            accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
-        else:
-            accuracy = 0.0
-        print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
-            "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
-                + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
-    
+    with open(metrics_file, 'w') as f:
+        for threshold_raw in range(1, 20, 1):
+            threshold = threshold_raw / 20.0
+            recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
+            precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
+            if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
+                accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
+            else:
+                accuracy = 0.0
+            print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+                "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+                    + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
+            
+            f.write(("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+                "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+                    + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold])) + '\n')
 
     
     
