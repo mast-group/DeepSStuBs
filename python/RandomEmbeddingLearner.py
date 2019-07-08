@@ -49,6 +49,14 @@ if __name__ == '__main__':
                 token_to_vector[token] = embedding
                 used_embeddings.add(str(embedding))
                 done = True 
+            # make sure there is an UNK embedding
+            if not token_to_vector['UNK']:
+                done = False
+                while not done:
+                    embedding = create_random_embedding()
+                    token_to_vector['UNK'] = embedding
+                    used_embeddings.add(str(embedding))
+                    done = True 
     
     time_stamp = math.floor(time.time() * 1000)
     token_to_vector_file_name = "token_to_vector_" + 'random' + ".json"
