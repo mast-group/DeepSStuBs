@@ -469,11 +469,11 @@ if __name__ == '__main__':
         t.start()
         threads.append(t)
     
-    test_losses = []
-    test_accuracies = []
-    test_batch_sizes = []
-    test_instances = 0
-    test_batches = 0
+    train_losses = []
+    train_accuracies = []
+    train_batch_sizes = []
+    train_instances = 0
+    train_batches = 0
     t = threading.Thread(target=prepare_xy_pairs_batches, args=(training_data_paths, learning_data,))
     t.start()
     # prepare_xy_pairs_batches(validation_data_paths, learning_data)
@@ -485,12 +485,12 @@ if __name__ == '__main__':
             batch = batches_queue.get(timeout=5)
             batch_x, batch_y = batch
             batch_len = len(batch_x)
-            test_instances += batch_len
-            test_batches += 1
-            test_batch_sizes.append(batch_len)
+            train_instances += batch_len
+            train_batches += 1
+            train_batch_sizes.append(batch_len)
             batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-            test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-            test_accuracies.append(batch_accuracy)
+            train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+            train_accuracies.append(batch_accuracy)
             batches_queue.task_done()
     except queue.Empty:
         pass
@@ -498,10 +498,10 @@ if __name__ == '__main__':
         # block untill all minibatches have been assigned to a batch_generator thread
         code_pieces_queue.join()
         print(learning_data.stats)
-        test_loss = mean(test_losses, test_batch_sizes)
-        test_accuracy = mean(test_accuracies, test_batch_sizes)
+        train_loss = mean(train_losses, train_batch_sizes)
+        train_accuracy = mean(train_accuracies, train_batch_sizes)
         print("Train instances %d - Loss & Accuracy [%f, %f]" % \
-                    (test_instances, test_loss, test_accuracy))
+                    (train_instances, train_loss, train_accuracy))
     # stop workers
     for i in range(BATCHING_THREADS):
         code_pieces_queue.put(None)
