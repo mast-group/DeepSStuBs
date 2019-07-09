@@ -529,7 +529,6 @@ if __name__ == '__main__':
     # ys_prediction = model.predict(xs_validation)
     poss_anomalies = []
     # for idx in range(0, len(xs_validation), 2):
-    print(predictions[: 100])
     for idx in range(0, len(predictions), 2):
         y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
         y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
