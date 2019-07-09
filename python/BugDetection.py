@@ -572,6 +572,12 @@ if __name__ == '__main__':
     
     print()
     with open(metrics_file, 'w') as f:
+        f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                    (train_instances, train_loss, train_accuracy) + '\n')
+        f.write("Test instances %d - Loss & Accuracy [%f, %f]" % \
+                    (test_instances, test_loss, test_accuracy) + '\n')
+        f.write('\n')
+        
         for threshold_raw in range(1, 20, 1):
             threshold = threshold_raw / 20.0
             recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
