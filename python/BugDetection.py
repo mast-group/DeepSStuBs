@@ -198,7 +198,7 @@ if __name__ == '__main__':
     # arguments (for learning new model): what --learn <name to vector file> <type to vector file> <AST node type to vector file> --trainingData <list of call data files> --validationData <list of call data files>
     # arguments (for learning new model): what --load <model file> <name to vector file> <type to vector file> <AST node type to vector file> --trainingData <list of call data files> --validationData <list of call data files>
     #   what is one of: SwappedArgs, BinOperator, SwappedBinOperands, IncorrectBinaryOperand, IncorrectAssignment
-    print("BugDetection started with " + str(sys.argv))
+    # print("BugDetection started with " + str(sys.argv))
     time_start = time.time()
     what = sys.argv[1]
     option = sys.argv[2]
