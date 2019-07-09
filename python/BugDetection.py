@@ -43,6 +43,10 @@ from bilm import TokenBatcher
 from ELMoUtil import *
 from ELMoClient import *
 
+# Set random seed
+random.seed(1234)
+
+
 name_embedding_size = 200
 file_name_embedding_size = 50
 type_embedding_size = 5
