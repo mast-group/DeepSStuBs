@@ -33,7 +33,7 @@ class LearningData(object):
 
     def pre_scan(self, training_data_paths, validation_data_paths):
         all_operators_set = set()
-        for bin_op in Util.DataReader(training_data_paths):
+        for bin_op in Util.DataReader(training_data_paths, False):
             file = bin_op["src"].split(" : ")[0]
             operands = self.file_to_operands.setdefault(file, set())
             left_operand = Operand(bin_op["left"], bin_op["leftType"])
@@ -42,7 +42,7 @@ class LearningData(object):
             operands.add(right_operand)
             
             all_operators_set.add(bin_op["op"])
-        for bin_op in Util.DataReader(validation_data_paths):
+        for bin_op in Util.DataReader(validation_data_paths, False):
             file = bin_op["src"].split(" : ")[0]
             operands = self.file_to_operands.setdefault(file, set())
             left_operand = Operand(bin_op["left"], bin_op["leftType"])

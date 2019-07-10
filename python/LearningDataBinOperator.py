@@ -36,9 +36,9 @@ class LearningData(object):
 
     def pre_scan(self, training_data_paths, validation_data_paths):
         all_operators_set = set()
-        for bin_op in Util.DataReader(training_data_paths):
+        for bin_op in Util.DataReader(training_data_paths, False):
             all_operators_set.add(bin_op["op"])
-        for bin_op in Util.DataReader(validation_data_paths):
+        for bin_op in Util.DataReader(validation_data_paths, False):
             all_operators_set.add(bin_op["op"])
         self.all_operators = list(all_operators_set)
     

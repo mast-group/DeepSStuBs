@@ -47,7 +47,7 @@ class LearningData(object):
         callee_to_freq = Counter()
         argument_to_freq = Counter()
         
-        for call in Util.DataReader(data_paths):
+        for call in Util.DataReader(data_paths, False):
             callee_to_freq[call["callee"]] += 1
             for argument in call["arguments"]:
                 argument_to_freq[argument] += 1
