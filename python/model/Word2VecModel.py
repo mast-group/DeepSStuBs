@@ -1,6 +1,8 @@
 import json
 import model.AbstractModel
 
+from AbstractModel import *
+
 
 class Word2VecModel(AbstractModel):
 

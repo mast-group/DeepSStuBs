@@ -1,5 +1,6 @@
 import model.AbstractModel
 
+from AbstractModel import *
 from gensim.models import FastText
 
 

@@ -1,5 +1,7 @@
 import model.AbstractModel
 
+from AbstractModel import *
+
 
 class ELMoModel(AbstractModel):
 
