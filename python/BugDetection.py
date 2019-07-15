@@ -328,7 +328,8 @@ if __name__ == '__main__':
         # Create the model
         model = create_keras_network(dimensions)
         
-        code_pairs = create_code_pairs()
+        train_code_pairs = create_code_pairs(training_data_paths, learning_data)
+        test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
         sys.exit(0)
 
         # Create threads for batch generation
