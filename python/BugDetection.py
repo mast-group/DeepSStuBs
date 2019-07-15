@@ -36,6 +36,9 @@ import queue
 import threading
 import traceback
 
+import python.model.ModelFactory
+from python.model.ModelFactory import *
+
 from gensim.models import FastText
 from threading import Thread
 from Util import *
@@ -118,6 +121,16 @@ def prepare_xy_pairs(data_paths, learning_data):
 def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths, False):
         code_pieces_queue.put((code_piece, learning_data))
+
+def create_code_pairs(data_paths, learning_data):
+    code_pairs = []
+    for code_piece in Util.DataReader(data_paths, False):
+        buggy_code_piece = learning_data.mutate(code_piece)
+        code_pairs.append( (code_piece, buggy_code_piece) )
+
+
+def minibatch_generator():
+    pass
 
 def batch_generator(ELMoModel):
     try:
@@ -211,7 +224,8 @@ if __name__ == '__main__':
     elif option == "--load":
         print("--load option is buggy and currently disabled")
         sys.exit(1)
-        model_file = sys.argv[3]
+        # model_file = sys.argv[3]
+        config_file = sys.argv[3]
         name_to_vector_file = join(getcwd(), sys.argv[4])
         type_to_vector_file = join(getcwd(), sys.argv[5])
         node_type_to_vector_file = join(getcwd(), sys.argv[6])
@@ -220,9 +234,14 @@ if __name__ == '__main__':
         print("Incorrect arguments")
         sys.exit(1)
     
-    with open(name_to_vector_file) as f:
-        name_to_vector = json.load(f)
-    # m = FastText.load(name_to_vector_file)
+
+    model_factory = ModelFactory(config_file)
+    embeddings_model = model_factory.get_model()
+    name_to_vector = embeddings_model.get_name_to_vector()
+
+    # with open(name_to_vector_file) as f:
+    #     name_to_vector = json.load(f)
+    # # m = FastText.load(name_to_vector_file)
     # name_to_vector = m.wv
     with open(type_to_vector_file) as f:
         type_to_vector = json.load(f)
@@ -308,6 +327,8 @@ if __name__ == '__main__':
 
         # Create the model
         model = create_keras_network(dimensions)
+        
+        code_pairs = create_code_pairs()
         
         # Create threads for batch generation
         threads = []
