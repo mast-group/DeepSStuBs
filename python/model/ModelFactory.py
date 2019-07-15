@@ -1,6 +1,6 @@
 import json
 
-import Model
+from Model import *
 import Word2VecModel
 import FastTextModel
 import ELMoBPEModel
