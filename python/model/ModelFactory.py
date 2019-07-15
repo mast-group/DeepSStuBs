@@ -6,6 +6,10 @@ import model.Word2VecModel
 import model.FastTextModel
 import model.ELMoBPEModel
 
+from Word2VecModel import *
+from FastTextModel import *
+from ELMoBPEModel import *
+
 
 # Supported models 
 supported_models = ['w2v', 'FastText', 'ELMoBPE']
