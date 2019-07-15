@@ -329,6 +329,7 @@ if __name__ == '__main__':
         model = create_keras_network(dimensions)
         
         code_pairs = create_code_pairs()
+        sys.exit(0)
         
         # Create threads for batch generation
         threads = []
