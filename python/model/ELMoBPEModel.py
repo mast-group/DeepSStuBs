@@ -1,3 +1,4 @@
+import model.AbstractModel
 
 
 class ELMoModel(AbstractModel):

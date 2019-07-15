@@ -1,3 +1,5 @@
+import model.AbstractModel
+
 from gensim.models import FastText
 
 

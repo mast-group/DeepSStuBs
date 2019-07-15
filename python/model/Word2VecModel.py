@@ -1,4 +1,5 @@
 import json
+import model.AbstractModel
 
 
 class Word2VecModel(AbstractModel):
