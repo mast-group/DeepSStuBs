@@ -1,5 +1,6 @@
 import json
 
+import AbstractModel
 from AbstractModel import *
 import Word2VecModel
 import FastTextModel
