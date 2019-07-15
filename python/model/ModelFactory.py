@@ -1,10 +1,10 @@
 import json
 
-# import AbstractModel
-from AbstractModel import *
-import Word2VecModel
-import FastTextModel
-import ELMoBPEModel
+import model.AbstractModel
+# from AbstractModel import *
+import model.Word2VecModel
+import model.FastTextModel
+import model.ELMoBPEModel
 
 
 # Supported models 
