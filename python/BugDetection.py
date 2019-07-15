@@ -36,8 +36,8 @@ import queue
 import threading
 import traceback
 
-import python.model.ModelFactory
-from python.model.ModelFactory import *
+import model.ModelFactory
+from model.ModelFactory import *
 
 from gensim.models import FastText
 from threading import Thread
@@ -330,7 +330,7 @@ if __name__ == '__main__':
         
         code_pairs = create_code_pairs()
         sys.exit(0)
-        
+
         # Create threads for batch generation
         threads = []
         for i in range(BATCHING_THREADS):
