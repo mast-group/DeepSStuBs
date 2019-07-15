@@ -216,7 +216,8 @@ if __name__ == '__main__':
     what = sys.argv[1]
     option = sys.argv[2]
     if option == "--learn":
-        name_to_vector_file = join(getcwd(), sys.argv[3])
+        # name_to_vector_file = join(getcwd(), sys.argv[3])
+        config_file = sys.argv[3]
         type_to_vector_file = join(getcwd(), sys.argv[4])
         node_type_to_vector_file = join(getcwd(), sys.argv[5])
         metrics_file = join(getcwd(), sys.argv[6])
@@ -224,8 +225,7 @@ if __name__ == '__main__':
     elif option == "--load":
         print("--load option is buggy and currently disabled")
         sys.exit(1)
-        # model_file = sys.argv[3]
-        config_file = sys.argv[3]
+        model_file = sys.argv[3]
         name_to_vector_file = join(getcwd(), sys.argv[4])
         type_to_vector_file = join(getcwd(), sys.argv[5])
         node_type_to_vector_file = join(getcwd(), sys.argv[6])
