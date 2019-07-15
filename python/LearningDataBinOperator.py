@@ -43,6 +43,29 @@ class LearningData(object):
         self.all_operators = list(all_operators_set)
     
 
+    def mutate(self, bin_op):
+        mutated_bin_op = dict()
+        
+        mutated_bin_op["left"] = bin_op["left"]
+        mutated_bin_op["right"] = bin_op["right"]
+        mutated_bin_op["left_type"] = bin_op["leftType"]
+        mutated_bin_op["right_type"] = bin_op["rightType"]
+        mutated_bin_op["parent"] = bin_op["parent"]
+        mutated_bin_op["grand_parent"] = bin_op["grandParent"]
+        mutated_bin_op["src"] = bin_op["src"]
+        mutated_bin_op["opPosition"] = bin_op["opPosition"]
+        mutated_tokens = bin_op["tokens"].copy()
+
+        other_operator = bin_op["op"]
+        while other_operator == bin_op["op"]:
+            other_operator = random.choice(self.all_operators)
+        
+        mutated_bin_op["op"] = other_operator
+        mutated_tokens[mutated_bin_op["opPosition"]] = other_operator
+
+        return mutated_bin_op
+
+
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
         left = bin_op["left"]
         right = bin_op["right"]

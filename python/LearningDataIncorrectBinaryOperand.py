@@ -35,23 +35,69 @@ class LearningData(object):
         all_operators_set = set()
         for bin_op in Util.DataReader(training_data_paths, False):
             file = bin_op["src"].split(" : ")[0]
-            operands = self.file_to_operands.setdefault(file, set())
+            operands = self.file_to_operands.setdefault(file, dict())
+            # operands = self.file_to_operands.setdefault(file, set())
             left_operand = Operand(bin_op["left"], bin_op["leftType"])
             right_operand = Operand(bin_op["right"], bin_op["rightType"])
-            operands.add(left_operand)
-            operands.add(right_operand)
+            if not left_operand in operands: operands[left_operand] = bin_op["tokens"][:bin_op["opPosition"]]
+            if not right_operand in operands: operands[right_operand] = bin_op["tokens"][bin_op["opPosition"] + 1: ]
+            # operands.add(left_operand)
+            # operands.add(right_operand)
             
             all_operators_set.add(bin_op["op"])
         for bin_op in Util.DataReader(validation_data_paths, False):
             file = bin_op["src"].split(" : ")[0]
-            operands = self.file_to_operands.setdefault(file, set())
+            operands = self.file_to_operands.setdefault(file, dict())
+            # operands = self.file_to_operands.setdefault(file, set())
             left_operand = Operand(bin_op["left"], bin_op["leftType"])
             right_operand = Operand(bin_op["right"], bin_op["rightType"])
-            operands.add(left_operand)
-            operands.add(right_operand)
+            if not left_operand in operands: operands[left_operand] = bin_op["tokens"][:bin_op["opPosition"]]
+            if not right_operand in operands: operands[right_operand] = bin_op["tokens"][bin_op["opPosition"] + 1: ]
+            # operands.add(left_operand)
+            # operands.add(right_operand)
             
             all_operators_set.add(bin_op["op"])
         self.all_operators = list(all_operators_set)
+    
+    
+    def mutate(self, bin_op):
+        mutated_bin_op = dict()
+        
+        mutated_bin_op["left"] = bin_op["left"]
+        mutated_bin_op["right"] = bin_op["right"]
+        mutated_bin_op["op"] = bin_op["op"]
+        mutated_bin_op["left_type"] = bin_op["leftType"]
+        mutated_bin_op["right_type"] = bin_op["rightType"]
+        mutated_bin_op["parent"] = bin_op["parent"]
+        mutated_bin_op["grand_parent"] = bin_op["grandParent"]
+        mutated_bin_op["src"] = bin_op["src"]
+        mutated_bin_op["opPosition"] = bin_op["opPosition"]
+        mutated_tokens = bin_op["tokens"].copy()
+        
+        # find an alternative operand in the same file
+        replace_left = random.random() < 0.5
+        if replace_left:
+            to_replace_operand = left
+        else:
+            to_replace_operand = right
+        file = src.split(" : ")[0]
+        all_operands = self.file_to_operands[file].keys()
+        tries_left = 100
+        found = False
+        while (not found) and tries_left > 0:
+            other_operand = random.choice(list(all_operands))
+            # This if here is problematic if it is inh word2vec, because it only keeps operands in vocab
+            if other_operand.op in name_to_vector and other_operand.op != to_replace_operand:
+                found = True
+            tries_left -= 1
+            
+        if not found:
+            print('Did not find operator')
+            return
+
+        # mutated_tokens[mutated_bin_op["opPosition"]] = other_operator
+
+        return mutated_bin_op
     
 
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
