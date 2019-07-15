@@ -37,11 +37,11 @@ def main(args):
     tokens_files = args[2:]
     with open(export_file, 'w') as f:
         yields = 0
-        for token_seq in instance_tokens_generator(tokens_files):
+        for token_seq in instance_tokens_generator(tokens_files, False):
             yields += 1
             f.write(' '.join(token_seq))
             f.write('\n')
-    print('yields%d' % yields)
+    print('yields: %d' % yields)
     
 
 if __name__ == '__main__':
