@@ -122,10 +122,10 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths, False):
         code_pieces_queue.put((code_piece, learning_data))
 
-def create_code_pairs(data_paths, learning_data):
+def create_code_pairs(data_paths, learning_data, name_to_vector):
     code_pairs = []
     for code_piece in Util.DataReader(data_paths, False):
-        buggy_code_piece = learning_data.mutate(code_piece)
+        buggy_code_piece = learning_data.mutate(code_piece, name_to_vector)
         code_pairs.append( (code_piece, buggy_code_piece) )
 
 

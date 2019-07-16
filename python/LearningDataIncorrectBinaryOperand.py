@@ -60,7 +60,7 @@ class LearningData(object):
         self.all_operators = list(all_operators_set)
     
     
-    def mutate(self, bin_op):
+    def mutate(self, bin_op, name_to_vector):
         mutated_bin_op = dict()
         
         mutated_bin_op["left"] = bin_op["left"]
