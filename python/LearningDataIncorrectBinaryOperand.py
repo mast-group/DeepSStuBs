@@ -80,7 +80,7 @@ class LearningData(object):
             to_replace_operand = mutated_bin_op["left"]
         else:
             to_replace_operand = mutated_bin_op["right"]
-        file = src.split(" : ")[0]
+        file = bin_op["src"].split(" : ")[0]
         all_operands = self.file_to_operands[file].keys()
         tries_left = 100
         found = False
