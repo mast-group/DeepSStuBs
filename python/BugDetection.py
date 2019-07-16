@@ -122,10 +122,10 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths, False):
         code_pieces_queue.put((code_piece, learning_data))
 
-def create_code_pairs(data_paths, learning_data, name_to_vector):
+def create_code_pairs(data_paths, learning_data):
     code_pairs = []
     for code_piece in Util.DataReader(data_paths, False):
-        buggy_code_piece = learning_data.mutate(code_piece, name_to_vector)
+        buggy_code_piece = learning_data.mutate(code_piece)
         code_pairs.append( (code_piece, buggy_code_piece) )
 
 
@@ -328,8 +328,8 @@ if __name__ == '__main__':
         # Create the model
         model = create_keras_network(dimensions)
         
-        train_code_pairs = create_code_pairs(training_data_paths, learning_data, name_to_vector)
-        test_code_pairs = create_code_pairs(validation_data_paths, learning_data, name_to_vector)
+        train_code_pairs = create_code_pairs(training_data_paths, learning_data)
+        test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
         sys.exit(0)
 
         # Create threads for batch generation
