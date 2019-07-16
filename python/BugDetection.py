@@ -370,6 +370,7 @@ if __name__ == '__main__':
         # Create the model
         model = create_keras_network(dimensions)
         
+        learning_data.resetStats()
         train_code_pairs = create_code_pairs(training_data_paths, learning_data)
         test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
 
@@ -377,7 +378,6 @@ if __name__ == '__main__':
         time_stamp = math.floor(time.time() * 1000)
         for e in range(1, EPOCHS + 1, 1):
             print("Serving code pairs in the queue.")
-            learning_data.resetStats()
             # Create thread for code pair creation.
             code_pairs_thread = threading.Thread(target=code_pairs_queue, args=(learning_data, embeddings_model))
             code_pairs_thread.start()
