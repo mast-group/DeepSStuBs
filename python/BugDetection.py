@@ -149,6 +149,7 @@ def minibatch_generator():
         code_pieces = []
         while True:
             code_pair = code_pairs_queue.get()
+            code_pairs_queue.task_done()
             if code_pair is None:
                 break
             fixed, buggy = code_pair
@@ -160,7 +161,6 @@ def minibatch_generator():
                     x, y = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                     xs.append(x)
                     ys.append(y)
-                    code_pairs_queue.task_done()
                 batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
                 xs = []
