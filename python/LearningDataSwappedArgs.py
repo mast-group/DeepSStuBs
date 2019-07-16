@@ -175,8 +175,11 @@ class LearningData(object):
 
         mutated_call["src"] = call["src"]
         mutated_call["filename"] = call["filename"]
-        mutated_call["tokens"] = call["swappedTokens"].copy()
-        mutated_call["swappedTokens"] = call["tokens"].copy()
+        if "swappedTokens" in call:
+            mutated_call["tokens"] = call["swappedTokens"].copy()
+            mutated_call["swappedTokens"] = call["tokens"].copy()
+        else:
+            mutated_call["tokens"] = call["tokens"].copy()
 
         return mutated_call
 
