@@ -128,7 +128,7 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 
 
 
-def code_pairs_queue(code_pairs):
+def fill_code_pairs_queue(code_pairs):
     for code_pair in code_pairs:
         code_pairs_queue.put(code_pair)
 
@@ -379,7 +379,7 @@ if __name__ == '__main__':
         for e in range(1, EPOCHS + 1, 1):
             print("Serving code pairs in the queue.")
             # Create thread for code pair creation.
-            code_pairs_thread = threading.Thread(target=code_pairs_queue, args=(learning_data, embeddings_model))
+            code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=(learning_data, embeddings_model))
             code_pairs_thread.start()
 
             # Create thread for minibatches creation.
