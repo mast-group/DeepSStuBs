@@ -239,12 +239,11 @@ class LearningData(object):
         x = callee_vector + argument0_vector + argument1_vector
         x += base_vector + argument0_type_vector + argument1_type_vector
         x += parameter0_vector + parameter1_vector #+ file_name_vector
-        y = [0]
 
         if calls != None:
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
         
-        return x, y
+        return x
 
 
     def code_to_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, calls=None):

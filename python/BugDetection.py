@@ -154,13 +154,14 @@ def minibatch_generator():
                 break
             fixed, buggy = code_pair
             code_pieces.append(fixed)
+            ys.append([0])
             code_pieces.append(buggy)
+            ys.append([1])
             if len(code_pieces) == BATCH_SIZE:
                 # Query the model for features
                 for code_piece in code_pieces:
-                    x, y = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                     xs.append(x)
-                    ys.append(y)
                 batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
                 xs = []
