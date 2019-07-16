@@ -162,7 +162,7 @@ class LearningData(object):
         mutated_call["parameters"] = []
         
         swap_mapping = self.get_swap_mapping(call)
-        if len(call["arguments"] != 2):
+        if len(call["arguments"]) != 2:
             return None
         self.stats["calls_with_two_args"] += 1
         
