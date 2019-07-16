@@ -60,4 +60,17 @@ class FastTextModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        return len(self.name_to_vector())
+        return len(self.name_to_vector[self.UNK])
+    
+
+    def isOOV(self, word):
+        """[summary]
+        
+        Arguments:
+            word {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        return False
+

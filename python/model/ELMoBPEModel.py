@@ -56,3 +56,16 @@ class ELMoModel(AbstractModel):
             [type] -- [description]
         """
         pass
+    
+
+    def isOOV(self, word):
+        """[summary]
+        
+        Arguments:
+            word {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        return False
+

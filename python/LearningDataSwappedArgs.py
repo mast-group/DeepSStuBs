@@ -149,6 +149,7 @@ class LearningData(object):
 
 
     def mutate(self, call):
+        self.stats["calls"] += 1
         mutated_call = dict()
 
         mutated_call["base"] = call["base"]
@@ -161,6 +162,10 @@ class LearningData(object):
         mutated_call["parameters"] = []
         
         swap_mapping = self.get_swap_mapping(call)
+        if len(call["arguments"] != 2):
+            return None
+        self.stats["calls_with_two_args"] += 1
+        
         for i in range(len(call["arguments"])):
             mutated_call["parameters"].append(call["parameters"][i])
             
@@ -191,6 +196,51 @@ class LearningData(object):
             swap_mapping[1] = 0
         
         return swap_mapping
+
+
+    def code_features(self, call, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, calls=None):
+        if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+            arguments = call["arguments"]
+            assert(len(arguments) == 2)
+
+            base_string = call["base"]
+            if base_string == '':
+                base_vector = [0] * embeddings_model.get_embedding_dims()
+            else:
+                base_vector = embeddings_model.get_embedding(base_string)
+
+            callee_string = call["callee"]
+            callee_vector = embeddings_model.get_embedding(callee_string)
+            
+            argument_strings = call["arguments"]
+            argument0_vector = embeddings_model.get_embedding(argument_strings[0])
+            argument1_vector = embeddings_model.get_embedding(argument_strings[1])
+        else:
+            return None
+        
+        argument_type_strings = call["argumentTypes"]
+        argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0]*type_embedding_size)
+        argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
+        if (self.is_known_type(argument_type_strings[0]) or self.is_known_type(argument_type_strings[1])):
+            self.stats["calls_with_known_types"] += 1
+        if (self.is_known_type(argument_type_strings[0]) and self.is_known_type(argument_type_strings[1])):
+            self.stats["calls_with_both_known_types"] += 1
+        
+        parameter_strings = call["parameters"]
+        parameter0_vector = name_to_vector.get(parameter_strings[0], [0]*name_embedding_size)
+        parameter1_vector = name_to_vector.get(parameter_strings[1], [0]*name_embedding_size)
+        if (parameter_strings[0] in name_to_vector or parameter_strings[1] in name_to_vector):
+            self.stats["calls_with_known_parameters"] += 1
+        
+        x = callee_vector + argument0_vector + argument1_vector
+        x += base_vector + argument0_type_vector + argument1_type_vector
+        x += parameter0_vector + parameter1_vector #+ file_name_vector
+        y = [0]
+
+        if calls != None:
+            calls.append(CodePiece(callee_string, argument_strings, call["src"]))
+        
+        return x, y
 
 
     def code_to_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, calls=None):

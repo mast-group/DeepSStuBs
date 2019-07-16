@@ -67,6 +67,10 @@ BATCH_SIZE = 100#63 #256
 # Queue used to store code_pieces from_which minibatches are generated
 CODE_PIECES_QUEUE_SIZE = 1000000
 code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
+
+CODE_PAIRS_QUEUE_SIZE = 250000
+code_pairs_queue = queue.Queue(maxsize=CODE_PAIRS_QUEUE_SIZE)
+
 # Queue used to store generated minibatches
 BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
@@ -122,15 +126,52 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
     for code_piece in Util.DataReader(data_paths, False):
         code_pieces_queue.put((code_piece, learning_data))
 
+
+
+def code_pairs_queue(code_pairs):
+    for code_pair in code_pairs:
+        code_pairs_queue.put(code_pair)
+
+
 def create_code_pairs(data_paths, learning_data):
     code_pairs = []
     for code_piece in Util.DataReader(data_paths, False):
         buggy_code_piece = learning_data.mutate(code_piece)
-        code_pairs.append( (code_piece, buggy_code_piece) )
+        if not buggy_code_piece is None:
+            code_pairs.append( (code_piece, buggy_code_piece) )
+    return code_pairs
 
 
 def minibatch_generator():
-    pass
+    try:
+        xs = []
+        ys = []
+        code_pieces = []
+        while True:
+            code_pair = code_pairs_queue.get()
+            if code_pair is None:
+                break
+            fixed, buggy = code_pair
+            code_pieces.append(fixed)
+            code_pieces.append(buggy)
+            if len(code_pieces) == BATCH_SIZE:
+                # Query the model for features
+                for code_piece in code_pieces:
+                    x, y = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    xs.append(x)
+                    ys.append(y)
+                    code_pairs_queue.task_done()
+                batch = [np.array(xs), np.array(ys)]
+                batches_queue.put(batch)
+                xs = []
+                ys = []
+                code_pieces = []
+    except Exception as e:
+        print('Exception:', str(e))
+        exc_type, exc_obj, tb = sys.exc_info()
+        print(traceback.format_exc())
+        code_pairs_queue.task_done()
+
 
 def batch_generator(ELMoModel):
     try:
@@ -237,6 +278,7 @@ if __name__ == '__main__':
 
     model_factory = ModelFactory(config_file)
     embeddings_model = model_factory.get_model()
+    emb_model_type = model_factory.get_model_type()
     name_to_vector = embeddings_model.get_name_to_vector()
 
     # with open(name_to_vector_file) as f:
@@ -330,7 +372,81 @@ if __name__ == '__main__':
         
         train_code_pairs = create_code_pairs(training_data_paths, learning_data)
         test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
+
+        # Training loop
+        time_stamp = math.floor(time.time() * 1000)
+        for e in range(1, EPOCHS + 1, 1):
+            print("Serving code pairs in the queue.")
+            learning_data.resetStats()
+            # Create thread for code pair creation.
+            code_pairs_thread = threading.Thread(target=code_pairs_queue, args=(learning_data, embeddings_model))
+            code_pairs_thread.start()
+
+            # Create thread for minibatches creation.
+            batching_thread = threading.Thread(target=minibatch_generator)
+            batching_thread.start()
+
+            pass
+            # Variables for training stats
+            train_losses = []
+            train_accuracies = []
+            train_batch_sizes = []
+            train_instances = 0
+            train_batches = 0
+
+            # Wait until the batches queue is not empty
+            while batches_queue.empty():
+                # print('Empty batch queue')
+                continue
+
+            try:
+                while True:
+                    batch = batches_queue.get(timeout=30)
+                    batch_x, batch_y = batch
+                    batch_len = len(batch_x)
+                    # print('Batch len:', batch_len)
+                    train_instances += batch_len
+                    train_batch_sizes.append(batch_len)
+                    train_batches += 1
+                    # print('Batches done:', train_batches)
+
+                    # Train and get loss for minibatch
+                    batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                    train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                    train_accuracies.append(batch_accuracy)
+                    # print('Batch accuracy:', batch_accuracy)
+                    
+                    if train_batches % 1000 == 0:
+                        print("1000 batches") 
+                        print('acc:', mean(train_accuracies, train_batch_sizes))
+                        # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
+
+                    batches_queue.task_done()
+            except queue.Empty:
+                print('Empty queue')
+                pass
+            except Exception as exc:
+                print(exc)
+            finally:
+                # block untill all minibatches have been assigned to a batch_generator thread
+                print('Before join in finally')
+                code_pieces_queue.join()
+                print('After join in finally')
+
+                train_loss = mean(train_losses, train_batch_sizes)
+                train_accuracy = mean(train_accuracies, train_batch_sizes)
+                print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
+                    (e, train_instances, train_loss, train_accuracy))
+            if e == 1: print(learning_data.stats)
+
+            # Wait until both queues have been exhausted.
+            code_pairs_thread.join()
+            batching_thread.join()
+
+        time_learning_done = time.time()
+        print("Time for learning (seconds): " + str(round(time_learning_done - time_start)))
         sys.exit(0)
+
 
         # Create threads for batch generation
         threads = []

@@ -85,7 +85,7 @@ class LearningData(object):
         tries_left = 100
         found = False
         if len(all_operands) == 1:
-            return;
+            return None
 
         while (not found) and tries_left > 0:
             other_operand = random.choice(list(all_operands))
@@ -97,7 +97,7 @@ class LearningData(object):
             
         if not found:
             # print('Did not find operand')
-            return
+            return None
         
         if replace_left:
             mutated_bin_op["left"] = other_operand.op

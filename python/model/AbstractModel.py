@@ -3,6 +3,11 @@ from abc import ABC, abstractmethod
 class AbstractModel(ABC):
 
     def __init__(self, path):
+        """[summary]
+        
+        Arguments:
+            path {[type]} -- [description]
+        """
         self.path = path
         self.UNK = 'UNK'
         super().__init__()
@@ -32,4 +37,13 @@ class AbstractModel(ABC):
 
     def get_UNK(self):
         return self.UNK
+    
+    @abstractmethod
+    def isOOV(self, word):
+        """[summary]
+        
+        Arguments:
+            word {[type]} -- [description]
+        """
+        pass
 

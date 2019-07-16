@@ -40,7 +40,7 @@ class Word2VecModel(AbstractModel):
         if word in self.name_to_vector:
             return self.name_to_vector[word]
         else:
-            return name_to_vector[self.UNK]
+            return self.name_to_vector[self.UNK]
     
 
     def get_sequence_embeddings(self, sequence):
@@ -63,4 +63,17 @@ class Word2VecModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        return len(self.name_to_vector())
+        return len(self.name_to_vector[self.UNK])
+
+
+    def isOOV(self, word):
+        """[summary]
+        
+        Arguments:
+            word {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        return word == self.get_UNK() or not word in self.name_to_vector
+
