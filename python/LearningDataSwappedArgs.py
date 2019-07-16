@@ -160,7 +160,7 @@ class LearningData(object):
         mutated_call["argumentTypes"] = []
         mutated_call["parameters"] = []
         
-        swap_mapping = get_swap_mapping(call)
+        swap_mapping = self.get_swap_mapping(call)
         for i in range(len(call["arguments"])):
             mutated_call["parameters"].append(call["parameters"][i])
             
