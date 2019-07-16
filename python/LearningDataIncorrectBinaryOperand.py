@@ -89,13 +89,13 @@ class LearningData(object):
             # This if here is problematic if it is inh word2vec, because it only keeps operands in vocab
             # if other_operand.op in name_to_vector and other_operand.op != to_replace_operand:
             if other_operand.op != to_replace_operand:
-                print('Found operator')
                 found = True
             tries_left -= 1
             
         if not found:
             print('Did not find operator')
             print(other_operand, to_replace_operand)
+            print(all_operands)
             return
         
         if replace_left:
