@@ -379,7 +379,7 @@ if __name__ == '__main__':
         for e in range(1, EPOCHS + 1, 1):
             print("Serving code pairs in the queue.")
             # Create thread for code pair creation.
-            code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=(train_code_pairs))
+            code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
             code_pairs_thread.start()
 
             # Create thread for minibatches creation.
