@@ -82,7 +82,6 @@ class LearningData(object):
             to_replace_operand = mutated_bin_op["right"]
         file = bin_op["src"].split(" : ")[0]
         all_operands = self.file_to_operands[file].keys()
-        print(all_operands)
         tries_left = 100
         found = False
         while (not found) and tries_left > 0:
@@ -96,15 +95,14 @@ class LearningData(object):
             print('Did not find operator')
             return
         
-        print('Chose operand', other_operand)
         if replace_left:
             mutated_bin_op["left"] = other_operand.op
             mutated_bin_op["left_type"] = other_operand.type
-            mutated_tokens = self.file_to_operands[other_operand] + bin_op["tokens"][bin_op["opPosition"]:]
+            mutated_tokens = self.file_to_operands[file][other_operand] + bin_op["tokens"][bin_op["opPosition"]:]
         else:
             mutated_bin_op["right"] = other_operand.op
             mutated_bin_op["right_type"] = other_operand.type
-            mutated_tokens = bin_op["tokens"][: bin_op["opPosition"] + 1] + self.file_to_operands[other_operand]
+            mutated_tokens = bin_op["tokens"][: bin_op["opPosition"] + 1] + self.file_to_operands[file][other_operand]
 
         return mutated_bin_op
     
