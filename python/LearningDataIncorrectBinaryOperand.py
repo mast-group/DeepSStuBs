@@ -77,9 +77,9 @@ class LearningData(object):
         # find an alternative operand in the same file
         replace_left = random.random() < 0.5
         if replace_left:
-            to_replace_operand = left
+            to_replace_operand = mutated_bin_op["left"]
         else:
-            to_replace_operand = right
+            to_replace_operand = mutated_bin_op["right"]
         file = src.split(" : ")[0]
         all_operands = self.file_to_operands[file].keys()
         tries_left = 100
@@ -94,8 +94,15 @@ class LearningData(object):
         if not found:
             print('Did not find operator')
             return
-
-        # mutated_tokens[mutated_bin_op["opPosition"]] = other_operator
+        
+        if replace_left:
+            mutated_bin_op["left"] = other_operand.op
+            mutated_bin_op["left_type"] = other_operand.type
+            mutated_tokens = self.file_to_operands[other_operand] + bin_op["tokens"][bin_op["opPosition"]:]
+        else:
+            mutated_bin_op["right"] = other_operand.op
+            mutated_bin_op["right_type"] = other_operand.type
+            mutated_tokens = bin_op["tokens"][: bin_op["opPosition"] + 1] + self.file_to_operands[other_operand]
 
         return mutated_bin_op
     
