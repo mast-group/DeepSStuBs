@@ -94,6 +94,7 @@ class LearningData(object):
             
         if not found:
             print('Did not find operator')
+            print(other_operand, to_replace_operand)
             return
         
         if replace_left:
