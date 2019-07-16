@@ -227,10 +227,14 @@ class LearningData(object):
             self.stats["calls_with_both_known_types"] += 1
         
         parameter_strings = call["parameters"]
-        parameter0_vector = name_to_vector.get(parameter_strings[0], [0]*name_embedding_size)
-        parameter1_vector = name_to_vector.get(parameter_strings[1], [0]*name_embedding_size)
-        if (parameter_strings[0] in name_to_vector or parameter_strings[1] in name_to_vector):
-            self.stats["calls_with_known_parameters"] += 1
+        if parameter_strings[0] == '':
+            parameter0_vector = [0] * embeddings_model.get_embedding_dims()
+        else:
+            parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
+        if parameter_strings[1] == '':
+            parameter1_vector = [1] * embeddings_model.get_embedding_dims()
+        else:
+            parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
         
         x = callee_vector + argument0_vector + argument1_vector
         x += base_vector + argument0_type_vector + argument1_type_vector
