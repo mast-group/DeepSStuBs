@@ -156,7 +156,7 @@ class LearningData(object):
         mutated_call["calleeLocation"] = call["calleeLocation"]
 
         mutated_call["arguments"] = []
-        mutated_call["argumentsLocations"] = []
+        mutated_call["argumentLocations"] = []
         mutated_call["argumentTypes"] = []
         mutated_call["parameters"] = []
         
