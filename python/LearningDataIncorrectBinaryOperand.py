@@ -87,7 +87,8 @@ class LearningData(object):
         while (not found) and tries_left > 0:
             other_operand = random.choice(list(all_operands))
             # This if here is problematic if it is inh word2vec, because it only keeps operands in vocab
-            if other_operand.op in name_to_vector and other_operand.op != to_replace_operand:
+            # if other_operand.op in name_to_vector and other_operand.op != to_replace_operand:
+            if other_operand.op != to_replace_operand:
                 found = True
             tries_left -= 1
             
