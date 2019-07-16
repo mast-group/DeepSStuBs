@@ -60,7 +60,7 @@ class LearningData(object):
         self.all_operators = list(all_operators_set)
     
     
-    def mutate(self, bin_op):
+    def mutate(self, bin_op, name_to_vector):
         mutated_bin_op = dict()
         
         mutated_bin_op["left"] = bin_op["left"]
@@ -84,6 +84,9 @@ class LearningData(object):
         all_operands = self.file_to_operands[file].keys()
         tries_left = 100
         found = False
+        if len(all_operands) == 1:
+            return;
+
         while (not found) and tries_left > 0:
             other_operand = random.choice(list(all_operands))
             # This if here is problematic if it is inh word2vec, because it only keeps operands in vocab
@@ -93,9 +96,7 @@ class LearningData(object):
             tries_left -= 1
             
         if not found:
-            print('Did not find operator')
-            print(other_operand, to_replace_operand)
-            print(all_operands)
+            # print('Did not find operand')
             return
         
         if replace_left:
