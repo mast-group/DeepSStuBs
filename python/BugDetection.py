@@ -402,6 +402,7 @@ if __name__ == '__main__':
 
             
             while True:
+                epoch_batches_done = False
                 try:
                     batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
@@ -425,13 +426,15 @@ if __name__ == '__main__':
                     batches_queue.task_done()
                 except queue.Empty:
                     print('Empty queue')
-                    pass
+                    epoch_batches_done = True
                 except Exception as exc:
                     batches_queue.task_done()
                     print(exc)
+                    break
                 finally:
                     # block untill all minibatches have been assigned to a batch_generator thread
-                    pass
+                    if epoch_batches_done:
+                        break
             print('Before join in finally')
             code_pairs_thread.join()
             print('After join in finally')
