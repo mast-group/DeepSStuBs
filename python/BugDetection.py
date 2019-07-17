@@ -434,6 +434,8 @@ if __name__ == '__main__':
                 code_pairs_thread.join()
                 print('After join in finally')
                 print('Before join in finally')
+                print(code_pairs_queue.empty())
+                print(batches_queue.empty())
                 batching_thread.join()
                 print('After join in finally')
 
