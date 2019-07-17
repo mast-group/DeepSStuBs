@@ -143,13 +143,22 @@ def create_code_pairs(data_paths, learning_data):
 
 
 def minibatch_generator():
-    try:
-        xs = []
-        ys = []
-        code_pieces = []
-        while True:
+    xs = []
+    ys = []
+    code_pieces = []
+    while True:
+        try:
             code_pair = code_pairs_queue.get()
             if code_pair is None:
+                print('Consumed all code pairs.')
+                if len(code_pieces) > 0:
+                    # Query the model for features
+                    for code_piece in code_pieces:
+                        x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                        xs.append(x)
+                    batch = [np.array(xs), np.array(ys)]
+                    batches_queue.put(batch)
+                code_pairs_queue.task_done()
                 break
             fixed, buggy = code_pair
             code_pieces.append(fixed)
@@ -166,12 +175,13 @@ def minibatch_generator():
                 xs = []
                 ys = []
                 code_pieces = []
-    except Exception as e:
-        print('Exception:', str(e))
-        exc_type, exc_obj, tb = sys.exc_info()
-        print(traceback.format_exc())
-    finally:
-        code_pairs_queue.task_done()
+        except Exception as e:
+            print('Exception:', str(e))
+            exc_type, exc_obj, tb = sys.exc_info()
+            print(traceback.format_exc())
+            break
+        finally:
+            code_pairs_queue.task_done()
 
 
 def batch_generator(ELMoModel):
