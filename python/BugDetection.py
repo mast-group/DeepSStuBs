@@ -466,6 +466,63 @@ if __name__ == '__main__':
 
         time_learning_done = time.time()
         print("Time for learning (seconds): " + str(round(time_learning_done - time_start)))
+        
+        # Test learned model on test set.
+        print("Serving code pairs in the queue.")
+        # Create thread for code pair creation.
+        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
+        code_pairs_thread.start()
+
+        # Create thread for minibatches creation.
+        batching_thread = threading.Thread(target=minibatch_generator)
+        batching_thread.start()
+
+        predictions = []
+        code_pieces_validation = []
+        test_losses = []
+        test_accuracies = []
+        test_batch_sizes = []
+        test_instances = 0
+        test_batches = 0
+        # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+        # Wait until the batches queue is not empty
+        while batches_queue.empty():
+            continue
+        test_batches_done = False
+        while True:
+            try:
+                batch = batches_queue.get(timeout=30)
+                batch_x, batch_y = batch
+                batch_len = len(batch_x)
+                test_instances += batch_len
+                test_batches += 1
+                test_batch_sizes.append(batch_len)
+                batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                # batch_predictions = model.predict(batch_x)
+                # predictions.extend([pred for pred in batch_predictions])
+                predictions.extend(model.predict(batch_x))
+                test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                test_accuracies.append(batch_accuracy)
+                batches_queue.task_done()
+            except queue.Empty:
+                test_batches_done = True
+                pass
+            finally:
+                # block untill all minibatches have been assigned to a batch_generator thread
+                code_pieces_queue.join()
+                print(learning_data.stats)
+                test_loss = mean(test_losses, test_batch_sizes)
+                test_accuracy = mean(test_accuracies, test_batch_sizes)
+                print("Test instances %d - Loss & Accuracy [%f, %f]" % \
+                            (test_instances, test_loss, test_accuracy))
+        # stop workers
+        code_pairs_thread.join()
+        batching_thread.join()
+
+        
+        time_prediction_done = time.time()
+        print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
+        
         sys.exit(0)
 
 
