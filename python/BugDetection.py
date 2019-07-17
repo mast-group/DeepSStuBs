@@ -159,7 +159,7 @@ def minibatch_generator():
                         xs.append(x)
                     batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
-                code_pairs_queue.task_done()
+                # code_pairs_queue.task_done()
                 break
             fixed, buggy = code_pair
             code_pieces.append(fixed)
