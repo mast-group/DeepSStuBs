@@ -42,11 +42,11 @@ class ModelFactory:
         assert(model in supported_models)
         
         if model == 'w2v':
-            return Word2VecModel(self.settings['vector_file'])
+            return Word2VecModel(self.settings['model_file'])
         elif model == 'FastText':
-            return FastTextModel(self.settings['vector_file'])
+            return FastTextModel(self.settings['model_file'])
         elif model == 'ELMoBPE':
-            return ELMoBPEModel(self.settings['vector_file'])
+            return ELMoBPEModel(self.settings['model_file'])
     
     def get_model_type(self):
         """[summary]
