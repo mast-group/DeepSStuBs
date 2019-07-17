@@ -431,7 +431,10 @@ if __name__ == '__main__':
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 print('Before join in finally')
-                code_pieces_queue.join()
+                code_pairs_thread.join()
+                print('After join in finally')
+                print('Before join in finally')
+                batching_thread.join()
                 print('After join in finally')
 
                 train_loss = mean(train_losses, train_batch_sizes)
@@ -441,8 +444,7 @@ if __name__ == '__main__':
             if e == 1: print(learning_data.stats)
 
             # Wait until both queues have been exhausted.
-            code_pairs_thread.join()
-            batching_thread.join()
+            
 
         time_learning_done = time.time()
         print("Time for learning (seconds): " + str(round(time_learning_done - time_start)))
