@@ -131,6 +131,7 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 def fill_code_pairs_queue(code_pairs):
     for code_pair in code_pairs:
         code_pairs_queue.put(code_pair)
+    code_pairs_queue.put(None)
 
 
 def create_code_pairs(data_paths, learning_data):
