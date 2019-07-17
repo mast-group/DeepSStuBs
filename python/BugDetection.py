@@ -470,7 +470,7 @@ if __name__ == '__main__':
         # Test learned model on test set.
         print("Serving code pairs in the queue.")
         # Create thread for code pair creation.
-        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
+        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((test_code_pairs), ))
         code_pairs_thread.start()
 
         # Create thread for minibatches creation.
@@ -506,7 +506,6 @@ if __name__ == '__main__':
                 batches_queue.task_done()
             except queue.Empty:
                 test_batches_done = True
-                pass
             finally:
                 # block untill all minibatches have been assigned to a batch_generator thread
                 if test_batches_done:
@@ -524,8 +523,56 @@ if __name__ == '__main__':
         time_prediction_done = time.time()
         print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
         
-        sys.exit(0)
-    
+
+        #  Test on training batches
+        # Create thread for code pair creation.
+        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
+        code_pairs_thread.start()
+
+        # Create thread for minibatches creation.
+        batching_thread = threading.Thread(target=minibatch_generator)
+        batching_thread.start()
+
+        train_losses = []
+        train_accuracies = []
+        train_batch_sizes = []
+        train_instances = 0
+        train_batches = 0
+        # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+        # Wait until the batches queue is not empty
+        while batches_queue.empty():
+            continue
+        train_batches_done = False
+        while True:
+            try:
+                batch = batches_queue.get(timeout=30)
+                batch_x, batch_y = batch
+                batch_len = len(batch_x)
+                train_instances += batch_len
+                train_batches += 1
+                train_batch_sizes.append(batch_len)
+                batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                # batch_predictions = model.predict(batch_x)
+                # predictions.extend([pred for pred in batch_predictions])
+                predictions.extend(model.predict(batch_x))
+                train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                train_accuracies.append(batch_accuracy)
+                batches_queue.task_done()
+            except queue.Empty:
+                train_batches_done = True
+            finally:
+                # block untill all minibatches have been assigned to a batch_generator thread
+                if train_batches_done:
+                    break
+        print(learning_data.stats)
+        train_loss = mean(train_losses, train_batch_sizes)
+        train_accuracy = mean(train_accuracies, train_batch_sizes)
+        print("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                    (train_instances, train_loss, train_accuracy))
+        # stop workers
+        code_pairs_thread.join()
+        batching_thread.join()
+
     # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
     # print("Validation examples : " + str(len(xs_validation)))
 
