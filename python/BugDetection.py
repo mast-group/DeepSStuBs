@@ -400,8 +400,9 @@ if __name__ == '__main__':
                 # print('Empty batch queue')
                 continue
 
-            try:
-                while True:
+            
+            while True:
+                try:
                     batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
                     batch_len = len(batch_x)
@@ -421,28 +422,29 @@ if __name__ == '__main__':
                         print("1000 batches") 
                         print('acc:', mean(train_accuracies, train_batch_sizes))
                         # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
-
                     batches_queue.task_done()
-            except queue.Empty:
-                print('Empty queue')
-                pass
-            except Exception as exc:
-                print(exc)
-            finally:
-                # block untill all minibatches have been assigned to a batch_generator thread
-                print('Before join in finally')
-                code_pairs_thread.join()
-                print('After join in finally')
-                print('Before join in finally')
-                print(code_pairs_queue.empty())
-                print(batches_queue.empty())
-                batching_thread.join()
-                print('After join in finally')
+                except queue.Empty:
+                    print('Empty queue')
+                    pass
+                except Exception as exc:
+                    batches_queue.task_done()
+                    print(exc)
+                finally:
+                    # block untill all minibatches have been assigned to a batch_generator thread
+                    pass
+            print('Before join in finally')
+            code_pairs_thread.join()
+            print('After join in finally')
+            print('Before join in finally')
+            print(code_pairs_queue.empty())
+            print(batches_queue.empty())
+            batching_thread.join()
+            print('After join in finally')
 
-                train_loss = mean(train_losses, train_batch_sizes)
-                train_accuracy = mean(train_accuracies, train_batch_sizes)
-                print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
-                    (e, train_instances, train_loss, train_accuracy))
+            train_loss = mean(train_losses, train_batch_sizes)
+            train_accuracy = mean(train_accuracies, train_batch_sizes)
+            print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
+                (e, train_instances, train_loss, train_accuracy))
             if e == 1: print(learning_data.stats)
 
             # Wait until both queues have been exhausted.
