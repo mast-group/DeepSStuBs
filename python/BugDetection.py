@@ -149,7 +149,6 @@ def minibatch_generator():
         code_pieces = []
         while True:
             code_pair = code_pairs_queue.get()
-            code_pairs_queue.task_done()
             if code_pair is None:
                 break
             fixed, buggy = code_pair
@@ -171,6 +170,7 @@ def minibatch_generator():
         print('Exception:', str(e))
         exc_type, exc_obj, tb = sys.exc_info()
         print(traceback.format_exc())
+    finally:
         code_pairs_queue.task_done()
 
 
