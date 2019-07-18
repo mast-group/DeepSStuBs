@@ -75,8 +75,7 @@ class ELMoModel(AbstractModel):
             [type] -- [description]
         """
         # Create batches of data.
-        code_ids = self._batcher.batch_sentences(tokenized_code)
-        # question_ids = batcher.batch_sentences(tokenized_question)
+        code_ids = self._batcher.batch_sentences(sequence)
 
         # Warm up the LSTM state, otherwise will get inconsistent embeddings.
         for step in range(500):
