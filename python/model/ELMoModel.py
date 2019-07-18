@@ -22,7 +22,7 @@ class ELMoModel(AbstractModel):
         bilm = self._create_bilm()
         # Get ops to compute the LM embeddings.
         code_embeddings_op = bilm(self._code_character_ids)
-        self.elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
+        self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
 
 
     def _create_bilm(self):
@@ -81,13 +81,13 @@ class ELMoModel(AbstractModel):
         # Warm up the LSTM state, otherwise will get inconsistent embeddings.
         for step in range(500):
             elmo_code_representation = self._sess.run(
-                [elmo_code_rep_op['weighted_op']],
+                [self._elmo_code_rep_op['weighted_op']],
                 feed_dict={self._code_character_ids: code_ids}
             )
 
         # Compute ELMo representations (here for the input only, for simplicity).
         elmo_code_representation = self._sess.run(
-            [elmo_code_rep_op['weighted_op']],
+            [self._elmo_code_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
         print(elmo_code_representation)
