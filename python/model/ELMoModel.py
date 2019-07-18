@@ -31,8 +31,7 @@ class ELMoModel(AbstractModel):
             self._weight_file,
             use_character_inputs=True
         )
-
-        pass
+        return bilm
 
 
     # def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30, dims=200):
