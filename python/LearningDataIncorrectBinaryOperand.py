@@ -111,6 +111,38 @@ class LearningData(object):
         return mutated_bin_op
     
 
+    def code_features(self, bin_op, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, code_pieces=None):
+        left = bin_op["left"]
+        right = bin_op["right"]
+
+        if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+            operator = bin_op["op"]
+            left_type = bin_op["leftType"]
+            right_type = bin_op["rightType"]
+            parent = bin_op["parent"]
+            grand_parent = bin_op["grandParent"]
+            src = bin_op["src"]
+            
+            left_vector = embeddings_model.get_embedding(left)
+            right_vector = embeddings_model.get_embedding(right)
+        else:
+            return None
+        
+        operator_vector = [0] * len(self.all_operators)
+        operator_vector[self.all_operators.index(operator)] = 1
+        left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
+        right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
+        parent_vector = node_type_to_vector.get(parent, [0] * node_type_embedding_size)
+        grand_parent_vector = node_type_to_vector.get(grand_parent, [0] * node_type_embedding_size)
+        
+        x = left_vector + right_vector + operator_vector + left_type_vector + \
+             right_type_vector + parent_vector + grand_parent_vector
+        if code_pieces != None:
+            code_pieces.append(CodePiece(right, left, operator, src))
+        
+        return x
+    
+
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
         left = bin_op["left"]
         right = bin_op["right"]
