@@ -13,6 +13,8 @@ config.gpu_options.allow_growth = True  # dynamically grow the memory used on th
 
 import model.ModelFactory
 from model.ModelFactory import *
+import model.ELMoModel
+from ELMoModel import *
 
 from gensim.models import FastText
 from threading import Thread
