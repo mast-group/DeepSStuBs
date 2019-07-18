@@ -49,4 +49,4 @@ if __name__ == "__main__":
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
 
-        get_sequence_embeddings(raw_code)
+        elmo.get_sequence_embeddings(raw_code)
