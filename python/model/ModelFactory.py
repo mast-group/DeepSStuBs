@@ -46,7 +46,8 @@ class ModelFactory:
         elif model == 'FastText':
             return FastTextModel(self.settings['model_file'])
         elif model == 'ELMoBPE':
-            return ELMoBPEModel(self.settings['model_file'])
+            return ELMoBPEModel(self.settings['model_file'], self.settings['vocab_file'], \
+                self.settings['weight_file'], self.settings['options_file'])
     
     def get_model_type(self):
         """[summary]
