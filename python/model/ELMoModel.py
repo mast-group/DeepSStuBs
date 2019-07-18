@@ -13,14 +13,15 @@ class ELMoModel(AbstractModel):
         # Create a Batcher to map text to character ids.
         self._batcher = Batcher(vocab_file, 50)
         # Input placeholders to the biLM.
-        code_character_ids = tf.placeholder('int32', shape=(None, None, 50))
+        self._code_character_ids = tf.placeholder('int32', shape=(None, None, 50))
         self._weight_file = weight_file
         self._options_file = options_file
+        self._sess = sess
         
         # Build the biLM graph.
         bilm = self._create_bilm()
         # Get ops to compute the LM embeddings.
-        code_embeddings_op = bilm(code_character_ids)
+        code_embeddings_op = bilm(self._code_character_ids)
         self.elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
 
 
@@ -79,15 +80,15 @@ class ELMoModel(AbstractModel):
 
         # Warm up the LSTM state, otherwise will get inconsistent embeddings.
         for step in range(500):
-            elmo_code_representation = sess.run(
+            elmo_code_representation = self._sess.run(
                 [elmo_code_rep_op['weighted_op']],
-                feed_dict={code_character_ids: code_ids}
+                feed_dict={self._code_character_ids: code_ids}
             )
 
         # Compute ELMo representations (here for the input only, for simplicity).
-        elmo_code_representation = sess.run(
+        elmo_code_representation = self._sess.run(
             [elmo_code_rep_op['weighted_op']],
-            feed_dict={code_character_ids: code_ids}
+            feed_dict={self._code_character_ids: code_ids}
         )
         print(elmo_code_representation)
     
