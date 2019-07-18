@@ -14,6 +14,7 @@ class ELMoModel(AbstractModel):
         self._batcher = Batcher(vocab_file, 50)
         # Input placeholders to the biLM.
         code_character_ids = tf.placeholder('int32', shape=(None, None, 50))
+        self._weight_file = weight_file
         self._options_file = options_file
         
         # Build the biLM graph.
