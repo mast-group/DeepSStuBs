@@ -66,10 +66,10 @@ class LearningData(object):
         mutated_bin_op["left"] = bin_op["left"]
         mutated_bin_op["right"] = bin_op["right"]
         mutated_bin_op["op"] = bin_op["op"]
-        mutated_bin_op["left_type"] = bin_op["leftType"]
-        mutated_bin_op["right_type"] = bin_op["rightType"]
+        mutated_bin_op["leftType"] = bin_op["leftType"]
+        mutated_bin_op["rightType"] = bin_op["rightType"]
         mutated_bin_op["parent"] = bin_op["parent"]
-        mutated_bin_op["grand_parent"] = bin_op["grandParent"]
+        mutated_bin_op["grandParent"] = bin_op["grandParent"]
         mutated_bin_op["src"] = bin_op["src"]
         mutated_bin_op["opPosition"] = bin_op["opPosition"]
         mutated_tokens = bin_op["tokens"].copy()
@@ -101,11 +101,11 @@ class LearningData(object):
         
         if replace_left:
             mutated_bin_op["left"] = other_operand.op
-            mutated_bin_op["left_type"] = other_operand.type
+            mutated_bin_op["leftType"] = other_operand.type
             mutated_tokens = self.file_to_operands[file][other_operand] + bin_op["tokens"][bin_op["opPosition"]:]
         else:
             mutated_bin_op["right"] = other_operand.op
-            mutated_bin_op["right_type"] = other_operand.type
+            mutated_bin_op["rightType"] = other_operand.type
             mutated_tokens = bin_op["tokens"][: bin_op["opPosition"] + 1] + self.file_to_operands[file][other_operand]
 
         return mutated_bin_op

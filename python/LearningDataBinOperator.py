@@ -48,10 +48,10 @@ class LearningData(object):
         
         mutated_bin_op["left"] = bin_op["left"]
         mutated_bin_op["right"] = bin_op["right"]
-        mutated_bin_op["left_type"] = bin_op["leftType"]
-        mutated_bin_op["right_type"] = bin_op["rightType"]
+        mutated_bin_op["leftType"] = bin_op["leftType"]
+        mutated_bin_op["rightType"] = bin_op["rightType"]
         mutated_bin_op["parent"] = bin_op["parent"]
-        mutated_bin_op["grand_parent"] = bin_op["grandParent"]
+        mutated_bin_op["grandParent"] = bin_op["grandParent"]
         mutated_bin_op["src"] = bin_op["src"]
         mutated_bin_op["opPosition"] = bin_op["opPosition"]
         mutated_tokens = bin_op["tokens"].copy()
