@@ -14,7 +14,7 @@ class FastTextModel(AbstractModel):
         """
         super().__init__(name_to_vector_file)
         self.m = FastText.load(name_to_vector_file)
-        self.name_to_vector = m.wv
+        self.name_to_vector = self.m.wv
     
 
     def get_name_to_vector(self):
