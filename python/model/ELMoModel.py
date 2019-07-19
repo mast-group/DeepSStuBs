@@ -128,5 +128,7 @@ class ELMoModel(AbstractModel):
         data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         for batch in data.iter_batches(batch_size, 20):
             print(len(batch))
+            print(batch)
+            break
         pass
 
