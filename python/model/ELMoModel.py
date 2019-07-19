@@ -4,6 +4,8 @@ import os
 
 from AbstractModel import *
 from bilm import Batcher, BidirectionalLanguageModel, weight_layers
+from bilm.data import BidirectionalLMDataset
+from bilm.training import load_vocab
 
 
 class ELMoModel(AbstractModel):
@@ -11,6 +13,7 @@ class ELMoModel(AbstractModel):
     def __init__(self, model_file, vocab_file, weight_file, options_file, sess, threshold=50):
         super().__init__(model_file)
         # Create a Batcher to map text to character ids.
+        self._vocab_file = vocab_file
         self._batcher = Batcher(vocab_file, 50)
         # Input placeholders to the biLM.
         self._code_character_ids = tf.placeholder('int32', shape=(None, None, 50))
@@ -113,4 +116,16 @@ class ELMoModel(AbstractModel):
         """
         return False
 
+
+    def warm_up(self, data_prefix):
+        """[summary]
+        
+        Arguments:
+            data_prefix {[type]} -- [description]
+        """
+        vocab = load_vocab(self._vocab_file)
+        data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
+        for sentence in data.get_sentence():
+            print(len(sentence))
+        pass
 
