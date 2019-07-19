@@ -1,3 +1,4 @@
+import glob
 import model.AbstractModel
 import tensorflow as tf
 import os
@@ -81,12 +82,12 @@ class ELMoModel(AbstractModel):
         # Create batches of data.
         code_ids = self._batcher.batch_sentences(sequence)
 
-        # Warm up the LSTM state, otherwise will get inconsistent embeddings.
-        for step in range(500):
-            elmo_code_representation = self._sess.run(
-                [self._elmo_code_rep_op['weighted_op']],
-                feed_dict={self._code_character_ids: code_ids}
-            )
+        # # Warm up the LSTM state, otherwise will get inconsistent embeddings.
+        # for step in range(500):
+        #     elmo_code_representation = self._sess.run(
+        #         [self._elmo_code_rep_op['weighted_op']],
+        #         feed_dict={self._code_character_ids: code_ids}
+        #     )
 
         # Compute ELMo representations (here for the input only, for simplicity).
         elmo_code_representation = self._sess.run(
@@ -125,10 +126,20 @@ class ELMoModel(AbstractModel):
         """
         batch_size = 64
         vocab = load_vocab(self._vocab_file, 50)
-        data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
-        for batch in data.iter_batches(batch_size, 20):
-            print(len(batch))
-            print(batch)
+
+        files = self._all_shards = glob.glob(data_prefix)
+        for file in files:
+            print(file)
+            with open(file, 'r') as f:
+                for program in f:
+                    self.get_sequence_embeddings(program)
+                    break
             break
+        
+        # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
+        # for batch in data.iter_batches(batch_size, 20):
+        #     print(len(batch))
+        #     print(batch)
+        #     break
         pass
 
