@@ -13,7 +13,6 @@ class FastTextModel(AbstractModel):
             name_to_vector_file {[type]} -- [description]
         """
         super().__init__(name_to_vector_file)
-        assert(name_to_vector_file.endswith('.json'))
         self.m = FastText.load(name_to_vector_file)
         self.name_to_vector = m.wv
     
