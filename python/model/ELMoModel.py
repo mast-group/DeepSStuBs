@@ -123,9 +123,10 @@ class ELMoModel(AbstractModel):
         Arguments:
             data_prefix {[type]} -- [description]
         """
-        vocab = load_vocab(self._vocab_file)
+        batch_size = 64
+        vocab = load_vocab(self._vocab_file, 50)
         data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
-        for sentence in data.get_sentence():
-            print(len(sentence))
+        for batch in data.iter_batches(batch_size, 20):
+            print(len(batch))
         pass
 
