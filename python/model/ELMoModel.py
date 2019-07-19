@@ -117,6 +117,29 @@ class ELMoModel(AbstractModel):
         """
         return False
 
+    
+    def _batch_generator(self, data_prefix, batch_size, sentence_len):
+        batch = []
+
+        files = self._all_shards = glob.glob(data_prefix)
+        for file in files:
+            print(file)
+            with open(file, 'r') as f:
+                for program in f:
+                    program = program.split()
+                    program_sequences = [program[i * sentence_len:(i + 1) * sentence_len] \
+                        for i in range((len(program) + sentence_len - 1) // sentence_len )]
+                    for program_sequence in program_sequences:
+                        batch.append(' '.join(program_sequence))
+                        if len(batch) == batch_size:
+                            yield batch
+                            batch = []
+                            break
+                    break
+            break
+        # if len(batch) > 0:
+        #     yield batch
+
 
     def warm_up(self, data_prefix):
         """[summary]
@@ -125,16 +148,11 @@ class ELMoModel(AbstractModel):
             data_prefix {[type]} -- [description]
         """
         batch_size = 64
+        sequence_size = 20
         vocab = load_vocab(self._vocab_file, 50)
 
-        files = self._all_shards = glob.glob(data_prefix)
-        for file in files:
-            print(file)
-            with open(file, 'r') as f:
-                for program in f:
-                    self.get_sequence_embeddings(program)
-                    break
-            break
+        for batch in self._batch_generator:
+            self.get_sequence_embeddings(batch)
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         # for batch in data.iter_batches(batch_size, 20):
