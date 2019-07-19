@@ -151,7 +151,7 @@ class ELMoModel(AbstractModel):
         sequence_size = 20
         vocab = load_vocab(self._vocab_file, 50)
 
-        for batch in self._batch_generator():
+        for batch in self._batch_generator(data_prefix, batch_size, sequence_size):
             print(batch)
             self.get_sequence_embeddings(batch)
         
