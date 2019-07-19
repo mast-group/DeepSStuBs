@@ -152,6 +152,7 @@ class ELMoModel(AbstractModel):
         vocab = load_vocab(self._vocab_file, 50)
 
         for batch in self._batch_generator:
+            print(batch)
             self.get_sequence_embeddings(batch)
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
