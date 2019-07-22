@@ -76,7 +76,7 @@ BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = False#True
+USE_ELMO = True
 USE_ELMO_TOP_ONLY = True
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
@@ -288,7 +288,12 @@ if __name__ == '__main__':
         sys.exit(1)
     
 
-    model_factory = ModelFactory(config_file)
+    session = tf.Session(config=config)
+    set_session(session)  # set this TensorFlow session as the default session for Keras
+    # session = tf.keras.backend.get_session()
+
+
+    model_factory = ModelFactory(config_file, session)
     embeddings_model = model_factory.get_model()
     emb_model_type = model_factory.get_model_type()
     name_to_vector = embeddings_model.get_name_to_vector()
@@ -358,10 +363,7 @@ if __name__ == '__main__':
         if dimensions == 0:
             sys.exit(1)
         
-        session = tf.Session(config=config)
-        set_session(session)  # set this TensorFlow session as the default session for Keras
-        # session = tf.keras.backend.get_session()
-        
+
         vocab_file = 'ELMoVocab.txt'
         # Location of pretrained LM.  Here we use the test fixtures.
         model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -374,9 +376,9 @@ if __name__ == '__main__':
         batcher = TokenBatcher(vocab_file)
 
         # Create ELMo Token operation
-        elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
-            token_embedding_file, USE_ELMO_TOP_ONLY)
-        ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
+        # elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
+        #     token_embedding_file, USE_ELMO_TOP_ONLY)
+        # ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
         session.run(tf.global_variables_initializer())
 
         # Create the model
