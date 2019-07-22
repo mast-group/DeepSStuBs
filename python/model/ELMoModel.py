@@ -130,11 +130,12 @@ class ELMoModel(AbstractModel):
                     program_sequences = [program[i * sentence_len:(i + 1) * sentence_len] \
                         for i in range((len(program) + sentence_len - 1) // sentence_len )]
                     for program_sequence in program_sequences:
-                        print(program_sequence)
+                        print(len(program_sequence), program_sequence)
                         batch.append(' '.join(program_sequence))
                         if len(batch) == batch_size:
                             yield batch
                             batch = []
+                            print()
                             break
                     break
             break
@@ -148,7 +149,7 @@ class ELMoModel(AbstractModel):
         Arguments:
             data_prefix {[type]} -- [description]
         """
-        batch_size = 64
+        batch_size = 16
         sequence_size = 20
         vocab = load_vocab(self._vocab_file, 50)
 
