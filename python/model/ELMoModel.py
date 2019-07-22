@@ -149,6 +149,9 @@ class ELMoModel(AbstractModel):
         # Create batches of data.
         code_ids = self._batcher.batch_sentences(sequence)
         print(code_ids)
+        print(code_ids[0])
+        print(code_ids[0][0])
+        print(len(code_ids[0][0]))
         
         # Compute token layer representations.
         elmo_token_representation = self._sess.run(
