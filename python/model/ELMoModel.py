@@ -28,8 +28,20 @@ class ELMoModel(AbstractModel):
         # code_embeddings_op is a dict containing various tensor ops.
         code_embeddings_op = bilm(self._code_character_ids)
         print('code_embeddings_op:', code_embeddings_op)
-        self._emb_dims = code_embeddings_op['lm_embeddings'].get_shape().as_list()[-1]
+        
+        lm_embeddings = code_embeddings_op['lm_embeddings']
+        self._n_lm_layers = int(lm_embeddings.get_shape()[1])
+        self._emb_dims = int(lm_embeddings.get_shape()[3])
+        # self._emb_dims = code_embeddings_op['lm_embeddings'].get_shape().as_list()[-1]
+        
 
+        # Create a token level representation op
+        self._token_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_tokens_only=True, use_top_only=False)
+        
+        # Create an ELMo top-layer only representation op
+        self._elmo_top_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=True)
+        
+        # Create an ELMo representation op
         self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=False)
         print('_elmo_code_rep_op:', self._elmo_code_rep_op)
         
@@ -72,13 +84,13 @@ class ELMoModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        code_ids = self._batcher.batch_sentences([word])
+        code_ids = self._batcher.batch_sentences([[word]])
 
-        elmo_code_representation = self._sess.run(
-            [self._elmo_code_rep_op['weighted_op']],
+        elmo_token_representation = self._sess.run(
+            [self._token_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
-        return elmo_code_representation
+        return elmo_token_representation
         
 
     def get_sequence_embeddings(self, sequence):
