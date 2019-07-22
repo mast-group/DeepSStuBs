@@ -151,7 +151,7 @@ class ELMoModel(AbstractModel):
         Arguments:
             data_prefix {[type]} -- [description]
         """
-        batch_size = 16
+        batch_size = 32
         sequence_size = 50
         vocab = load_vocab(self._vocab_file, 50)
 
