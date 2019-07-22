@@ -26,7 +26,9 @@ class ELMoModel(AbstractModel):
         bilm = self._create_bilm()
         # Get ops to compute the LM embeddings.
         code_embeddings_op = bilm(self._code_character_ids)
-        self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0)
+        print('code_embeddings_op:', code_embeddings_op.shape)
+        self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=False)
+        print('_elmo_code_rep_op:', _elmo_code_rep_op.shape)
 
 
     def _create_bilm(self):
@@ -59,8 +61,7 @@ class ELMoModel(AbstractModel):
 
     def get_embedding(self, word):
         """[summary]
-        Retrieves and returns the FastText embedding of the specified word.
-        If the word is out-of-vocabulary then FastText utilizes character 3-gram embedding to calculate one.
+        Retrieves and returns the token embedding of the specified word.
         Arguments:
             word {[type]} -- [description]
         
@@ -155,7 +156,8 @@ class ELMoModel(AbstractModel):
             # print(batch)
             embeddings = self.get_sequence_embeddings(batch)
             # print(len(embeddings))
-            # print(embeddings[0].shape)
+            print(embeddings[0].shape)
+            break
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         # for batch in data.iter_batches(batch_size, 20):
