@@ -1,23 +1,25 @@
 import json
 
-import model.AbstractModel
+import python.model.AbstractModel
 # from AbstractModel import *
-import model.Word2VecModel
-import model.FastTextModel
-import model.ELMoBPEModel
+import python.model.Word2VecModel
+import python.model.FastTextModel
+import python.model.ELMoModel
+import python.model.ELMoBPEModel
 
 from Word2VecModel import *
 from FastTextModel import *
 from ELMoBPEModel import *
+from ELMoModel import *
 
 
 # Supported models 
-supported_models = ['w2v', 'FastText', 'ELMoBPE']
+supported_models = ['w2v', 'FastText', 'ELMo', 'ELMoBPE']
 
 
 class ModelFactory:
 
-    def __init__(self, config_file):
+    def __init__(self, config_file, sess=None):
         """[summary]
         
         Arguments:
@@ -27,6 +29,7 @@ class ModelFactory:
         with open(config_file, 'r') as f:
             self.settings = json.load(f)
         assert(self.settings['model'] in supported_models)
+        self._sess = sess
 
 
     def get_model(self):
@@ -45,9 +48,30 @@ class ModelFactory:
             return Word2VecModel(self.settings['model_file'])
         elif model == 'FastText':
             return FastTextModel(self.settings['model_file'])
+        elif model == 'ELMo':
+            assert self._sess is not None
+            
+            data_dir = '/disk/scratch/mpatsis/eddie/data/phog/js/'
+            data_dir = self.settings['data_dir']
+            model_dir = self.settings['model_dir']
+            vocab_file = os.path.join(data_dir, self.settings['vocab_file'])
+            weight_file = os.path.join(model_dir, self.settings['weight_file'])
+            options_file = os.path.join(model_dir, self.settings['options_file'])
+        
+            elmoModel = ELMoModel(model_dir, vocab_file, weight_file, options_file, self._sess)
+            # if 'warm_up' in self.settings:
+            #     elmoModel.warm_up(self.settings['warm_up'])
+            return elmoModel
         elif model == 'ELMoBPE':
-            return ELMoBPEModel(self.settings['model_file'], self.settings['vocab_file'], \
-                self.settings['weight_file'], self.settings['options_file'])
+            assert self._sess is not None
+            
+            data_dir = self.settings['data_dir']
+            model_dir = self.settings['model_dir'], 
+            vocab_file = os.path.join(data_dir, self.settings['vocab_file'])
+            weight_file = os.path.join(model_dir, self.settings['weight_file'])
+            options_file = os.path.join(model_dir, self.settings['options_file'])
+
+            return ELMoBPEModel(model_dir, vocab_file, weight_file, options_file, self._sess)
     
     def get_model_type(self):
         """[summary]

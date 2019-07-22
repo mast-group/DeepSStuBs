@@ -215,30 +215,51 @@ class LearningData(object):
             argument_strings = call["arguments"]
             argument0_vector = embeddings_model.get_embedding(argument_strings[0])
             argument1_vector = embeddings_model.get_embedding(argument_strings[1])
+
+            x = callee_vector + argument0_vector + argument1_vector + base_vector
+
+            argument_type_strings = call["argumentTypes"]
+            argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0]*type_embedding_size)
+            argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
+            if (self.is_known_type(argument_type_strings[0]) or self.is_known_type(argument_type_strings[1])):
+                self.stats["calls_with_known_types"] += 1
+            if (self.is_known_type(argument_type_strings[0]) and self.is_known_type(argument_type_strings[1])):
+                self.stats["calls_with_both_known_types"] += 1
+            
+            parameter_strings = call["parameters"]
+            if parameter_strings[0] == '':
+                parameter0_vector = [0] * embeddings_model.get_embedding_dims()
+            else:
+                parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
+            if parameter_strings[1] == '':
+                parameter1_vector = [1] * embeddings_model.get_embedding_dims()
+            else:
+                parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
+            
+            x += argument0_type_vector + argument1_type_vector
+            x += parameter0_vector + parameter1_vector #+ file_name_vector
+
+        elif emb_model_type == 'ELMo':
+            arguments = call["arguments"]
+            assert(len(arguments) == 2)
+            callee_string = call["callee"]
+            argument_strings = call["arguments"]
+            
+            query = '%sSTD:( %s STD:, %s STD:)' % (callee_string, argument_strings[0], argument_strings[1])
+            
+            base_string = call["base"]
+            if base_string == '':
+                base_vector = [0] * embeddings_model.get_embedding_dims()
+                x = base_vector
+                x += embeddings_model.get_sequence_token_embeddings([query.split()])
+            else:
+                query = ('%s STD:. ' % base_string) + query
+                x = embeddings_model.get_sequence_token_embeddings([query.split()])
+            return x
+            
         else:
             return None
         
-        argument_type_strings = call["argumentTypes"]
-        argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0]*type_embedding_size)
-        argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
-        if (self.is_known_type(argument_type_strings[0]) or self.is_known_type(argument_type_strings[1])):
-            self.stats["calls_with_known_types"] += 1
-        if (self.is_known_type(argument_type_strings[0]) and self.is_known_type(argument_type_strings[1])):
-            self.stats["calls_with_both_known_types"] += 1
-        
-        parameter_strings = call["parameters"]
-        if parameter_strings[0] == '':
-            parameter0_vector = [0] * embeddings_model.get_embedding_dims()
-        else:
-            parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
-        if parameter_strings[1] == '':
-            parameter1_vector = [1] * embeddings_model.get_embedding_dims()
-        else:
-            parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
-        
-        x = callee_vector + argument0_vector + argument1_vector
-        x += base_vector + argument0_type_vector + argument1_type_vector
-        x += parameter0_vector + parameter1_vector #+ file_name_vector
 
         if calls != None:
             calls.append(CodePiece(callee_string, argument_strings, call["src"]))
