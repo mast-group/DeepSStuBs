@@ -255,7 +255,9 @@ class LearningData(object):
             else:
                 query = ('%s STD:. ' % base_string) + query
                 x = embeddings_model.get_sequence_token_embeddings([query.split()])
-            return list(x.ravel())
+            x = list(x.ravel())
+            print(x)
+            return x
             
         else:
             return None
