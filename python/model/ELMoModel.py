@@ -157,7 +157,7 @@ class ELMoModel(AbstractModel):
         for batch in self._batch_generator(data_prefix, batch_size, sequence_size):
             print(batch)
             embeddings = self.get_sequence_embeddings(batch)
-            print(embeddings.shape)
+            print(len(embeddings))
             print(embeddings[0].shape)
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
