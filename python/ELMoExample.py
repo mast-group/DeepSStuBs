@@ -33,6 +33,7 @@ if __name__ == "__main__":
         'STD:var ID:gfm STD:= ID:require STD:( LIT:github-flavored-markdown STD:) STD:;'
     ]
     tokenized_code = [sentence.split() for sentence in raw_code]
+    print(tokenized_code)
     # tokenized_question = [
     #     ['What', 'are', 'biLMs', 'useful', 'for', '?'],
     # ]
