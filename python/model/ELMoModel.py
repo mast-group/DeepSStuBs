@@ -155,7 +155,7 @@ class ELMoModel(AbstractModel):
             [self._token_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
-        return elmo_token_representation
+        return elmo_token_representation[0]
     
 
     def get_sequence_top_embeddings(self, sequence):
