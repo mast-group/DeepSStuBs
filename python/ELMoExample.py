@@ -51,3 +51,4 @@ if __name__ == "__main__":
 
         elmo.warm_up('/disk/scratch/mpatsis/eddie/data/phog/js/elmo/elmo_train.csv.shard0')
         # elmo.get_sequence_embeddings(raw_code)
+        elmo.get_embedding('STD:function')

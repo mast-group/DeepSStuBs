@@ -72,8 +72,14 @@ class ELMoModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        pass
+        code_ids = self._batcher.batch_sentences([word])
 
+        elmo_code_representation = self._sess.run(
+            [self._elmo_code_rep_op['weighted_op']],
+            feed_dict={self._code_character_ids: code_ids}
+        )
+        return elmo_code_representation
+        
 
     def get_sequence_embeddings(self, sequence):
         """[summary]
