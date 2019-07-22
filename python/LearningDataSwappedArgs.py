@@ -249,15 +249,13 @@ class LearningData(object):
             
             base_string = call["base"]
             if base_string == '':
-                base_vector = [0] * embeddings_model.get_embedding_dims()
+                base_vector = [0] * embeddings_model.get_embedding_dims() * 2
                 x = base_vector
                 x += embeddings_model.get_sequence_token_embeddings([query.split()])
             else:
                 query = ('%s STD:. ' % base_string) + query
                 x = embeddings_model.get_sequence_token_embeddings([query.split()])
-            x = list(x.ravel())
-            print(x)
-            return x
+            return list(x.ravel())
             
         else:
             return None
