@@ -245,7 +245,8 @@ class LearningData(object):
             callee_string = call["callee"]
             argument_strings = call["arguments"]
             
-            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, argument_strings[0], argument_strings[1])
+            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, argument_strings[0].replace(' ', 'U+0020'), \
+                argument_strings[1].replace(' ', 'U+0020'))
             
             base_string = call["base"]
             if base_string == '':
