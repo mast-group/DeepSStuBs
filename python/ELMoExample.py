@@ -54,3 +54,7 @@ if __name__ == "__main__":
         token_emb = elmo.get_embedding('STD:function')
         print(token_emb)
         print(token_emb[0].shape)
+        
+        token_embs = elmo.get_sequence_token_embeddings(tokenized_code)
+        print(token_embs)
+        print(token_embs[0].shape)

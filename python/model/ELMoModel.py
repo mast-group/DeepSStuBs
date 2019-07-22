@@ -75,7 +75,7 @@ class ELMoModel(AbstractModel):
         pass
     
 
-    def get_embedding(self, word):
+    def get_embedding(self, word, token=True):
         """[summary]
         Retrieves and returns the token embedding of the specified word.
         Arguments:
@@ -86,12 +86,36 @@ class ELMoModel(AbstractModel):
         """
         code_ids = self._batcher.batch_sentences([[word]])
 
-        elmo_token_representation = self._sess.run(
-            [self._token_rep_op['weighted_op']],
+        if token: 
+            elmo_token_representation = self._sess.run(
+                [self._token_rep_op['weighted_op']],
+                feed_dict={self._code_character_ids: code_ids}
+            )
+            return elmo_token_representation
+        else:
+            elmo_code_representation = self._sess.run(
+                [self._elmo_code_rep_op['weighted_op']],
+                feed_dict={self._code_character_ids: code_ids}
+            )
+            return elmo_code_representation
+
+
+    def get_top_embedding(self, word):
+        """[summary]
+        Retrieves and returns the token embedding of the specified word.
+        Arguments:
+            word {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        code_ids = self._batcher.batch_sentences([[word]])
+        elmo_top_representation = self._sess.run(
+            [self._elmo_top_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
-        return elmo_token_representation
-        
+        return elmo_top_representation
+
 
     def get_sequence_embeddings(self, sequence):
         """[summary]
@@ -105,19 +129,52 @@ class ELMoModel(AbstractModel):
         # Create batches of data.
         code_ids = self._batcher.batch_sentences(sequence)
 
-        # # Warm up the LSTM state, otherwise will get inconsistent embeddings.
-        # for step in range(500):
-        #     elmo_code_representation = self._sess.run(
-        #         [self._elmo_code_rep_op['weighted_op']],
-        #         feed_dict={self._code_character_ids: code_ids}
-        #     )
-
-        # Compute ELMo representations (here for the input only, for simplicity).
+        # Compute ELMo representations.
         elmo_code_representation = self._sess.run(
             [self._elmo_code_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
         return elmo_code_representation
+    
+
+    def get_sequence_token_embeddings(self, sequence):
+        """[summary]
+        
+        Arguments:
+            sequence {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        # Create batches of data.
+        code_ids = self._batcher.batch_sentences(sequence)
+        
+        # Compute token layer representations.
+        elmo_token_representation = self._sess.run(
+            [self._token_rep_op['weighted_op']],
+            feed_dict={self._code_character_ids: code_ids}
+        )
+        return elmo_token_representation
+    
+
+    def get_sequence_top_embeddings(self, sequence):
+        """[summary]
+        
+        Arguments:
+            sequence {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        # Create batches of data.
+        code_ids = self._batcher.batch_sentences(sequence)
+        
+        # Compute top layer representations.
+        elmo_top_representation = self._sess.run(
+            [self._elmo_top_rep_op['weighted_op']],
+            feed_dict={self._code_character_ids: code_ids}
+        )
+        return elmo_top_representation
     
 
     def get_embedding_dims(self):
