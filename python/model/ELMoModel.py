@@ -95,6 +95,7 @@ class ELMoModel(AbstractModel):
             feed_dict={self._code_character_ids: code_ids}
         )
         print(elmo_code_representation)
+        return elmo_code_representation
     
 
     def get_embedding_dims(self):
@@ -155,7 +156,9 @@ class ELMoModel(AbstractModel):
 
         for batch in self._batch_generator(data_prefix, batch_size, sequence_size):
             print(batch)
-            self.get_sequence_embeddings(batch)
+            embeddings = self.get_sequence_embeddings(batch)
+            print(batch.shape)
+            print(batch[0].shape)
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         # for batch in data.iter_batches(batch_size, 20):
