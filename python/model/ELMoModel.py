@@ -150,7 +150,7 @@ class ELMoModel(AbstractModel):
             data_prefix {[type]} -- [description]
         """
         batch_size = 16
-        sequence_size = 20
+        sequence_size = 50
         vocab = load_vocab(self._vocab_file, 50)
 
         for batch in self._batch_generator(data_prefix, batch_size, sequence_size):
