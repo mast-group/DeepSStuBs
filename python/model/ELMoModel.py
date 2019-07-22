@@ -25,10 +25,14 @@ class ELMoModel(AbstractModel):
         # Build the biLM graph.
         bilm = self._create_bilm()
         # Get ops to compute the LM embeddings.
+        # code_embeddings_op is a dict containing various tensor ops.
         code_embeddings_op = bilm(self._code_character_ids)
         print('code_embeddings_op:', code_embeddings_op)
+        self._emb_dims = code_embeddings_op['lm_embeddings'].get_shape().as_list()[-1]
+
         self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=False)
         print('_elmo_code_rep_op:', self._elmo_code_rep_op.shape)
+        
 
 
     def _create_bilm(self):
@@ -104,7 +108,16 @@ class ELMoModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        pass
+        return self._emb_dims
+    
+
+    def get_token_embedding_dims(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
+        return self._emb_dims / 2
     
 
     def isOOV(self, word):
