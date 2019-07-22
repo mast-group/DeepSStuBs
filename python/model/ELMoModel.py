@@ -26,7 +26,7 @@ class ELMoModel(AbstractModel):
         bilm = self._create_bilm()
         # Get ops to compute the LM embeddings.
         code_embeddings_op = bilm(self._code_character_ids)
-        print('code_embeddings_op:', code_embeddings_op.shape)
+        print('code_embeddings_op:', code_embeddings_op)
         self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=False)
         print('_elmo_code_rep_op:', _elmo_code_rep_op.shape)
 
