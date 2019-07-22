@@ -131,18 +131,15 @@ class ELMoModel(AbstractModel):
                     program_sequences = [program[i * sentence_len:(i + 1) * sentence_len] \
                         for i in range((len(program) + sentence_len - 1) // sentence_len )]
                     for program_sequence in program_sequences:
-                        print(len(program_sequence), program_sequence)
+                        # print(len(program_sequence), program_sequence)
                         batch.append(program_sequence)
                         # batch.append(' '.join(program_sequence))
                         if len(batch) == batch_size:
                             yield batch
                             batch = []
-                            print()
-                            break
-                    break
-            break
-        # if len(batch) > 0:
-        #     yield batch
+                            # print()
+        if len(batch) > 0:
+            yield batch
 
 
     def warm_up(self, data_prefix):
@@ -156,10 +153,10 @@ class ELMoModel(AbstractModel):
         vocab = load_vocab(self._vocab_file, 50)
 
         for batch in self._batch_generator(data_prefix, batch_size, sequence_size):
-            print(batch)
+            # print(batch)
             embeddings = self.get_sequence_embeddings(batch)
-            print(len(embeddings))
-            print(embeddings[0].shape)
+            # print(len(embeddings))
+            # print(embeddings[0].shape)
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         # for batch in data.iter_batches(batch_size, 20):
