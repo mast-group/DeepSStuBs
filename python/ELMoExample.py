@@ -39,7 +39,7 @@ if __name__ == "__main__":
     
     with tf.Session() as sess:
         data_dir = '/disk/scratch/mpatsis/eddie/data/phog/js/'
-        model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/1024/'
+        model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
         vocab_file = os.path.join(data_dir, 'vocab')
         weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
         options_file = os.path.join(model_dir, 'query_options.json')
