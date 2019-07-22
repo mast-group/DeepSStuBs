@@ -130,6 +130,7 @@ class ELMoModel(AbstractModel):
                     program_sequences = [program[i * sentence_len:(i + 1) * sentence_len] \
                         for i in range((len(program) + sentence_len - 1) // sentence_len )]
                     for program_sequence in program_sequences:
+                        print(program_sequence)
                         batch.append(' '.join(program_sequence))
                         if len(batch) == batch_size:
                             yield batch
