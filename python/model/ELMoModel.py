@@ -31,7 +31,7 @@ class ELMoModel(AbstractModel):
         self._emb_dims = code_embeddings_op['lm_embeddings'].get_shape().as_list()[-1]
 
         self._elmo_code_rep_op = weight_layers('input', code_embeddings_op, l2_coef=0.0, use_top_only=False)
-        print('_elmo_code_rep_op:', self._elmo_code_rep_op.shape)
+        print('_elmo_code_rep_op:', self._elmo_code_rep_op)
         
 
 
