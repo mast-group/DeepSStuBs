@@ -256,6 +256,8 @@ class LearningData(object):
                 query = ('%s STD:. ' % base_string) + query
                 x = embeddings_model.get_sequence_token_embeddings([query.split()])
                 x = list(x.ravel())
+            if len(x) != 1600:
+                print(len(x), query)
             return x
             
         else:
