@@ -198,7 +198,7 @@ class LearningData(object):
         return swap_mapping
 
 
-    def fix_str(str):
+    def fix_str(self, str):
         return str.replace(' ', 'U+0020').replace('\n', '')
     
 
@@ -249,8 +249,8 @@ class LearningData(object):
             callee_string = call["callee"]
             argument_strings = call["arguments"]
             
-            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, fix_str(argument_strings[0]), \
-                fix_str(argument_strings[1]))
+            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, self.fix_str(argument_strings[0]), \
+                self.fix_str(argument_strings[1]))
             
             base_string = call["base"]
             if base_string == '':
