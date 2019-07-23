@@ -347,7 +347,7 @@ if __name__ == '__main__':
                 # dimensions = max_tokens_threshold * name_embedding_size + 2 * type_embedding_size
                 # dimensions = name_embedding_size
                 # dimensions = name_embedding_size + 2 * type_embedding_size
-                dimensions = 8 * name_embedding_size
+                dimensions = 8 * name_embedding_size + 2 * type_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
         elif what == "BinOperator":
