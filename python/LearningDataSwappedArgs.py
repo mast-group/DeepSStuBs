@@ -7,6 +7,7 @@ Created on Nov 9, 2017
 import itertools
 import numpy as np
 import Util
+import sys
 from collections import Counter
 
 from ELMoClient import *
@@ -200,6 +201,13 @@ class LearningData(object):
 
     def code_features(self, call, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector):
         if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+            if isinstance(call, list):
+                feats = []
+                for call_inst in call:
+                    x = self.code_features(call_inst, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    feats.append(x)
+                return feats
+
             arguments = call["arguments"]
             assert(len(arguments) == 2)
 
@@ -240,26 +248,28 @@ class LearningData(object):
             x += parameter0_vector + parameter1_vector #+ file_name_vector
 
         elif emb_model_type == 'ELMo':
-            arguments = call["arguments"]
-            assert(len(arguments) == 2)
-            callee_string = call["callee"]
-            argument_strings = call["arguments"]
-            
-            query = '%s STD:( %s STD:, %s STD:)' % (clean_string(callee_string), clean_string(argument_strings[0]), \
-                clean_string(argument_strings[1]))
-            
-            base_string = call["base"]
-            if base_string == '':
-                base_vector = [0] * embeddings_model.get_embedding_dims() * 2
-                x = base_vector
-                x += list(embeddings_model.get_sequence_token_embeddings([query.split()]).ravel())
+            if isinstance(call, list):
+                feats = []
+                queries = []
+                base_vecs = []
+                for call_inst in call:
+                    base_vec, query  = self._to_ELMo_heuristic_query(call)
+                    queries.append(query)
+                    base_vecs.append(base_vec)
+                feats = embeddings_model.get_sequence_token_embeddings([query.split()])
+                print(feats)
+                print(feats[0])
+                print(feats[0].shape)
+                    
+                sys.exit(0)
+                return feats
             else:
-                query = ('%s STD:. ' % clean_string(base_string)) + query
-                x = embeddings_model.get_sequence_token_embeddings([query.split()])
-                x = list(x.ravel())
-            if len(x) != 1600:
-                print(len(x), query)
-            return x
+                base_vec, query  = self._to_ELMo_heuristic_query(call)
+                x = base_vec + list(embeddings_model.get_sequence_token_embeddings([query]).ravel())
+                
+                if len(x) != 1600:
+                    print(len(x), query)
+                return x
             
         else:
             return None
@@ -269,6 +279,24 @@ class LearningData(object):
         #     calls.append(CodePiece(callee_string, argument_strings, call["src"]))
         
         return x
+    
+
+    def _to_ELMo_heuristic_query(self, call):
+        arguments = call["arguments"]
+        assert(len(arguments) == 2)
+        callee_string = call["callee"]
+        argument_strings = call["arguments"]
+        
+        query = '%s STD:( %s STD:, %s STD:)' % (clean_string(callee_string), clean_string(argument_strings[0]), \
+            clean_string(argument_strings[1]))
+        
+        base_string = call["base"]
+        if base_string == '':
+            base_vector = [0] * embeddings_model.get_embedding_dims() * 2
+            return base_vector, query.split()
+        else:
+            query = ('%s STD:. ' % clean_string(base_string)) + query
+            return [], query.split()
 
 
     def code_to_xy_pairs(self, call, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, calls=None):
