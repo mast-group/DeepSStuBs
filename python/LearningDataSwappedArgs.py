@@ -253,7 +253,7 @@ class LearningData(object):
                 queries = []
                 base_vecs = []
                 for call_inst in call:
-                    base_vec, query  = self._to_ELMo_heuristic_query(call)
+                    base_vec, query  = self._to_ELMo_heuristic_query(call_inst)
                     queries.append(query)
                     base_vecs.append(base_vec)
                 feats = embeddings_model.get_sequence_token_embeddings([query.split()])
