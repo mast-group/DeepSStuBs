@@ -261,7 +261,7 @@ class LearningData(object):
                     vec = list(embeds[i].ravel())
                     if len(vec) != 1600: print(len(vec))
                     if len(base_vecs[i]) > 0 and len(vec) < embeddings_model.get_embedding_dims() * 8:
-                        feats.append(base_vecs[i] + vec[2 * embeddings_model.get_embedding_dims():])
+                        feats.append(base_vecs[i] + vec)
                     else:
                         feats.append(vec)
                 
