@@ -253,7 +253,7 @@ class LearningData(object):
                 queries = []
                 base_vecs = []
                 for call_inst in call:
-                    base_vec, query  = self._to_ELMo_heuristic_query(call_inst)
+                    base_vec, query  = self._to_ELMo_heuristic_query(call_inst, embeddings_model)
                     queries.append(query)
                     base_vecs.append(base_vec)
                 feats = embeddings_model.get_sequence_token_embeddings([query.split()])
@@ -264,7 +264,7 @@ class LearningData(object):
                 sys.exit(0)
                 return feats
             else:
-                base_vec, query  = self._to_ELMo_heuristic_query(call)
+                base_vec, query  = self._to_ELMo_heuristic_query(call, embeddings_model)
                 x = base_vec + list(embeddings_model.get_sequence_token_embeddings([query]).ravel())
                 
                 if len(x) != 1600:
@@ -281,7 +281,7 @@ class LearningData(object):
         return x
     
 
-    def _to_ELMo_heuristic_query(self, call):
+    def _to_ELMo_heuristic_query(self, call, embeddings_model):
         arguments = call["arguments"]
         assert(len(arguments) == 2)
         callee_string = call["callee"]
