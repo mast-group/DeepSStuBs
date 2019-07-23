@@ -258,8 +258,9 @@ class LearningData(object):
                     base_vecs.append(base_vec)
                 embeds = embeddings_model.get_sequence_token_embeddings(queries)
                 for i in range(len(embeds)):
-                    if len(base_vecs[i]) > 0:
-                        feats.append(base_vecs[i] + list(embeds[i].ravel())[2 * embeddings_model.get_embedding_dims():])
+                    vec = list(embeds[i].ravel())
+                    if len(base_vecs[i]) > 0 and len(vec) < embeddings_model.get_embedding_dims() * 8:
+                        feats.append(base_vecs[i] + vec[2 * embeddings_model.get_embedding_dims():])
                     else:
                         feats.append(list(embeds[i].ravel()))
                 
