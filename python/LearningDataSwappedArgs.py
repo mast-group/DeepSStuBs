@@ -267,8 +267,7 @@ class LearningData(object):
                 print(len(feats))
                 print(queries)
                 print(feats[0])
-                    
-                sys.exit(0)
+                
                 return feats
             else:
                 base_vec, query  = self._to_ELMo_heuristic_query(call, embeddings_model)
