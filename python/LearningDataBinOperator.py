@@ -67,21 +67,74 @@ class LearningData(object):
     
 
     def code_features(self, bin_op, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, code_pieces=None):
-        left = bin_op["left"]
-        right = bin_op["right"]
+        if isinstance(bin_op, list):
+            if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+                feats = []
+                for bin_op_inst in bin_op:
+                    x = self.code_features(bin_op_inst, embeddings_model, \
+                        emb_model_type, type_to_vector, node_type_to_vector)
+                    feats.append(x)
+                return feats
+            elif emb_model_type == 'ELMo':
+                if isinstance(bin_op, list):
+                    feats = []
+                    queries = []
+                    extra_vecs = []
+                    for bin_op_inst in bin_op:
+                        extra_vecs.append(self._extra_feats(bin_op_inst, type_to_vector, node_type_to_vector))
+                        query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+                        queries.append(query)
+                    
+                    embeds = embeddings_model.get_sequence_token_embeddings(queries)
+                    for i in range(len(embeds)):
+                        vec = list(embeds[i].ravel())
+                        feats.append(vec + extra_vecs[i])
+                    
+                    return feats
+                else:
+                    query  = self._to_ELMo_heuristic_query(bin_op, embeddings_model)
+                    extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
+                    x = list(embeddings_model.get_sequence_token_embeddings([query]).ravel()) + extra_vec
+                    return x
 
-        if emb_model_type == 'w2v' or emb_model_type == 'FastText':
-            operator = bin_op["op"]
-            left_type = bin_op["leftType"]
-            right_type = bin_op["rightType"]
-            parent = bin_op["parent"]
-            grand_parent = bin_op["grandParent"]
-            src = bin_op["src"]
-            
-            left_vector = embeddings_model.get_embedding(left)
-            right_vector = embeddings_model.get_embedding(right)
         else:
-            return None
+            left = bin_op["left"]
+            right = bin_op["right"]
+
+            if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+                operator = bin_op["op"]
+                left_type = bin_op["leftType"]
+                right_type = bin_op["rightType"]
+                parent = bin_op["parent"]
+                grand_parent = bin_op["grandParent"]
+                src = bin_op["src"]
+                
+                left_vector = embeddings_model.get_embedding(left)
+                right_vector = embeddings_model.get_embedding(right)
+            else:
+                return None
+        
+            operator_vector = [0] * len(self.all_operators)
+            operator_vector[self.all_operators.index(operator)] = 1
+            left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
+            right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
+            parent_vector = node_type_to_vector.get(parent, [0] * node_type_embedding_size)
+            grand_parent_vector = node_type_to_vector.get(grand_parent, [0] * node_type_embedding_size)
+            
+            x = left_vector + right_vector + operator_vector + left_type_vector + \
+                right_type_vector + parent_vector + grand_parent_vector
+            return x
+        
+        if code_pieces != None:
+            code_pieces.append(CodePiece(right, left, operator, src))
+        
+        
+    def _extra_feats(self, bin_op, type_to_vector, node_type_to_vector):
+        operator = bin_op["op"]
+        left_type = bin_op["leftType"]
+        right_type = bin_op["rightType"]
+        parent = bin_op["parent"]
+        grand_parent = bin_op["grandParent"]
         
         operator_vector = [0] * len(self.all_operators)
         operator_vector[self.all_operators.index(operator)] = 1
@@ -90,13 +143,22 @@ class LearningData(object):
         parent_vector = node_type_to_vector.get(parent, [0] * node_type_embedding_size)
         grand_parent_vector = node_type_to_vector.get(grand_parent, [0] * node_type_embedding_size)
         
-        x = left_vector + right_vector + operator_vector + left_type_vector + \
-             right_type_vector + parent_vector + grand_parent_vector
-        if code_pieces != None:
-            code_pieces.append(CodePiece(right, left, operator, src))
-        
-        return x
+        return operator_vector + left_type_vector + right_type_vector + parent_vector + grand_parent_vector
     
+
+    def _to_ELMo_heuristic_query(self, bin_op, embeddings_model):
+        left = bin_op["left"]
+        right = bin_op["right"]
+        operator = bin_op["op"]
+        query = '%s %s %s' % (clean_string(left), clean_string(operator), clean_string(right))
+
+        base_string = call["base"]
+        if base_string == '':
+            base_vector = [0] * embeddings_model.get_embedding_dims() * 2
+            return base_vector, query.split()
+        else:
+            query = ('%s STD:. ' % clean_string(base_string)) + query
+            return [], query.split()
 
 
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
