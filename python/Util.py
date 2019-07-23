@@ -8,8 +8,11 @@ from scipy.spatial.distance import cosine
 import random
 import json
 import linecache
+import re
 import sys
 
+
+whitespace_pattern = re.compile(r'\s+')
 
 def in_group_similarity(vector_group):
     vector_group = list(vector_group)
@@ -118,8 +121,9 @@ def print_exception():
 
 
 def clean_string(str):
-    str = str.replace(' ', 'U+0020')
-    str = str.replace('\n', '\\n')
-    str = str.replace('\r', '\\r')
-    str = str.replace('\t', '\\t')
-    return str
+    # str = str.replace(' ', 'U+0020')
+    # str = str.replace('\n', '\\n')
+    # str = str.replace('\r', '\\r')
+    # str = str.replace('\t', '\\t')
+    return re.sub(whitespace_pattern, '', str)
+    # return str

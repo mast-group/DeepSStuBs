@@ -196,10 +196,6 @@ class LearningData(object):
             swap_mapping[1] = 0
         
         return swap_mapping
-
-
-    def fix_str(self, str):
-        return str.replace(' ', 'U+0020').replace('\n', '')
     
 
     def code_features(self, call, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, calls=None):
@@ -249,8 +245,8 @@ class LearningData(object):
             callee_string = call["callee"]
             argument_strings = call["arguments"]
             
-            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, self.fix_str(argument_strings[0]), \
-                self.fix_str(argument_strings[1]))
+            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, clean_string(argument_strings[0]), \
+                clean_string(argument_strings[1]))
             
             base_string = call["base"]
             if base_string == '':
