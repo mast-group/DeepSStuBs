@@ -198,7 +198,7 @@ class LearningData(object):
         return swap_mapping
     
 
-    def code_features(self, call, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, calls=None):
+    def code_features(self, call, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector):
         if emb_model_type == 'w2v' or emb_model_type == 'FastText':
             arguments = call["arguments"]
             assert(len(arguments) == 2)
@@ -245,7 +245,7 @@ class LearningData(object):
             callee_string = call["callee"]
             argument_strings = call["arguments"]
             
-            query = '%s STD:( %s STD:, %s STD:)' % (callee_string, clean_string(argument_strings[0]), \
+            query = '%s STD:( %s STD:, %s STD:)' % (clean_string(callee_string), clean_string(argument_strings[0]), \
                 clean_string(argument_strings[1]))
             
             base_string = call["base"]
@@ -254,7 +254,7 @@ class LearningData(object):
                 x = base_vector
                 x += list(embeddings_model.get_sequence_token_embeddings([query.split()]).ravel())
             else:
-                query = ('%s STD:. ' % base_string) + query
+                query = ('%s STD:. ' % clean_string(base_string)) + query
                 x = embeddings_model.get_sequence_token_embeddings([query.split()])
                 x = list(x.ravel())
             if len(x) != 1600:
@@ -265,8 +265,8 @@ class LearningData(object):
             return None
         
 
-        if calls != None:
-            calls.append(CodePiece(callee_string, argument_strings, call["src"]))
+        # if calls != None:
+        #     calls.append(CodePiece(callee_string, argument_strings, call["src"]))
         
         return x
 
