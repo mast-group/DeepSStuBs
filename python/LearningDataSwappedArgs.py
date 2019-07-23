@@ -262,11 +262,6 @@ class LearningData(object):
                         feats.append(base_vecs[i] + list(embeds[i].ravel())[2 * embeddings_model.get_embedding_dims():])
                     else:
                         feats.append(list(embeds[i].ravel()))
-
-                print(feats)
-                print(len(feats))
-                print(queries)
-                print(feats[0])
                 
                 return feats
             else:
