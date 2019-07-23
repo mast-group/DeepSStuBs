@@ -258,6 +258,7 @@ class LearningData(object):
                     base_vecs.append(base_vec)
                 feats = embeddings_model.get_sequence_token_embeddings(queries)
                 print(feats)
+                print(queries)
                 print(feats[0])
                 print(feats[0].shape)
                     
