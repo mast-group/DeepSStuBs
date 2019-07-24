@@ -59,8 +59,8 @@ class ModelFactory:
             options_file = os.path.join(model_dir, self.settings['options_file'])
         
             elmoModel = ELMoModel(model_dir, vocab_file, weight_file, options_file, self._sess)
-            # if 'warm_up' in self.settings:
-            #     elmoModel.warm_up(self.settings['warm_up'])
+            if 'warm_up' in self.settings:
+                elmoModel.warm_up(self.settings['warm_up'])
             return elmoModel
         elif model == 'ELMoBPE':
             assert self._sess is not None
