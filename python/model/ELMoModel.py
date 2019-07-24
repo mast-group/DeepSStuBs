@@ -137,6 +137,26 @@ class ELMoModel(AbstractModel):
         return elmo_code_representation[0]
     
 
+    def get_sequence_default_embeddings(self, sequence):
+        """[summary]
+        
+        Arguments:
+            sequence {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        # Create batches of data.
+        code_ids = self._batcher.batch_sentences(sequence)
+
+        # Compute ELMo representations.
+        elmo_code_representation = self._sess.run(
+            [self._elmo_code_rep_op['weighted_op']],
+            feed_dict={self._code_character_ids: code_ids}
+        )
+        return elmo_code_representation[0]
+    
+
     def get_sequence_token_embeddings(self, sequence):
         """[summary]
         
@@ -245,8 +265,8 @@ class ELMoModel(AbstractModel):
             # print(batch)
             embeddings = self.get_sequence_embeddings(batch)
             # print(len(embeddings))
-            print(embeddings[0].shape)
-            break
+            # print(embeddings[0].shape)
+            # break
         
         # data = BidirectionalLMDataset(data_prefix, vocab, test=False, shuffle_on_load=False)
         # for batch in data.iter_batches(batch_size, 20):
