@@ -59,6 +59,7 @@ class ModelFactory:
             options_file = os.path.join(model_dir, self.settings['options_file'])
         
             elmoModel = ELMoModel(model_dir, vocab_file, weight_file, options_file, self._sess)
+            self._sess.run(tf.global_variables_initializer())
             if 'warm_up' in self.settings:
                 elmoModel.warm_up(self.settings['warm_up'])
             return elmoModel
@@ -70,8 +71,10 @@ class ModelFactory:
             vocab_file = os.path.join(data_dir, self.settings['vocab_file'])
             weight_file = os.path.join(model_dir, self.settings['weight_file'])
             options_file = os.path.join(model_dir, self.settings['options_file'])
-
-            return ELMoBPEModel(model_dir, vocab_file, weight_file, options_file, self._sess)
+            
+            elmoBPEModel = ELMoBPEModel(model_dir, vocab_file, weight_file, options_file, self._sess)
+            self._sess.run(tf.global_variables_initializer())
+            return elmoBPEModel
     
     def get_model_type(self):
         """[summary]

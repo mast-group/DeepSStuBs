@@ -293,7 +293,7 @@ if __name__ == '__main__':
     session = tf.Session(config=config)
     set_session(session)  # set this TensorFlow session as the default session for Keras
     # session = tf.keras.backend.get_session()
-
+    # session.run(tf.global_variables_initializer())
 
     model_factory = ModelFactory(config_file, session)
     embeddings_model = model_factory.get_model()
@@ -372,16 +372,16 @@ if __name__ == '__main__':
         options_file = os.path.join(model_dir, 'query_options.json')
         weight_file = os.path.join(model_dir, 'weights/weights.hdf5')
         
-        # Dump the token embeddings to a file. Run this once for your dataset.
-        token_embedding_file = 'elmo_token_embeddings.hdf5'
-        # Create a TokenBatcher to map text to token ids.
-        batcher = TokenBatcher(vocab_file)
+        # # Dump the token embeddings to a file. Run this once for your dataset.
+        # token_embedding_file = 'elmo_token_embeddings.hdf5'
+        # # Create a TokenBatcher to map text to token ids.
+        # batcher = TokenBatcher(vocab_file)
 
         # Create ELMo Token operation
         # elmo_token_op, code_token_ids = create_token_ELMo(options_file, weight_file, \
         #     token_embedding_file, USE_ELMO_TOP_ONLY)
         # ELMoModel = ELMoModel(session, batcher, elmo_token_op, code_token_ids)
-        session.run(tf.global_variables_initializer())
+        # session.run(tf.global_variables_initializer())
 
         # Create the model
         model = create_keras_network(dimensions)
