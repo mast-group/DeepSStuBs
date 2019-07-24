@@ -263,7 +263,7 @@ class LearningData(object):
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     type_vecs.append( argument0_type_vector + argument1_type_vector )
 
-                embeds = embeddings_model.get_sequence_top_embeddings(queries)
+                embeds = embeddings_model.get_sequence_default_embeddings(queries)
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
                     # if len(vec) != 1600: print(len(vec))
@@ -275,7 +275,7 @@ class LearningData(object):
                 return feats
             else:
                 base_vec, query  = self._to_ELMo_heuristic_query(call, embeddings_model)
-                x = base_vec + list(embeddings_model.get_sequence_top_embeddings([query]).ravel())
+                x = base_vec + list(embeddings_model.get_sequence_default_embeddings([query]).ravel())
                 
                 if len(x) != 1600:
                     print(len(x), query)
