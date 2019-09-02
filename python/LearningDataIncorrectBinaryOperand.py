@@ -115,10 +115,16 @@ class LearningData(object):
     
 
     def code_features(self, bin_op, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector, code_pieces=None):
-        left = bin_op["left"]
-        right = bin_op["right"]
-
         if emb_model_type == 'w2v' or emb_model_type == 'FastText':
+            if isinstance(bin_op, list):
+                feats = []
+                for bin_op_inst in bin_op:
+                    x = self.code_features(bin_op_inst, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    feats.append(x)
+                return feats
+            left = bin_op["left"]
+            right = bin_op["right"]
+
             operator = bin_op["op"]
             left_type = bin_op["leftType"]
             right_type = bin_op["rightType"]
@@ -139,7 +145,7 @@ class LearningData(object):
                 feats = embeddings_model.get_sequence_default_embeddings(queries)
                 return feats
             else:
-                query = '%s %s %s' % (clean_string(left), operator, clean_string(right))
+                query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
                 x = list(embeddings_model.get_sequence_default_embeddings([query]).ravel())
                 return x
         else:
