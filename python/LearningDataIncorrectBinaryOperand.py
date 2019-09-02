@@ -138,19 +138,22 @@ class LearningData(object):
             if isinstance(bin_op, list):
                 feats = []
                 queries = []
+                extra_vecs = []
                 for bin_op_inst in bin_op:
+                    extra_vecs.append(self._extra_feats(bin_op_inst, type_to_vector, node_type_to_vector))
                     query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
                     queries.append(query)
                     
                 embeds = embeddings_model.get_sequence_default_embeddings(queries)
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
-                    feats.append(vec)
-                                
+                    feats.append(vec + extra_vecs[i])
+
                 return feats
             else:
                 query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
-                x = list(embeddings_model.get_sequence_default_embeddings([query]).ravel())
+                extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
+                x = list(embeddings_model.get_sequence_default_embeddings([query]).ravel()) + extra_vec
                 return x
         else:
             return None
@@ -177,6 +180,23 @@ class LearningData(object):
         
         query = '%s %s %s' % (clean_string(left), operator, clean_string(right))
         return query.split()
+    
+
+    def _extra_feats(self, bin_op, type_to_vector, node_type_to_vector):
+        operator = bin_op["op"]
+        left_type = bin_op["leftType"]
+        right_type = bin_op["rightType"]
+        parent = bin_op["parent"]
+        grand_parent = bin_op["grandParent"]
+        
+        operator_vector = [0] * len(self.all_operators)
+        operator_vector[self.all_operators.index(operator)] = 1
+        left_type_vector = type_to_vector.get(left_type, [0]*type_embedding_size)
+        right_type_vector = type_to_vector.get(right_type, [0]*type_embedding_size)
+        parent_vector = node_type_to_vector.get(parent, [0] * node_type_embedding_size)
+        grand_parent_vector = node_type_to_vector.get(grand_parent, [0] * node_type_embedding_size)
+        
+        return operator_vector + left_type_vector + right_type_vector + parent_vector + grand_parent_vector
     
 
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
