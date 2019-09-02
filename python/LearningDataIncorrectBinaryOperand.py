@@ -136,13 +136,17 @@ class LearningData(object):
             right_vector = embeddings_model.get_embedding(right)
         elif emb_model_type == 'ELMo':
             if isinstance(bin_op, list):
-                # feats = []
+                feats = []
                 queries = []
                 for bin_op_inst in bin_op:
                     query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
                     queries.append(query)
                     
-                feats = embeddings_model.get_sequence_default_embeddings(queries)
+                embeds = embeddings_model.get_sequence_default_embeddings(queries)
+                for i in range(len(embeds)):
+                    vec = list(embeds[i].ravel())
+                    feats.append(vec)
+                                
                 return feats
             else:
                 query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
