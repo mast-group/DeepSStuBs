@@ -8,6 +8,9 @@ import Util
 from collections import namedtuple
 import random
 
+from Util import clean_string
+
+
 type_embedding_size = 5
 node_type_embedding_size = 8 # if changing here, then also change in LearningDataBinOperator
 
@@ -125,6 +128,20 @@ class LearningData(object):
             
             left_vector = embeddings_model.get_embedding(left)
             right_vector = embeddings_model.get_embedding(right)
+        elif emb_model_type == 'ELMo':
+            if isinstance(bin_op, list):
+                # feats = []
+                queries = []
+                for bin_op_inst in bin_op:
+                    query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+                    queries.append(query)
+                    
+                feats = embeddings_model.get_sequence_default_embeddings(queries)
+                return feats
+            else:
+                query = '%s %s %s' % (clean_string(left), operator, clean_string(right))
+                x = list(embeddings_model.get_sequence_default_embeddings([query]).ravel())
+                return x
         else:
             return None
         
@@ -141,6 +158,15 @@ class LearningData(object):
             code_pieces.append(CodePiece(right, left, operator, src))
         
         return x
+    
+
+    def _to_ELMo_heuristic_query(self, bin_op, embeddings_model):
+        left = bin_op["left"]
+        right = bin_op["right"]
+        operator = bin_op["op"]
+        
+        query = '%s %s %s' % (clean_string(left), operator, clean_string(right))
+        return query.split()
     
 
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
