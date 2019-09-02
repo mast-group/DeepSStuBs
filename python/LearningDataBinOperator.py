@@ -152,13 +152,7 @@ class LearningData(object):
         operator = bin_op["op"]
         query = '%s %s %s' % (clean_string(left), clean_string(operator), clean_string(right))
 
-        base_string = call["base"]
-        if base_string == '':
-            base_vector = [0] * embeddings_model.get_embedding_dims() * 2
-            return base_vector, query.split()
-        else:
-            query = ('%s STD:. ' % clean_string(base_string)) + query
-            return [], query.split()
+        return query.split()
 
 
     def code_to_xy_FastText_pairs(self, bin_op, xs, ys, name_to_vector, type_to_vector, node_type_to_vector, code_pieces=None):
