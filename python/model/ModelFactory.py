@@ -60,8 +60,8 @@ class ModelFactory:
         
             elmoModel = ELMoModel(model_dir, vocab_file, weight_file, options_file, self._sess)
             self._sess.run(tf.global_variables_initializer())
-            # if 'warm_up' in self.settings:
-            #     elmoModel.warm_up(self.settings['warm_up'])
+            if 'warm_up' in self.settings:
+                elmoModel.warm_up(self.settings['warm_up'])
             return elmoModel
         elif model == 'ELMoBPE':
             assert self._sess is not None
