@@ -21,7 +21,7 @@ class BPEModel(AbstractModel):
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         self._sess = sess
 
-        config = Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
+        config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
                     code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
                     code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
                     code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
@@ -29,14 +29,14 @@ class BPEModel(AbstractModel):
         config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
-            self.model = create_model(self._sess, config)
+            self.model = code_nlm.create_model(self._sess, config)
             self.model.train_vocab = train_vocab
             self.model.train_vocab_rev = train_vocab_rev
             feed_dict = {
                 self.inputd: 100,
                 self.keep_probability: 1.0
             }
-            embedded_inputds = session.run([model.embedded_inputds], feed_dict)
+            embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
             print('Queried for embedded inputs')
             print(embedded_inputds)
 
