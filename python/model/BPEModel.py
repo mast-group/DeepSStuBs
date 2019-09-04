@@ -19,7 +19,6 @@ class BPEModel(AbstractModel):
 
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
-        config.vocab_size = len(train_vocab)
         self._sess = sess
 
         config = Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
@@ -27,6 +26,7 @@ class BPEModel(AbstractModel):
                     code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
                     code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
                     code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
+        config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
             self.model = create_model(self._sess, config)
