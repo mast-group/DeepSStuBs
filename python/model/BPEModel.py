@@ -9,28 +9,36 @@ from codenlm import code_nlm
 
 class BPEModel(AbstractModel):
 
-    def __init__(self, model_file, vocab_file):
+    def __init__(self, model_file, vocab_file, sess):
         """[summary]
         Loads and instantiates a word2vec model from a json file.
         Arguments:
             name_to_vector_file {[type]} -- [description]
         """
         super().__init__(model_file)
+
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         config.vocab_size = len(train_vocab)
+        self._sess = sess
+
+        config = Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
+                    code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
+                    code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
+                    code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
+                    code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
+
         with tf.Graph().as_default():
-            with tf.Session(config=get_gpu_config()) as session:
-                self.model = create_model(session, config)
-                self.model.train_vocab = train_vocab
-                self.model.train_vocab_rev = train_vocab_rev
-                feed_dict = {
-                    self.inputd: 100,
-                    self.keep_probability: 1.0
-                }
-                embedded_inputds = session.run([model.embedded_inputds], feed_dict)
-                print('Queried for embedded inputs')
-                print(embedded_inputds)
+            self.model = create_model(self._sess, config)
+            self.model.train_vocab = train_vocab
+            self.model.train_vocab_rev = train_vocab_rev
+            feed_dict = {
+                self.inputd: 100,
+                self.keep_probability: 1.0
+            }
+            embedded_inputds = session.run([model.embedded_inputds], feed_dict)
+            print('Queried for embedded inputs')
+            print(embedded_inputds)
 
 
     def get_name_to_vector(self):

@@ -11,6 +11,7 @@ from Word2VecModel import *
 from FastTextModel import *
 from ELMoBPEModel import *
 from ELMoModel import *
+from BPEModel import *
 
 
 # Supported models 
@@ -48,6 +49,16 @@ class ModelFactory:
             return Word2VecModel(self.settings['model_file'])
         elif model == 'FastText':
             return FastTextModel(self.settings['model_file'])
+        elif model == 'BPE':
+            assert self._sess is not None
+            
+            data_dir = self.settings['data_dir']
+            model_dir = self.settings['model_dir'], 
+            vocab_file = os.path.join(data_dir, self.settings['vocab_file'])
+            
+            BPEModel = BPEModel(model_dir, vocab_file, self._sess)
+            self._sess.run(tf.global_variables_initializer())
+            return BPEModel
         elif model == 'ELMo':
             assert self._sess is not None
             
