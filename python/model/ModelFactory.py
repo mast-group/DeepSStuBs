@@ -15,7 +15,7 @@ from BPEModel import *
 
 
 # Supported models 
-supported_models = ['w2v', 'FastText', 'ELMo', 'ELMoBPE']
+supported_models = ['w2v', 'FastText', 'BPE', 'ELMo', 'ELMoBPE']
 
 
 class ModelFactory:
