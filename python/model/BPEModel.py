@@ -20,15 +20,25 @@ class BPEModel(AbstractModel):
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         self._sess = sess
-
-        try:
-            config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
-                        code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
-                        code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
-                        code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
-                        code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
-        except Exception:
-            print('exception')
+        
+        config = {
+            "init_scale"    : 0.05,
+            "learning_rate" : 0.1,
+            "max_grad_norm" : 5.0,
+            "num_layers"    : 1,
+            "num_steps"     : 20,
+            "hidden_size"   : 512,
+            "max_epoch"     : 30,
+            "keep_prob"     : 1.0,
+            "lr_decay"      : 0.5,
+            "batch_size"    : 32,
+            "test_batch_size": 10
+        }
+        # config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
+        #             code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
+        #             code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
+        #             code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
+        #             code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
         config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
