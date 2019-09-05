@@ -176,6 +176,7 @@ class BPEModel(AbstractModel):
             name_to_vector_file {[type]} -- [description]
         """
         super().__init__(model_file)
+        self._model_dir = model_file
 
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
@@ -204,7 +205,7 @@ class BPEModel(AbstractModel):
         # config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
-            self.model = code_nlm.create_model(self._sess, config)
+            self.model = self.__create_model__(self._sess, config)
             self.model.train_vocab = train_vocab
             self.model.train_vocab_rev = train_vocab_rev
             feed_dict = {
@@ -214,6 +215,25 @@ class BPEModel(AbstractModel):
             embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
             print('Queried for embedded inputs')
             print(embedded_inputds)
+    
+
+    def __create_model__(self, session, config):
+        """
+        Creates the NLM and restores its parameters if there is a saved checkpoint.
+        :param session: The TF session in which operations will be run.
+        :param config: The configuration to be used.
+        :return:
+        """
+        model = NLM(config)
+        ckpt = tf.train.get_checkpoint_state(self._model_dir)
+        if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
+            print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+            model.saver.restore(session, ckpt.model_checkpoint_path)
+        else:
+            print("Created model with fresh parameters:")
+            session.run(tf.global_variables_initializer())
+        print("*Number of parameters* = " + str(model.get_parameter_count()))
+        return model
 
 
     def get_name_to_vector(self):
