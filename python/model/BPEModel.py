@@ -229,6 +229,7 @@ class BPEModel(AbstractModel):
         if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
             print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
             model.saver.restore(session, ckpt.model_checkpoint_path)
+            print('Done restoring the model.')
         else:
             print("Created model with fresh parameters:")
             session.run(tf.global_variables_initializer())
