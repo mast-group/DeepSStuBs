@@ -5,6 +5,7 @@ import tensorflow as tf
 from AbstractModel import *
 from codenlm import reader
 from codenlm import code_nlm
+from absl
 
 
 class BPEModel(AbstractModel):
@@ -21,11 +22,14 @@ class BPEModel(AbstractModel):
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         self._sess = sess
 
-        config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
-                    code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
-                    code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
-                    code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
-                    code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
+        try:
+            config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
+                        code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
+                        code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
+                        code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
+                        code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
+        except Exception:
+            print('exception')
         config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
