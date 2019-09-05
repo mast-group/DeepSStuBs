@@ -212,8 +212,8 @@ class BPEModel(AbstractModel):
             self.model.train_vocab = train_vocab
             self.model.train_vocab_rev = train_vocab_rev
             feed_dict = {
-                self.inputd: 100,
-                self.keep_probability: 1.0
+                self.model.inputd: 100,
+                self.model.keep_probability: 1.0
             }
             embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
             # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
