@@ -215,7 +215,7 @@ class BPEModel(AbstractModel):
                 self.model.inputd: 100,
                 self.model.keep_probability: 1.0
             }
-            embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
+            embedded_inputds = self._sess.run([self.model.embedded_inputds], feed_dict)
             # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
             print('Queried for embedded inputs')
             print(embedded_inputds)
