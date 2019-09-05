@@ -213,7 +213,7 @@ class BPEModel(AbstractModel):
             self.model.train_vocab = train_vocab
             self.model.train_vocab_rev = train_vocab_rev
             feed_dict = {
-                self.model.inputd: np.array([100] * 32),
+                self.model.inputd: np.expand_dims(np.array([100] * 32), axis=0),
                 self.model.keep_probability: 1.0
             }
             embedded_inputds = self._sess.run([self.model.embedded_inputds], feed_dict)
