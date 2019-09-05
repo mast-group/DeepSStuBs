@@ -205,20 +205,20 @@ class BPEModel(AbstractModel):
         #             code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
         # config.vocab_size = len(train_vocab)
 
-        with tf.Graph().as_default():
-            with tf.Session(config=get_gpu_config()) as session:
-                # self.model = self.__create_model__(self._sess, config)
-                self.model = self.__create_model__(session, config)
-                self.model.train_vocab = train_vocab
-                self.model.train_vocab_rev = train_vocab_rev
-                feed_dict = {
-                    self.inputd: 100,
-                    self.keep_probability: 1.0
-                }
-                # embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
-                embedded_inputds = session.run([model.embedded_inputds], feed_dict)
-                print('Queried for embedded inputs')
-                print(embedded_inputds)
+        with self._sess.graph.as_default():
+        # with tf.Graph().as_default():
+            self.model = self.__create_model__(self._sess, config)
+            # self.model = self.__create_model__(session, config)
+            self.model.train_vocab = train_vocab
+            self.model.train_vocab_rev = train_vocab_rev
+            feed_dict = {
+                self.inputd: 100,
+                self.keep_probability: 1.0
+            }
+            embedded_inputds = self._sess.run([model.embedded_inputds], feed_dict)
+            # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
+            print('Queried for embedded inputs')
+            print(embedded_inputds)
     
 
     def __create_model__(self, session, config):
