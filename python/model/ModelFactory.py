@@ -56,8 +56,9 @@ class ModelFactory:
             # data_dir = self.settings['data_dir']
             model_dir = self.settings['model_dir']
             vocab_file = os.path.join(model_dir, self.settings['vocab_file'])
-            
-            nlmBPEModel = BPEModel(model_dir, vocab_file, self._sess)
+            codes_file = self.settings['codes_file']
+
+            nlmBPEModel = BPEModel(model_dir, vocab_file, codes_file, self._sess)
             self._sess.run(tf.global_variables_initializer())
             return nlmBPEModel
         elif model == 'ELMo':

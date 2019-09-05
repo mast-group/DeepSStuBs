@@ -4,6 +4,10 @@ import tensorflow as tf
 import inspect
 import numpy as np
 
+# BPE imports
+import codecs
+from subword_nmt.apply_bpe import BPE, read_vocabulary
+
 from AbstractModel import *
 from codenlm import reader
 # from codenlm import code_nlm
@@ -170,7 +174,7 @@ class NLM(object):
 
 class BPEModel(AbstractModel):
 
-    def __init__(self, model_file, vocab_file, sess):
+    def __init__(self, model_file, vocab_file, codes_file, sess):
         """[summary]
         Loads and instantiates a word2vec model from a json file.
         Arguments:
@@ -178,6 +182,9 @@ class BPEModel(AbstractModel):
         """
         super().__init__(model_file)
         self._model_dir = model_file
+        
+        bpe_codes_fin = FLAGS.BPE
+        bpe = BPE(codes_file, merges=-1, separator='@@')
 
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
@@ -251,20 +258,31 @@ class BPEModel(AbstractModel):
         pass
     
 
-    def get_embedding(self, word):
+    def get_embedding(self, word, token=True):
         """[summary]
-        Retrieves and returns the word2vec embedding of the specified word.
-        If the word is out-of-vocabulary the embedding for UNK is returned instead.
+        Retrieves and returns the token embedding of the specified word.
+        Using this method is not suggested and its sequence variant should be preffered instead.
         Arguments:
             word {[type]} -- [description]
         
         Returns:
             [type] -- [description]
         """
-        if word in self.name_to_vector:
-            return self.name_to_vector[word]
+
+        id = self.model.train_vocab[word]
+
+        if token: 
+            elmo_token_representation = self._sess.run(
+                [self._token_rep_op['weighted_op']],
+                feed_dict={self._code_character_ids: code_ids}
+            )
+            return elmo_token_representation
         else:
-            return self.name_to_vector[self.UNK]
+            elmo_code_representation = self._sess.run(
+                [self._elmo_code_rep_op['weighted_op']],
+                feed_dict={self._code_character_ids: code_ids}
+            )
+            return elmo_code_representation
     
 
     def get_sequence_embeddings(self, sequence):
