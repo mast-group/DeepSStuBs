@@ -21,25 +21,27 @@ class BPEModel(AbstractModel):
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         self._sess = sess
         
-        config = {
-            "init_scale"    : 0.05,
-            "learning_rate" : 0.1,
-            "max_grad_norm" : 5.0,
-            "num_layers"    : 1,
-            "num_steps"     : 20,
-            "hidden_size"   : 512,
-            "max_epoch"     : 30,
-            "keep_prob"     : 1.0,
-            "lr_decay"      : 0.5,
-            "batch_size"    : 32,
-            "test_batch_size": 10
-        }
+        init_scale = 0.05
+        learning_rate = 0.1
+        max_grad_norm = 5.0
+        num_layers = 1
+        num_steps = 20
+        hidden_size = 512
+        max_epoch = 30
+        keep_prob = 1.0
+        lr_decay = 0.5
+        batch_size = 32
+        test_batch_size = 10
+        
+        config = Config( init_scale, learning_rate, max_grad_norm, num_layers, num_steps, hidden_size, 
+                        max_epoch, keep_prob, lr_decay, batch_size, test_batch_size, len(train_vocab) )
+        
         # config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
         #             code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
         #             code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
         #             code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
         #             code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
-        config.vocab_size = len(train_vocab)
+        # config.vocab_size = len(train_vocab)
 
         with tf.Graph().as_default():
             self.model = code_nlm.create_model(self._sess, config)
@@ -113,3 +115,21 @@ class BPEModel(AbstractModel):
         """
         return word == self.get_UNK() or not word in self.name_to_vector
 
+
+class Config(object):
+  """Configuration"""
+
+  def __init__(self, inits, lr, mgrad, nlayers, nsteps, hsize, mepoch, kp, 
+                decay, bsize, tbsize, vsize):
+    self.init_scale = inits
+    self.learning_rate = lr
+    self.max_grad_norm = mgrad
+    self.num_layers = nlayers
+    self.num_steps = nsteps
+    self.hidden_size = hsize
+    self.max_epoch = mepoch
+    self.keep_prob = kp
+    self.lr_decay = decay
+    self.batch_size = bsize
+    self.test_batch_size = tbsize
+    self.vocab_size = vsize
