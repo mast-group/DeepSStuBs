@@ -183,8 +183,8 @@ class BPEModel(AbstractModel):
         super().__init__(model_file)
         self._model_dir = model_file
         
-        bpe_codes_fin = FLAGS.BPE
-        bpe = BPE(codes_file, merges=-1, separator='@@')
+        with open(codes_file, 'r') as bpe_codes_fin:
+            self._bpe = BPE(bpe_codes_fin, merges=-1, separator='@@')
 
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
@@ -269,6 +269,7 @@ class BPEModel(AbstractModel):
             [type] -- [description]
         """
 
+        words = self._bpe.
         id = self.model.train_vocab[word]
 
         if token: 
