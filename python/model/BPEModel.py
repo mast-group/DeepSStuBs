@@ -33,7 +33,6 @@ class NLM(object):
     self.num_steps = num_steps = config.num_steps
     self.hidden_size = hidden_size = config.hidden_size
     self.vocab_size = vocab_size = config.vocab_size
-    self.predictions_file = config.output_probs_file
     self.global_step = tf.Variable(0, trainable=False)
 
     with tf.name_scope("Parameters"):
