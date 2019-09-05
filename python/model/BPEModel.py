@@ -5,7 +5,6 @@ import tensorflow as tf
 from AbstractModel import *
 from codenlm import reader
 from codenlm import code_nlm
-from absl
 
 
 class BPEModel(AbstractModel):
