@@ -72,7 +72,7 @@ class ELMoModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        raise AttributeError
+        pass
     
 
     def get_embedding(self, word, token=True):
