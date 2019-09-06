@@ -326,8 +326,8 @@ class BPEModel(AbstractModel):
         for i in range(len(code_ids)):
             code_ids[i].extend( [filler_id] * (longest - len(code_ids[i])) )
 
-        print(code_ids)
-        print(np.array(code_ids))
+        # print(code_ids)
+        # print(np.array(code_ids))
 
         with self._sess.graph.as_default():
             feed_dict = {
@@ -335,7 +335,7 @@ class BPEModel(AbstractModel):
                 self.model.keep_probability: 1.0
             }
             bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
-            print(bpe_token_representation[0].shape)
+            # print(bpe_token_representation[0].shape)
             return bpe_token_representation[0]
     
 
