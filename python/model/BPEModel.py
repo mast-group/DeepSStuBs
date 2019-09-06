@@ -270,7 +270,7 @@ class BPEModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        subtokens = self._bpe.segment(word).split
+        subtokens = self._bpe.segment(word).split()
         code_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
         code_ids += [self.model.train_vocab["</s>"]] * (self.model.batch_size - len(code_ids))
 
