@@ -35,7 +35,7 @@ class NLM(object):
     :param config: The configuration to be used for initialization.
     """
     self.num_layers = config.num_layers
-    self.batch_size = batch_size = None #config.batch_size
+    self.batch_size = batch_size = config.batch_size
     self.num_steps = num_steps = config.num_steps
     self.hidden_size = hidden_size = config.hidden_size
     self.vocab_size = vocab_size = config.vocab_size
@@ -176,7 +176,7 @@ class BPEModel(AbstractModel):
 
     def __init__(self, model_file, vocab_file, codes_file, sess):
         """[summary]
-        Loads and instantiates a word2vec model from a json file.
+        Loads and instantiates a BPE model from a tensoflow checkpoint file.
         Arguments:
             name_to_vector_file {[type]} -- [description]
         """
@@ -272,6 +272,7 @@ class BPEModel(AbstractModel):
         """
         subtokens = self._bpe.segment(word).split
         code_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
+        code_ids += [self.model.train_vocab["</s>"]] * (self.model.batch_size - len(code_ids))
 
         if token:    
             with self._sess.graph.as_default():
