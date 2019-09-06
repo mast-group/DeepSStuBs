@@ -282,8 +282,9 @@ class BPEModel(AbstractModel):
                     self.model.keep_probability: 1.0
                 }
                 bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
-                print()
-                print(bpe_token_representation[:len(subtokens)])
+                print(len(subtokens))
+                print(bpe_token_representation[0].shape)
+                print(bpe_token_representation[0][:len(subtokens)])
                 return bpe_token_representation
         else:
             elmo_code_representation = self._sess.run(
