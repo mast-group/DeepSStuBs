@@ -230,7 +230,7 @@ class BPEModel(AbstractModel):
         print('Query')
         print(self.get_embedding('publicios'))
         sequences = [['publicios', 'static', 'void'] for i in range(self.model.batch_size)]
-        sequences[-1].append('main')
+        sequences[-1][-1] = 'voidmain'
         print(self.get_sequence_token_embeddings(sequences))
     
 
@@ -341,11 +341,15 @@ class BPEModel(AbstractModel):
             # print(bpe_token_representation[0].shape)
 
             if True:
+                summed_representations = []
                 for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
+                    summed_representations.append([])
                     index = 0
                     for sub_size in sub_sizes:
+                        summed_representations[-1].extend(np.sum(representation[index: index + sub_size], axis=0))
                         index += sub_size
                     # sum()
+                return np.array(summed_representations)
             return bpe_token_representation[0]
     
 
