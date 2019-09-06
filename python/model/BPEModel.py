@@ -230,7 +230,7 @@ class BPEModel(AbstractModel):
         print('Query')
         print(self.get_embedding('publicios'))
         sequences = [['public', 'static, void'] for i in range(self.model.batch_size)]
-        print(self.get_sequence_token_embeddings())
+        print(self.get_sequence_token_embeddings(sequences))
     
 
     def __create_model__(self, session, config):
