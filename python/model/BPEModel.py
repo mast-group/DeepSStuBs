@@ -296,6 +296,35 @@ class BPEModel(AbstractModel):
             # return elmo_code_representation
     
 
+    def get_sequence_token_embeddings(self, sequence):
+        """[summary]
+        
+        Arguments:
+            sequence {[type]} -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+        assert(type(sequence) == list)
+        assert(len(sequence) == self.model.batch_size)
+
+        code_ids = []
+        for sentence in sequence:
+            for word in sentence:
+                subtokens = self._bpe.segment(word).split()
+                sentence_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
+                code_ids.append(sentence_ids)
+
+        with self._sess.graph.as_default():
+            feed_dict = {
+                self.model.inputd: np.array(code_ids),
+                self.model.keep_probability: 1.0
+            }
+            bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
+            print(bpe_token_representation[0].shape)
+            return bpe_token_representation[0]
+    
+
     def get_sequence_embeddings(self, sequence):
         """[summary]
         
