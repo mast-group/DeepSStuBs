@@ -312,9 +312,10 @@ class BPEModel(AbstractModel):
 
         code_ids = []
         for sentence in sequence:
+            sentence_ids = []
             for word in sentence:
                 subtokens = self._bpe.segment(word).split()
-                sentence_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
+                sentence_ids.extend([self.model.train_vocab[subtoken] for subtoken in subtokens])
                 code_ids.append(sentence_ids)
         print(code_ids)
         print(np.array(code_ids))
