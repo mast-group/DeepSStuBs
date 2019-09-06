@@ -272,20 +272,21 @@ class BPEModel(AbstractModel):
         """
         subtokens = self._bpe.segment(word).split()
         code_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
-        code_ids += [self.model.train_vocab["</s>"]] * (self.model.batch_size - len(code_ids))
+        
 
-        if token:    
+        if token:
             with self._sess.graph.as_default():
                 feed_dict = {
-                    self.model.inputd: np.expand_dims(np.array(code_ids), axis=1),
+                    self.model.inputd: np.array([code_ids for i in range(self.model.batch_size)]),
+                    # self.model.inputd: np.expand_dims(np.array(code_ids), axis=1),
                     # self.model.inputd: np.expand_dims(np.array([100] * 32), axis=1),
                     self.model.keep_probability: 1.0
                 }
                 bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
                 print(len(subtokens))
-                print(bpe_token_representation[0].shape)
-                print(np.squeeze(bpe_token_representation[0][:len(subtokens)], axis=1))
-                return bpe_token_representation[0][:len(subtokens)]
+                print(bpe_token_representation[0][0].shape)
+                # print(np.squeeze(bpe_token_representation[0][:len(subtokens)], axis=1))
+                return bpe_token_representation[0][0]
         else:
             pass
             # elmo_code_representation = self._sess.run(
@@ -305,6 +306,12 @@ class BPEModel(AbstractModel):
             [type] -- [description]
         """
         assert(type(sequence) == list)
+        code_ids = []
+        for word in sequence:
+            subtokens = self._bpe.segment(word).split()
+            code_ids += [self.model.train_vocab[subtoken] for subtoken in subtokens]
+
+
         embeddings = [self.get_embedding(word) for word in sequence]
         return embeddings
     
@@ -315,7 +322,7 @@ class BPEModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        return len(self.name_to_vector[self.UNK])
+        return len(self.model.hidden_size)
 
 
     def isOOV(self, word):
@@ -327,7 +334,7 @@ class BPEModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        return word == self.get_UNK() or not word in self.name_to_vector
+        return False
 
 
 class Config(object):
