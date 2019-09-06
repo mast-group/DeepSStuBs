@@ -231,6 +231,8 @@ class BPEModel(AbstractModel):
         print(self.get_embedding('publicios'))
         sequences = [['publicios', 'static', 'void'] for i in range(self.model.batch_size)]
         sequences[-1][-1] = 'voidmain'
+        sequence_representations = self.get_sequence_token_embeddings(sequences)
+        print(sequence_representations, sequence_representations.shape)
         sequence_representations = self.get_sequence_embeddings(sequences)
         print(sequence_representations, sequence_representations.shape)
     
