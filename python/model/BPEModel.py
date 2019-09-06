@@ -342,12 +342,8 @@ class BPEModel(AbstractModel):
 
             if True:
                 for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
-                    print("representation")
-                    print(representation, representation.shape)
                     index = 0
                     for sub_size in sub_sizes:
-                        print(representation[index: index + sub_size], representation[index: index + sub_size].shape)
-                        print(np.sum(representation[index: index + sub_size], axis=0))
                         index += sub_size
                     # sum()
             return bpe_token_representation[0]
