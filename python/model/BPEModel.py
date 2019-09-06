@@ -349,8 +349,6 @@ class BPEModel(AbstractModel):
                         print(representation[index: sub_size], representation[index: sub_size].shape)
                         print(np.sum(representation[index: sub_size], axis=0))
                         index += sub_size
-                        import sys
-                        sys.exit(0)
                     # sum()
             return bpe_token_representation[0]
     
