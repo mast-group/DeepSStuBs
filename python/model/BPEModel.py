@@ -346,9 +346,9 @@ class BPEModel(AbstractModel):
                     print(representation, representation.shape)
                     index = 0
                     for sub_size in sub_sizes:
-                        index += sub_size
                         print(representation[index: sub_size], representation[index: sub_size].shape)
                         print(np.sum(representation[index: sub_size], axis=1))
+                        index += sub_size
                         import sys
                         sys.exit(0)
                     # sum()
