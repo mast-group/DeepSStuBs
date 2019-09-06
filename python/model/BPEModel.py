@@ -35,7 +35,7 @@ class NLM(object):
     :param config: The configuration to be used for initialization.
     """
     self.num_layers = config.num_layers
-    self.batch_size = batch_size = config.batch_size
+    self.batch_size = batch_size = None #config.batch_size
     self.num_steps = num_steps = config.num_steps
     self.hidden_size = hidden_size = config.hidden_size
     self.vocab_size = vocab_size = config.vocab_size
@@ -227,6 +227,8 @@ class BPEModel(AbstractModel):
             # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
             print('Queried for embedded inputs')
             print(embedded_inputds)
+        print('Query')
+        print(get_embedding('public'))
     
 
     def __create_model__(self, session, config):
@@ -268,16 +270,18 @@ class BPEModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
+        subtokens = self._bpe.segment(word).split
+        code_ids = [self.model.train_vocab[subtoken] for subtoken in subtokens]
 
-        words = self._bpe.
-        id = self.model.train_vocab[word]
-
-        if token: 
-            elmo_token_representation = self._sess.run(
-                [self._token_rep_op['weighted_op']],
-                feed_dict={self._code_character_ids: code_ids}
-            )
-            return elmo_token_representation
+        if token:    
+            with self._sess.graph.as_default():
+                feed_dict = {
+                    self.model.inputd: np.expand_dims(np.array(code_ids), axis=1),
+                    # self.model.inputd: np.expand_dims(np.array([100] * 32), axis=1),
+                    self.model.keep_probability: 1.0
+                }
+                bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
+                return bpe_token_representation
         else:
             elmo_code_representation = self._sess.run(
                 [self._elmo_code_rep_op['weighted_op']],
