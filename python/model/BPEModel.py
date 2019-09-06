@@ -318,6 +318,14 @@ class BPEModel(AbstractModel):
                 subtokens = self._bpe.segment(word).split()
                 sentence_ids.extend([self.model.train_vocab[subtoken] for subtoken in subtokens])
             code_ids.append(sentence_ids)
+        
+        # Find sentence lengths
+        sizes = [len(sentence_ids) for sentence_ids in code_ids]
+        longest = max(sizes)
+        filler_id = self.model.train_vocab['</s>']
+        for i in range(len(code_ids)):
+            code_ids[i].extend( [filler_id] * (longest - len(code_ids[i])) )
+
         print(code_ids)
         print(np.array(code_ids))
 
