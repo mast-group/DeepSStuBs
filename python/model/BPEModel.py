@@ -228,7 +228,7 @@ class BPEModel(AbstractModel):
             print('Queried for embedded inputs')
             print(embedded_inputds)
         print('Query')
-        print(get_embedding('public'))
+        print(self.get_embedding('public'))
     
 
     def __create_model__(self, session, config):
