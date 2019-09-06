@@ -312,10 +312,13 @@ class BPEModel(AbstractModel):
         assert(len(sequence) == self.model.batch_size)
 
         code_ids = []
+        subword_sizes = []
         for sentence in sequence:
             sentence_ids = []
+            subword_sizes.append([])
             for word in sentence:
                 subtokens = self._bpe.segment(word).split()
+                subword_sizes[-1].append(len(subtokens))
                 sentence_ids.extend([self.model.train_vocab[subtoken] for subtoken in subtokens])
             code_ids.append(sentence_ids)
         
@@ -336,6 +339,14 @@ class BPEModel(AbstractModel):
             }
             bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
             # print(bpe_token_representation[0].shape)
+
+            if True:
+                for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
+                    index = 0
+                    for sub_size in sub_sizes:
+                        index += sub_size
+                        sum(representation[index: sub_size])
+                    # sum()
             return bpe_token_representation[0]
     
 
