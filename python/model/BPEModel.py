@@ -284,14 +284,15 @@ class BPEModel(AbstractModel):
                 bpe_token_representation = self._sess.run([self.model.embedded_inputds], feed_dict)
                 print(len(subtokens))
                 print(bpe_token_representation[0].shape)
-                print(bpe_token_representation[0][:len(subtokens)])
-                return bpe_token_representation
+                print(np.squeeze(bpe_token_representation[0][:len(subtokens)], axis=1))
+                return bpe_token_representation[0][:len(subtokens)]
         else:
-            elmo_code_representation = self._sess.run(
-                [self._elmo_code_rep_op['weighted_op']],
-                feed_dict={self._code_character_ids: code_ids}
-            )
-            return elmo_code_representation
+            pass
+            # elmo_code_representation = self._sess.run(
+            #     [self._elmo_code_rep_op['weighted_op']],
+            #     feed_dict={self._code_character_ids: code_ids}
+            # )
+            # return elmo_code_representation
     
 
     def get_sequence_embeddings(self, sequence):
