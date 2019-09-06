@@ -391,16 +391,16 @@ class BPEModel(AbstractModel):
         # print(np.array(code_ids))
 
         with self._sess.graph.as_default():
-            state = self._sess.run(self.reset_state)
+            state = self._sess.run(self.model.reset_state)
             feed_dict = {
                 self.model.inputd: np.array(code_ids),
                 self.model.keep_probability: 1.0
             }
             if self.model.gru:
-                for i, h in enumerate(self.reset_state):
+                for i, h in enumerate(self.model.reset_state):
                     feed_dict[h] = state[i]
             else:
-                for i, (c, h) in enumerate(self.reset_state):
+                for i, (c, h) in enumerate(self.model.reset_state):
                     feed_dict[c] = state[i].c
                     feed_dict[h] = state[i].h
             
