@@ -231,7 +231,7 @@ class BPEModel(AbstractModel):
         print(self.get_embedding('publicios'))
         sequences = [['publicios', 'static', 'void'] for i in range(self.model.batch_size)]
         sequences[-1][-1] = 'voidmain'
-        sequence_representations = self.get_sequence_token_embeddings(sequences)
+        sequence_representations = self.get_sequence_embeddings(sequences)
         print(sequence_representations, sequence_representations.shape)
     
 
@@ -364,14 +364,49 @@ class BPEModel(AbstractModel):
             [type] -- [description]
         """
         assert(type(sequence) == list)
+        assert(len(sequence) == self.model.batch_size)
+
         code_ids = []
-        for word in sequence:
-            subtokens = self._bpe.segment(word).split()
-            code_ids += [self.model.train_vocab[subtoken] for subtoken in subtokens]
+        subword_sizes = []
+        for sentence in sequence:
+            sentence_ids = []
+            subword_sizes.append([])
+            for word in sentence:
+                subtokens = self._bpe.segment(word).split()
+                subword_sizes[-1].append(len(subtokens))
+                sentence_ids.extend([self.model.train_vocab[subtoken] for subtoken in subtokens])
+            code_ids.append(sentence_ids)
+        
+        # Find sentence lengths
+        sizes = [len(sentence_ids) for sentence_ids in code_ids]
+        longest = max(sizes)
+        filler_id = self.model.train_vocab['</s>']
+        for i in range(len(code_ids)):
+            code_ids[i].extend( [filler_id] * (longest - len(code_ids[i])) )
 
+        # print(code_ids)
+        # print(np.array(code_ids))
 
-        embeddings = [self.get_embedding(word) for word in sequence]
-        return embeddings
+        with self._sess.graph.as_default():
+            feed_dict = {
+                self.model.inputd: np.array(code_ids),
+                self.model.keep_probability: 1.0
+            }
+            
+            bpe_token_representation = self._sess.run([self.model.next_state], feed_dict)
+            # print(bpe_token_representation[0].shape)
+
+            if True:
+                summed_representations = []
+                for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
+                    summed_representations.append([])
+                    index = 0
+                    for sub_size in sub_sizes:
+                        summed_representations[-1].extend(np.sum(representation[index: index + sub_size], axis=0))
+                        index += sub_size
+                    # sum()
+                return np.array(summed_representations)
+            return bpe_token_representation[0]
     
 
     def get_embedding_dims(self):
