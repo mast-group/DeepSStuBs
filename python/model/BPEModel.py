@@ -40,6 +40,7 @@ class NLM(object):
     self.hidden_size = hidden_size = config.hidden_size
     self.vocab_size = vocab_size = config.vocab_size
     self.global_step = tf.Variable(0, trainable=False)
+    self.gru = config.gru
 
     with tf.name_scope("Parameters"):
       # Sets dropout and learning rate.
@@ -390,10 +391,18 @@ class BPEModel(AbstractModel):
         # print(np.array(code_ids))
 
         with self._sess.graph.as_default():
+            state = self._sess.run(self.reset_state)
             feed_dict = {
                 self.model.inputd: np.array(code_ids),
                 self.model.keep_probability: 1.0
             }
+            if self.model.gru:
+                for i, h in enumerate(self.reset_state):
+                    feed_dict[h] = state[i]
+            else:
+                for i, (c, h) in enumerate(self.reset_state):
+                    feed_dict[c] = state[i].c
+                    feed_dict[h] = state[i].h
             
             bpe_token_representation = self._sess.run([self.model.next_state], feed_dict)
             print(bpe_token_representation)
