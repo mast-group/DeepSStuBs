@@ -230,7 +230,8 @@ class BPEModel(AbstractModel):
         print(sequence_representations, sequence_representations.shape)
         sequence_representations = self.get_sequence_embeddings(sequences)
         print('here')
-        print(sequence_representations, sequence_representations.shape)
+        print(sequence_representations)
+        print(sequence_representations.shape)
     
 
     def __create_model__(self, session, config):
