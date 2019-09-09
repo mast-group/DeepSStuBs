@@ -175,7 +175,7 @@ class NLM(object):
 
 class BPEModel(AbstractModel):
 
-    def __init__(self, model_file, vocab_file, codes_file, sess):
+    def __init__(self, model_file, vocab_file, codes_file, merge, sess):
         """[summary]
         Loads and instantiates a BPE model from a tensoflow checkpoint file.
         Arguments:
@@ -187,6 +187,7 @@ class BPEModel(AbstractModel):
         with open(codes_file, 'r') as bpe_codes_fin:
             self._bpe = BPE(bpe_codes_fin, merges=-1, separator='@@')
 
+        sefl.merge = merge
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         print(len(train_vocab))
@@ -206,13 +207,6 @@ class BPEModel(AbstractModel):
         
         config = Config( init_scale, learning_rate, max_grad_norm, num_layers, num_steps, hidden_size, 
                         max_epoch, keep_prob, lr_decay, batch_size, test_batch_size, len(train_vocab) )
-        
-        # config = code_nlm.Config(code_nlm.FLAGS.init_scale, code_nlm.FLAGS.learning_rate, code_nlm.FLAGS.max_grad_norm,
-        #             code_nlm.FLAGS.num_layers, code_nlm.FLAGS.num_steps, code_nlm.FLAGS.hidden_size, 
-        #             code_nlm.FLAGS.max_epoch, code_nlm.FLAGS.keep_prob, code_nlm.FLAGS.lr_decay, 
-        #             code_nlm.FLAGS.batch_size, code_nlm.FLAGS.test_batch_size, 
-        #             code_nlm.FLAGS.vocab_size, code_nlm.FLAGS.output_probs_file)
-        # config.vocab_size = len(train_vocab)
 
         with self._sess.graph.as_default():
         # with tf.Graph().as_default():
@@ -411,7 +405,7 @@ class BPEModel(AbstractModel):
             # print(bpe_token_representation[0][0])
             # print(bpe_token_representation[0][0].shape)
             
-            if True:
+            if self.merge == 'sum':
                 summed_representations = []
                 for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
                     print(representation)
@@ -422,6 +416,16 @@ class BPEModel(AbstractModel):
                         index += sub_size
                     # sum()
                 return np.array(summed_representations)
+            elif self.merge == 'avg':
+                averaged_representations = []
+                for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
+                    print(representation)
+                    averaged_representations.append([])
+                    index = 0
+                    for sub_size in sub_sizes:
+                        averaged_representations[-1].extend(np.mean(representation[index: index + sub_size], axis=0))
+                        index += sub_size
+                return averaged_representations
             return bpe_token_representation[0]
     
 
