@@ -31,13 +31,16 @@ def instance_tokens_generator(tokens_files, keep_types=True):
     print('Sequences: %d' % sequences)
         # break
 
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
+
 def main(args):
-    keep_types = args[1]
+    keep_types = str2bool(args[1])
     export_file = args[2]
     tokens_files = args[3:]
     with open(export_file, 'w') as f:
         yields = 0
-        for token_seq in instance_tokens_generator(tokens_files, False):
+        for token_seq in instance_tokens_generator(tokens_files, keep_types):
             yields += 1
             f.write(' '.join(token_seq))
             f.write('\n')
