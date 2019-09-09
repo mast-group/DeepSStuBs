@@ -424,7 +424,7 @@ if __name__ == '__main__':
                     batch_x, batch_y = batch
 
                     batch_len = len(batch_x)
-                    print('Batch len:', batch_len)
+                    # print('Batch len:', batch_len)
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
                     train_batches += 1
