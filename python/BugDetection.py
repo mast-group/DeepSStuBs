@@ -326,6 +326,7 @@ if __name__ == '__main__':
         sys.exit(1)
     
     print("Statistics on training data:")
+    print(training_data_paths)
     learning_data.pre_scan(training_data_paths, validation_data_paths)
     # prepare x,y pairs for learning and validation
     
