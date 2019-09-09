@@ -9,6 +9,8 @@ import sys
 from EmbeddingLearnerWord2Vec import EncodedSequenceReader
 from os import getcwd
 from os.path import join
+from Util import clean_string
+
 
 def instance_tokens_generator(tokens_files, keep_types=True):
     sequences = 0
@@ -19,10 +21,7 @@ def instance_tokens_generator(tokens_files, keep_types=True):
     
     for token_seq in EncodedSequenceReader(data_paths):
         sequences += 1
-        token_seq = [token.replace(' ', 'U+0020') for token in token_seq]
-        token_seq = [token.replace('\n', '\\n') for token in token_seq]
-        token_seq = [token.replace('\r', '\\r') for token in token_seq]
-        token_seq = [token.replace('\t', '\\t') for token in token_seq]
+        token_seq = [clean_string(token) for token in token_seq]
         
         if not keep_types:
             token_seq = [token[token.find(':') + 1: ] for token in token_seq]
@@ -33,8 +32,9 @@ def instance_tokens_generator(tokens_files, keep_types=True):
         # break
 
 def main(args):
-    export_file = args[1]
-    tokens_files = args[2:]
+    keep_types = args[1]
+    export_file = args[2]
+    tokens_files = args[3:]
     with open(export_file, 'w') as f:
         yields = 0
         for token_seq in instance_tokens_generator(tokens_files, False):
