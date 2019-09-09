@@ -187,7 +187,7 @@ class BPEModel(AbstractModel):
         with open(codes_file, 'r') as bpe_codes_fin:
             self._bpe = BPE(bpe_codes_fin, merges=-1, separator='@@')
 
-        sefl.merge = merge
+        self.merge = merge
         self._vocab_file = vocab_file
         train_vocab, train_vocab_rev = reader._read_vocab(vocab_file)
         print(len(train_vocab))
