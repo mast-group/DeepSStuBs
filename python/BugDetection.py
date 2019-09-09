@@ -50,7 +50,7 @@ from ELMoClient import *
 random.seed(1234)
 
 
-name_embedding_size = 200
+name_embedding_size = 512
 file_name_embedding_size = 50
 type_embedding_size = 5
 node_type_embedding_size = 8 # if changing here, then also change in LearningDataBinOperator
