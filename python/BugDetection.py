@@ -326,7 +326,6 @@ if __name__ == '__main__':
         sys.exit(1)
     
     print("Statistics on training data:")
-    print(training_data_paths)
     learning_data.pre_scan(training_data_paths, validation_data_paths)
     # prepare x,y pairs for learning and validation
     
@@ -423,8 +422,9 @@ if __name__ == '__main__':
                 try:
                     batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
+
                     batch_len = len(batch_x)
-                    # print('Batch len:', batch_len)
+                    print('Batch len:', batch_len)
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
                     train_batches += 1
