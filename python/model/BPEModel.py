@@ -229,6 +229,7 @@ class BPEModel(AbstractModel):
         sequence_representations = self.get_sequence_token_embeddings(sequences)
         print(sequence_representations, sequence_representations.shape)
         sequence_representations = self.get_sequence_embeddings(sequences)
+        print('here')
         print(sequence_representations, sequence_representations.shape)
     
 
