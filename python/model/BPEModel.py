@@ -406,7 +406,8 @@ class BPEModel(AbstractModel):
             
             bpe_token_representation = self._sess.run([self.model.next_state], feed_dict)
             print(bpe_token_representation)
-            print(bpe_token_representation[0], bpe_token_representation[0].shape)
+            print(bpe_token_representation[0])
+            print()
             print(bpe_token_representation[0][0])
             print(bpe_token_representation[0][0].shape)
             
