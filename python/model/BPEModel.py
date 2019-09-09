@@ -406,10 +406,10 @@ class BPEModel(AbstractModel):
             
             bpe_token_representation = self._sess.run([self.model.output], feed_dict)
             print(bpe_token_representation)
-            print(bpe_token_representation[0])
+            print(bpe_token_representation[0], bpe_token_representation[0].shape)
             print()
-            print(bpe_token_representation[0][0])
-            print(bpe_token_representation[0][0].shape)
+            # print(bpe_token_representation[0][0])
+            # print(bpe_token_representation[0][0].shape)
             
             if True:
                 summed_representations = []
