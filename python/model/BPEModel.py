@@ -346,7 +346,7 @@ class BPEModel(AbstractModel):
                     summed_representations.append([])
                     index = 0
                     for sub_size in sub_sizes:
-                        summed_representations[-1].extend(np.sum(representation[index: index + sub_size], axis=1))
+                        summed_representations[-1].extend(np.sum(representation[index: index + sub_size], axis=0))
                         index += sub_size
                     # sum()
                 return np.array(summed_representations)
@@ -425,7 +425,9 @@ class BPEModel(AbstractModel):
                     averaged_representations.append([])
                     index = 0
                     for sub_size in sub_sizes:
-                        averaged_representations[-1].extend(np.mean(representation[index: index + sub_size], axis=0))
+                        print('0: ', np.mean(representation[index: index + sub_size], axis=0))
+                        print('1: ', np.mean(representation[index: index + sub_size], axis=1))
+                        averaged_representations[-1].extend(np.mean(representation[index: index + sub_size], axis=1))
                         index += sub_size
                 return averaged_representations
             return bpe_token_representation[0]
