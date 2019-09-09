@@ -214,24 +214,24 @@ class BPEModel(AbstractModel):
             # self.model = self.__create_model__(session, config)
             self.model.train_vocab = train_vocab
             self.model.train_vocab_rev = train_vocab_rev
-            feed_dict = {
-                self.model.inputd: np.expand_dims(np.array([100] * 32), axis=1),
-                self.model.keep_probability: 1.0
-            }
-            embedded_inputds = self._sess.run([self.model.embedded_inputds], feed_dict)
-            # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
-            print('Queried for embedded inputs')
-            print(embedded_inputds)
-        print('Query')
-        print(self.get_embedding('publicios'))
-        sequences = [['publicios', 'static', 'void'] for i in range(self.model.batch_size)]
-        sequences[-1][-1] = 'voidmain'
-        sequence_representations = self.get_sequence_token_embeddings(sequences)
-        print(sequence_representations, sequence_representations.shape)
-        sequence_representations = self.get_sequence_embeddings(sequences)
-        print('here')
-        print(sequence_representations)
-        print(sequence_representations.shape)
+            # feed_dict = {
+            #     self.model.inputd: np.expand_dims(np.array([100] * 32), axis=1),
+            #     self.model.keep_probability: 1.0
+            # }
+            # embedded_inputds = self._sess.run([self.model.embedded_inputds], feed_dict)
+            # # embedded_inputds = session.run([model.embedded_inputds], feed_dict)
+            # print('Queried for embedded inputs')
+            # print(embedded_inputds)
+        # print('Query')
+        # print(self.get_embedding('publicios'))
+        # sequences = [['publicios', 'static', 'void'] for i in range(self.model.batch_size)]
+        # sequences[-1][-1] = 'voidmain'
+        # sequence_representations = self.get_sequence_token_embeddings(sequences)
+        # print(sequence_representations, sequence_representations.shape)
+        # sequence_representations = self.get_sequence_embeddings(sequences)
+        # print('here')
+        # print(sequence_representations)
+        # print(sequence_representations.shape)
     
 
     def __create_model__(self, session, config):
