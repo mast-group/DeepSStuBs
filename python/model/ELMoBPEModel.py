@@ -1,9 +1,12 @@
 import model.AbstractModel
+import tensorflow as tf
+import os
 
 from AbstractModel import *
+from bilm import Batcher, BidirectionalLanguageModel, weight_layers
 
 
-class ELMoModel(AbstractModel):
+class ELMoBPEModel(AbstractModel):
 
     def __init__(self, name_to_vector_file):
         """[summary]
@@ -13,6 +16,30 @@ class ELMoModel(AbstractModel):
         """
         super().__init__(name_to_vector_file)
         pass
+    
+
+    def __init__(self, model_file, options_file, sess, threshold=50):
+        super().__init__(model_file)
+        self.options_file = options_file
+        pass
+
+    def _create_bilm(self, options_file, weight_file):
+         # Build the biLM graph.
+        bilm = BidirectionalLanguageModel(
+            options_file,
+            weight_file,
+            use_character_inputs=True
+        )
+        pass
+
+
+    def __init__(self, sess, batcher, elmo_token_op, code_token_ids, threshold=30, dims=200):
+        self.sess = sess
+        self.batcher = batcher
+        self.elmo_token_op = elmo_token_op
+        self.code_token_ids = code_token_ids
+        self.threshold = threshold
+        self.dims = dims
     
 
     def get_name_to_vector(self):
