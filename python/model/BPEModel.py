@@ -202,7 +202,7 @@ class BPEModel(AbstractModel):
         max_epoch = 30
         keep_prob = 1.0
         lr_decay = 0.5
-        batch_size = 32
+        batch_size = 100
         test_batch_size = 10
         
         config = Config( init_scale, learning_rate, max_grad_norm, num_layers, num_steps, hidden_size, 
