@@ -401,16 +401,16 @@ class BPEModel(AbstractModel):
                     feed_dict[h] = state[i].h
             
             bpe_token_representation = self._sess.run([self.model.outputs], feed_dict)
-            print(bpe_token_representation)
-            print(bpe_token_representation[0], bpe_token_representation[0].shape)
-            print()
+            # print(bpe_token_representation)
+            # print(bpe_token_representation[0], bpe_token_representation[0].shape)
+            # print()
             # print(bpe_token_representation[0][0])
             # print(bpe_token_representation[0][0].shape)
             
             if self.merge == 'sum':
                 summed_representations = []
                 for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
-                    print(representation)
+                    # print(representation)
                     summed_representations.append([])
                     index = 0
                     for sub_size in sub_sizes:
@@ -421,12 +421,10 @@ class BPEModel(AbstractModel):
             elif self.merge == 'avg':
                 averaged_representations = []
                 for representation, sub_sizes in zip(bpe_token_representation[0], subword_sizes):
-                    print(representation)
+                    # print(representation)
                     averaged_representations.append([])
                     index = 0
                     for sub_size in sub_sizes:
-                        print('0: ', np.mean(representation[index: index + sub_size], axis=0))
-                        print('1: ', np.mean(representation[index: index + sub_size], axis=1))
                         averaged_representations[-1].extend(np.mean(representation[index: index + sub_size], axis=0))
                         index += sub_size
                 return np.array(averaged_representations)
