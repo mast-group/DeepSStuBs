@@ -373,7 +373,8 @@ class BPEModel(AbstractModel):
             for word in sentence:
                 subtokens = self._bpe.segment(word).split()
                 subword_sizes[-1].append(len(subtokens))
-                sentence_ids.extend([self.model.train_vocab[subtoken] for subtoken in subtokens])
+                sentence_ids.extend([self.model.train_vocab[subtoken] if subtoken in self.model.train_vocab \
+                                            else self.model.train_vocab['-UNK-'] for subtoken in subtokens ])
             code_ids.append(sentence_ids)
         
         # Find sentence lengths
