@@ -176,7 +176,6 @@ class LearningData(object):
                 extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
                 x = list(embeddings_model.get_sequence_embeddings([query]).ravel()) + extra_vec
                 return x
-            pass
         else:
             return None
         

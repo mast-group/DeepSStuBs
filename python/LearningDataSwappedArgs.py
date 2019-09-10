@@ -284,7 +284,42 @@ class LearningData(object):
                 argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
                 x += argument0_type_vector + argument1_type_vector
                 return x
-            
+
+        elif emb_model_type == 'BPE':
+            if isinstance(call, list):
+                feats = []
+                queries = []
+                base_vecs = []
+                type_vecs = []
+                for call_inst in call:
+                    base_vec, query  = self._to_ELMo_heuristic_query(call_inst, embeddings_model)
+                    queries.append(query)
+                    base_vecs.append(base_vec)
+                    # Type vector
+                    argument_type_strings = call_inst["argumentTypes"]
+                    argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0] * type_embedding_size)
+                    argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
+                    type_vecs.append( argument0_type_vector + argument1_type_vector )
+
+                embeds = embeddings_model.get_sequence_embeddings(queries)
+                for i in range(len(embeds)):
+                    vec = list(embeds[i].ravel())
+                    # if len(vec) != 1600: print(len(vec))
+                    if len(base_vecs[i]) > 0 and len(vec) < embeddings_model.get_embedding_dims() * 8:
+                        feats.append(base_vecs[i] + vec + type_vecs[i])
+                    else:
+                        feats.append(vec + type_vecs[i])
+                
+                return feats
+            else:
+                base_vec, query  = self._to_ELMo_heuristic_query(call, embeddings_model)
+                x = base_vec + list(embeddings_model.get_sequence_embeddings([query]).ravel())
+                
+                argument_type_strings = call["argumentTypes"]
+                argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0]*type_embedding_size)
+                argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0]*type_embedding_size)
+                x += argument0_type_vector + argument1_type_vector
+                return x
         else:
             return None
         
