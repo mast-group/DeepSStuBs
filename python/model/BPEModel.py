@@ -198,7 +198,7 @@ class BPEModel(AbstractModel):
         max_grad_norm = 5.0
         num_layers = 1
         num_steps = 20
-        hidden_size = 512
+        hidden_size = 200
         max_epoch = 30
         keep_prob = 1.0
         lr_decay = 0.5
