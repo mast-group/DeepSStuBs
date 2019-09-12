@@ -206,7 +206,7 @@ class BPEModel(AbstractModel):
         test_batch_size = 10
         
         config = Config( init_scale, learning_rate, max_grad_norm, num_layers, num_steps, hidden_size, 
-                        max_epoch, keep_prob, lr_decay, batch_size, test_batch_size, len(train_vocab) )
+                        max_epoch, keep_prob, lr_decay, batch_size, test_batch_size, len(train_vocab), False )
 
         with self._sess.graph.as_default():
         # with tf.Graph().as_default():
