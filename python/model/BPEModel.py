@@ -381,7 +381,8 @@ class BPEModel(AbstractModel):
         # Find sentence lengths
         sizes = [len(sentence_ids) for sentence_ids in code_ids]
         longest = max(sizes)
-        filler_id = self.model.train_vocab['</s>']
+        # filler_id = self.model.train_vocab['</s>']
+        filler_id = self.model.train_vocab['-eod-']
         for i in range(len(code_ids)):
             code_ids[i].extend( [filler_id] * (longest - len(code_ids[i])) )
 
