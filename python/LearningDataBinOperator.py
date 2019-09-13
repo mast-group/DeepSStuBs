@@ -86,7 +86,6 @@ class LearningData(object):
                         queries.append(query)
                     
                     embeds = embeddings_model.get_sequence_token_embeddings(queries)
-                    print(embeds.shape)
                     return embeds
                     for i in range(len(embeds)):
                         vec = list(embeds[i].ravel())
