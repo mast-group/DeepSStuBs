@@ -174,6 +174,7 @@ def minibatch_generator():
                 # Query the model for features
                 xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                 xs = tf.reshape(xs, [BATCH_SIZE, 600])
+                print(xs)
                 # for code_piece in code_pieces:
                 #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                 #     xs.append(x)
@@ -443,7 +444,7 @@ if __name__ == '__main__':
                             train_instances += batch_len
                             train_batch_sizes.append(batch_len)
                             train_batches += 1
-                            # print('Batches done:', train_batches)
+                            print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
                             batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
