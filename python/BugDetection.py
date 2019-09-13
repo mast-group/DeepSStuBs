@@ -305,7 +305,7 @@ if __name__ == '__main__':
     emb_model_type = model_factory.get_model_type()
     name_to_vector = embeddings_model.get_name_to_vector()
 
-    GRAPH = tf.get_default_graph()
+    GRAPH = session.graph
 
     # with open(name_to_vector_file) as f:
     #     name_to_vector = json.load(f)
