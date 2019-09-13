@@ -134,7 +134,7 @@ class ELMoModel(AbstractModel):
             [self._elmo_code_rep_op['weighted_op']],
             feed_dict={self._code_character_ids: code_ids}
         )
-        return elmo_code_representation[0]
+        return elmo_code_representation#[0]
     
 
     def get_sequence_default_embeddings(self, sequence):
