@@ -395,15 +395,151 @@ if __name__ == '__main__':
         # Create the model
         with GRAPH.as_default():
             model = create_keras_network(dimensions)
-        
-        learning_data.resetStats()
-        train_code_pairs = create_code_pairs(training_data_paths, learning_data)
-        test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
+            
+            learning_data.resetStats()
+            train_code_pairs = create_code_pairs(training_data_paths, learning_data)
+            test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
 
-        # Training loop
-        time_stamp = math.floor(time.time() * 1000)
-        for e in range(1, EPOCHS + 1, 1):
+            # Training loop
+            time_stamp = math.floor(time.time() * 1000)
+            for e in range(1, EPOCHS + 1, 1):
+                print("Serving code pairs in the queue.")
+                # Create thread for code pair creation.
+                code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
+                code_pairs_thread.start()
+
+                # Create thread for minibatches creation.
+                batching_thread = threading.Thread(target=minibatch_generator)
+                batching_thread.start()
+
+                pass
+                # Variables for training stats
+                train_losses = []
+                train_accuracies = []
+                train_batch_sizes = []
+                train_instances = 0
+                train_batches = 0
+
+                # Wait until the batches queue is not empty
+                while batches_queue.empty():
+                    # print('Empty batch queue')
+                    continue
+
+                
+                while True:
+                    epoch_batches_done = False
+                    try:
+                        batch = batches_queue.get(timeout=30)
+                        batch_x, batch_y = batch
+
+                        batch_len = len(batch_y)
+                        # print('Batch len:', batch_len)
+                        train_instances += batch_len
+                        train_batch_sizes.append(batch_len)
+                        train_batches += 1
+                        # print('Batches done:', train_batches)
+
+                        # Train and get loss for minibatch
+                        batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                        train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                        train_accuracies.append(batch_accuracy)
+                        # print('Batch accuracy:', batch_accuracy)
+                        
+                        if train_batches % 1000 == 0:
+                            print("1000 batches") 
+                            print('acc:', mean(train_accuracies, train_batch_sizes))
+                            # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
+                        batches_queue.task_done()
+                    except queue.Empty:
+                        print('Empty queue')
+                        epoch_batches_done = True
+                    except Exception as exc:
+                        batches_queue.task_done()
+                        print(exc)
+                        break
+                    finally:
+                        # block untill all minibatches have been assigned to a batch_generator thread
+                        if epoch_batches_done:
+                            break
+                print('Before join in finally')
+                code_pairs_thread.join()
+                print('After join in finally')
+                print('Before join in finally')
+                print(code_pairs_queue.empty())
+                print(batches_queue.empty())
+                batching_thread.join()
+                print('After join in finally')
+
+                train_loss = mean(train_losses, train_batch_sizes)
+                train_accuracy = mean(train_accuracies, train_batch_sizes)
+                print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
+                    (e, train_instances, train_loss, train_accuracy))
+                if e == 1: print(learning_data.stats)
+
+                # Wait until both queues have been exhausted.
+                
+
+            time_learning_done = time.time()
+            print("Time for learning (seconds): " + str(round(time_learning_done - time_start)))
+            
+            # Test learned model on test set.
             print("Serving code pairs in the queue.")
+            # Create thread for code pair creation.
+            code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((test_code_pairs), ))
+            code_pairs_thread.start()
+
+            # Create thread for minibatches creation.
+            batching_thread = threading.Thread(target=minibatch_generator)
+            batching_thread.start()
+
+            predictions = []
+            code_pieces_validation = []
+            test_losses = []
+            test_accuracies = []
+            test_batch_sizes = []
+            test_instances = 0
+            test_batches = 0
+            # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+            # Wait until the batches queue is not empty
+            while batches_queue.empty():
+                continue
+            test_batches_done = False
+            while True:
+                try:
+                    batch = batches_queue.get(timeout=30)
+                    batch_x, batch_y = batch
+                    batch_len = len(batch_y)
+                    test_instances += batch_len
+                    test_batches += 1
+                    test_batch_sizes.append(batch_len)
+                    batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                    # batch_predictions = model.predict(batch_x)
+                    # predictions.extend([pred for pred in batch_predictions])
+                    predictions.extend(model.predict(batch_x))
+                    test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                    test_accuracies.append(batch_accuracy)
+                    batches_queue.task_done()
+                except queue.Empty:
+                    test_batches_done = True
+                finally:
+                    # block untill all minibatches have been assigned to a batch_generator thread
+                    if test_batches_done:
+                        break
+            print(learning_data.stats)
+            test_loss = mean(test_losses, test_batch_sizes)
+            test_accuracy = mean(test_accuracies, test_batch_sizes)
+            print("Test instances %d - Loss & Accuracy [%f, %f]" % \
+                        (test_instances, test_loss, test_accuracy))
+            # stop workers
+            code_pairs_thread.join()
+            batching_thread.join()
+
+            
+            time_prediction_done = time.time()
+            print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
+            
+
+            #  Test on training batches
             # Create thread for code pair creation.
             code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
             code_pairs_thread.start()
@@ -412,267 +548,131 @@ if __name__ == '__main__':
             batching_thread = threading.Thread(target=minibatch_generator)
             batching_thread.start()
 
-            pass
-            # Variables for training stats
             train_losses = []
             train_accuracies = []
             train_batch_sizes = []
             train_instances = 0
             train_batches = 0
-
+            # prepare_xy_pairs_batches(validation_data_paths, learning_data)
             # Wait until the batches queue is not empty
             while batches_queue.empty():
-                # print('Empty batch queue')
                 continue
-
-            
+            train_batches_done = False
             while True:
-                epoch_batches_done = False
                 try:
                     batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
-
                     batch_len = len(batch_y)
-                    # print('Batch len:', batch_len)
                     train_instances += batch_len
-                    train_batch_sizes.append(batch_len)
                     train_batches += 1
-                    # print('Batches done:', train_batches)
-
-                    # Train and get loss for minibatch
+                    train_batch_sizes.append(batch_len)
                     batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                    # batch_predictions = model.predict(batch_x)
+                    # predictions.extend([pred for pred in batch_predictions])
+                    predictions.extend(model.predict(batch_x))
                     train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                     train_accuracies.append(batch_accuracy)
-                    # print('Batch accuracy:', batch_accuracy)
-                    
-                    if train_batches % 1000 == 0:
-                        print("1000 batches") 
-                        print('acc:', mean(train_accuracies, train_batch_sizes))
-                        # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
                     batches_queue.task_done()
                 except queue.Empty:
-                    print('Empty queue')
-                    epoch_batches_done = True
-                except Exception as exc:
-                    batches_queue.task_done()
-                    print(exc)
-                    break
+                    train_batches_done = True
                 finally:
                     # block untill all minibatches have been assigned to a batch_generator thread
-                    if epoch_batches_done:
+                    if train_batches_done:
                         break
-            print('Before join in finally')
-            code_pairs_thread.join()
-            print('After join in finally')
-            print('Before join in finally')
-            print(code_pairs_queue.empty())
-            print(batches_queue.empty())
-            batching_thread.join()
-            print('After join in finally')
-
+            print(learning_data.stats)
             train_loss = mean(train_losses, train_batch_sizes)
             train_accuracy = mean(train_accuracies, train_batch_sizes)
-            print("Epoch %d Training instances %d - Loss & Accuracy [%f, %f]" % \
-                (e, train_instances, train_loss, train_accuracy))
-            if e == 1: print(learning_data.stats)
+            print("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                        (train_instances, train_loss, train_accuracy))
+            # stop workers
+            code_pairs_thread.join()
+            batching_thread.join()
 
-            # Wait until both queues have been exhausted.
-            
+        # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
+        # print("Validation examples : " + str(len(xs_validation)))
 
-        time_learning_done = time.time()
-        print("Time for learning (seconds): " + str(round(time_learning_done - time_start)))
+        # All the representations were received so close the socket.
+        # socket.sendall(CONN_END)
+        # socket.close()
         
-        # Test learned model on test set.
-        print("Serving code pairs in the queue.")
-        # Create thread for code pair creation.
-        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((test_code_pairs), ))
-        code_pairs_thread.start()
-
-        # Create thread for minibatches creation.
-        batching_thread = threading.Thread(target=minibatch_generator)
-        batching_thread.start()
-
-        predictions = []
-        code_pieces_validation = []
-        test_losses = []
-        test_accuracies = []
-        test_batch_sizes = []
-        test_instances = 0
-        test_batches = 0
-        # prepare_xy_pairs_batches(validation_data_paths, learning_data)
-        # Wait until the batches queue is not empty
-        while batches_queue.empty():
-            continue
-        test_batches_done = False
-        while True:
-            try:
-                batch = batches_queue.get(timeout=30)
-                batch_x, batch_y = batch
-                batch_len = len(batch_y)
-                test_instances += batch_len
-                test_batches += 1
-                test_batch_sizes.append(batch_len)
-                batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-                # batch_predictions = model.predict(batch_x)
-                # predictions.extend([pred for pred in batch_predictions])
-                predictions.extend(model.predict(batch_x))
-                test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-                test_accuracies.append(batch_accuracy)
-                batches_queue.task_done()
-            except queue.Empty:
-                test_batches_done = True
-            finally:
-                # block untill all minibatches have been assigned to a batch_generator thread
-                if test_batches_done:
-                    break
-        print(learning_data.stats)
-        test_loss = mean(test_losses, test_batch_sizes)
-        test_accuracy = mean(test_accuracies, test_batch_sizes)
-        print("Test instances %d - Loss & Accuracy [%f, %f]" % \
-                    (test_instances, test_loss, test_accuracy))
-        # stop workers
-        code_pairs_thread.join()
-        batching_thread.join()
-
+        # print()
+        # print("Validation loss & accuracy: " + str(validation_loss))
         
-        time_prediction_done = time.time()
-        print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
-        
+        # sys.exit(0)
 
-        #  Test on training batches
-        # Create thread for code pair creation.
-        code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
-        code_pairs_thread.start()
-
-        # Create thread for minibatches creation.
-        batching_thread = threading.Thread(target=minibatch_generator)
-        batching_thread.start()
-
-        train_losses = []
-        train_accuracies = []
-        train_batch_sizes = []
-        train_instances = 0
-        train_batches = 0
-        # prepare_xy_pairs_batches(validation_data_paths, learning_data)
-        # Wait until the batches queue is not empty
-        while batches_queue.empty():
-            continue
-        train_batches_done = False
-        while True:
-            try:
-                batch = batches_queue.get(timeout=30)
-                batch_x, batch_y = batch
-                batch_len = len(batch_y)
-                train_instances += batch_len
-                train_batches += 1
-                train_batch_sizes.append(batch_len)
-                batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                # batch_predictions = model.predict(batch_x)
-                # predictions.extend([pred for pred in batch_predictions])
-                predictions.extend(model.predict(batch_x))
-                train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-                train_accuracies.append(batch_accuracy)
-                batches_queue.task_done()
-            except queue.Empty:
-                train_batches_done = True
-            finally:
-                # block untill all minibatches have been assigned to a batch_generator thread
-                if train_batches_done:
-                    break
-        print(learning_data.stats)
-        train_loss = mean(train_losses, train_batch_sizes)
-        train_accuracy = mean(train_accuracies, train_batch_sizes)
-        print("Train instances %d - Loss & Accuracy [%f, %f]" % \
-                    (train_instances, train_loss, train_accuracy))
-        # stop workers
-        code_pairs_thread.join()
-        batching_thread.join()
-
-    # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
-    # print("Validation examples : " + str(len(xs_validation)))
-
-    # All the representations were received so close the socket.
-    # socket.sendall(CONN_END)
-    # socket.close()
-    
-    # print()
-    # print("Validation loss & accuracy: " + str(validation_loss))
-    
-    # sys.exit(0)
-
-    # compute precision and recall with different thresholds for reporting anomalies
-    # assumption: correct and swapped arguments are alternating in list of x-y pairs
-    threshold_to_correct = Counter()
-    threshold_to_incorrect = Counter()
-    threshold_to_found_seeded_bugs = Counter()
-    threshold_to_warnings_in_orig_code = Counter()
-    # ys_prediction = model.predict(xs_validation)
-    poss_anomalies = []
-    # for idx in range(0, len(xs_validation), 2):
-    for idx in range(0, len(predictions), 2):
-        y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
-        y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
-        anomaly_score = learning_data.anomaly_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be anomaly in current code
-        normal_score = learning_data.normal_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be correct in current code
-        is_anomaly = False
-        for threshold_raw in range(1, 20, 1):
-            threshold = threshold_raw / 20.0
-            suggests_change_of_orig = anomaly_score >= threshold
-            suggests_change_of_changed = normal_score >= threshold
-            # counts for positive example
-            if suggests_change_of_orig:
-                threshold_to_incorrect[threshold] += 1
-                threshold_to_warnings_in_orig_code[threshold] += 1
-            else:
-                threshold_to_correct[threshold] += 1
-            # counts for negative example
-            if suggests_change_of_changed:
-                threshold_to_correct[threshold] += 1
-                threshold_to_found_seeded_bugs[threshold] += 1
-            else:
-                threshold_to_incorrect[threshold] += 1
-            
-            # check if we found an anomaly in the original code
-            if suggests_change_of_orig:
-                is_anomaly = True
+        # compute precision and recall with different thresholds for reporting anomalies
+        # assumption: correct and swapped arguments are alternating in list of x-y pairs
+        threshold_to_correct = Counter()
+        threshold_to_incorrect = Counter()
+        threshold_to_found_seeded_bugs = Counter()
+        threshold_to_warnings_in_orig_code = Counter()
+        # ys_prediction = model.predict(xs_validation)
+        poss_anomalies = []
+        # for idx in range(0, len(xs_validation), 2):
+        for idx in range(0, len(predictions), 2):
+            y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
+            y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
+            anomaly_score = learning_data.anomaly_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be anomaly in current code
+            normal_score = learning_data.normal_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be correct in current code
+            is_anomaly = False
+            for threshold_raw in range(1, 20, 1):
+                threshold = threshold_raw / 20.0
+                suggests_change_of_orig = anomaly_score >= threshold
+                suggests_change_of_changed = normal_score >= threshold
+                # counts for positive example
+                if suggests_change_of_orig:
+                    threshold_to_incorrect[threshold] += 1
+                    threshold_to_warnings_in_orig_code[threshold] += 1
+                else:
+                    threshold_to_correct[threshold] += 1
+                # counts for negative example
+                if suggests_change_of_changed:
+                    threshold_to_correct[threshold] += 1
+                    threshold_to_found_seeded_bugs[threshold] += 1
+                else:
+                    threshold_to_incorrect[threshold] += 1
                 
-#         if is_anomaly:
-#             code_piece = code_pieces_validation[idx]
-#             message = "Score : " + str(anomaly_score) + " | " + code_piece.to_message()
-# #             print("Possible anomaly: "+message)
-#             # Log the possible anomaly for future manual inspection
-#             poss_anomalies.append(Anomaly(message, anomaly_score))
-    
-#     f_inspect = open('poss_anomalies.txt', 'w+')
-#     poss_anomalies = sorted(poss_anomalies, key=lambda a: -a.score)
-#     for anomaly in poss_anomalies:
-#         f_inspect.write(anomaly.message + "\n")
-#     print("Possible Anomalies written to file : poss_anomalies.txt")
-#     f_inspect.close()
-    
-    print()
-    with open(metrics_file, 'w') as f:
-        f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
-                    (train_instances, train_loss, train_accuracy) + '\n')
-        f.write("Test instances %d - Loss & Accuracy [%f, %f]" % \
-                    (test_instances, test_loss, test_accuracy) + '\n')
-        f.write('\n')
+                # check if we found an anomaly in the original code
+                if suggests_change_of_orig:
+                    is_anomaly = True
+                    
+    #         if is_anomaly:
+    #             code_piece = code_pieces_validation[idx]
+    #             message = "Score : " + str(anomaly_score) + " | " + code_piece.to_message()
+    # #             print("Possible anomaly: "+message)
+    #             # Log the possible anomaly for future manual inspection
+    #             poss_anomalies.append(Anomaly(message, anomaly_score))
         
-        for threshold_raw in range(1, 20, 1):
-            threshold = threshold_raw / 20.0
-            recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
-            precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
-            if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
-                accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
-            else:
-                accuracy = 0.0
-            print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
-                "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
-                    + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
+    #     f_inspect = open('poss_anomalies.txt', 'w+')
+    #     poss_anomalies = sorted(poss_anomalies, key=lambda a: -a.score)
+    #     for anomaly in poss_anomalies:
+    #         f_inspect.write(anomaly.message + "\n")
+    #     print("Possible Anomalies written to file : poss_anomalies.txt")
+    #     f_inspect.close()
+        
+        print()
+        with open(metrics_file, 'w') as f:
+            f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                        (train_instances, train_loss, train_accuracy) + '\n')
+            f.write("Test instances %d - Loss & Accuracy [%f, %f]" % \
+                        (test_instances, test_loss, test_accuracy) + '\n')
+            f.write('\n')
             
-            f.write(("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
-                "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
-                    + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold])) + '\n')
+            for threshold_raw in range(1, 20, 1):
+                threshold = threshold_raw / 20.0
+                recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
+                precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
+                if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
+                    accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
+                else:
+                    accuracy = 0.0
+                print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+                    "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+                        + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
+                
+                f.write(("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+                    "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+                        + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold])) + '\n')
 
     
     
