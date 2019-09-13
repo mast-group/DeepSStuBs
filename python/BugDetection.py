@@ -155,10 +155,12 @@ def minibatch_generator():
                 if len(code_pieces) > 0:
                     # Query the model for features
                     xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    xs = tf.reshape(xs, [BATCH_SIZE, 600])
                     # for code_piece in code_pieces:
                     #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                     #     xs.append(x)
-                    batch = [np.array(xs), np.array(ys)]
+                    batch = [xs, np.array(ys)]
+                    # batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
                 # code_pairs_queue.task_done()
                 break
