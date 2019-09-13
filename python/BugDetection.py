@@ -437,6 +437,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
+                            batch_x = np.zeros([100, 600], dtype=float)
 
                             batch_len = len(batch_y)
                             # print('Batch len:', batch_len)
@@ -514,6 +515,8 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
+                        batch_x = np.zeros([100, 600], dtype=float)
+                        
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
