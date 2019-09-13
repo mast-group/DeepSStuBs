@@ -78,6 +78,7 @@ batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 max_tokens_threshold = 30
 USE_ELMO = True
 USE_ELMO_TOP_ONLY = True
+GRAPH = None
 # Connecting to ELMo server
 # socket = connect('localhost', PORT)
 
@@ -304,6 +305,8 @@ if __name__ == '__main__':
     emb_model_type = model_factory.get_model_type()
     name_to_vector = embeddings_model.get_name_to_vector()
 
+    GRAPH = tf.get_default_graph()
+
     # with open(name_to_vector_file) as f:
     #     name_to_vector = json.load(f)
     # # m = FastText.load(name_to_vector_file)
@@ -390,7 +393,8 @@ if __name__ == '__main__':
         # session.run(tf.global_variables_initializer())
 
         # Create the model
-        model = create_keras_network(dimensions)
+        with GRAPH.as_default():
+            model = create_keras_network(dimensions)
         
         learning_data.resetStats()
         train_code_pairs = create_code_pairs(training_data_paths, learning_data)
