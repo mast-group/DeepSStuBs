@@ -428,7 +428,7 @@ if __name__ == '__main__':
                     batch = batches_queue.get(timeout=30)
                     batch_x, batch_y = batch
 
-                    batch_len = len(batch_x)
+                    batch_len = len(batch_y)
                     # print('Batch len:', batch_len)
                     train_instances += batch_len
                     train_batch_sizes.append(batch_len)
@@ -504,7 +504,7 @@ if __name__ == '__main__':
             try:
                 batch = batches_queue.get(timeout=30)
                 batch_x, batch_y = batch
-                batch_len = len(batch_x)
+                batch_len = len(batch_y)
                 test_instances += batch_len
                 test_batches += 1
                 test_batch_sizes.append(batch_len)
@@ -558,7 +558,7 @@ if __name__ == '__main__':
             try:
                 batch = batches_queue.get(timeout=30)
                 batch_x, batch_y = batch
-                batch_len = len(batch_x)
+                batch_len = len(batch_y)
                 train_instances += batch_len
                 train_batches += 1
                 train_batch_sizes.append(batch_len)
