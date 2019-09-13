@@ -306,6 +306,9 @@ if __name__ == '__main__':
     name_to_vector = embeddings_model.get_name_to_vector()
 
     GRAPH = session.graph
+    for op in GRAPH.get_operations():
+        print(str(op.name))
+    
 
     # with open(name_to_vector_file) as f:
     #     name_to_vector = json.load(f)
@@ -396,7 +399,9 @@ if __name__ == '__main__':
         with session.as_default():
             with GRAPH.as_default():
                 model = create_keras_network(dimensions)
-                
+                print('Created the model!')
+                for op in GRAPH.get_operations():
+                    print(str(op.name))
                 learning_data.resetStats()
                 train_code_pairs = create_code_pairs(training_data_paths, learning_data)
                 test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
