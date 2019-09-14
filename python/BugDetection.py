@@ -469,22 +469,22 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            print('batch_x:', batch_x.shape)
+                            # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
                             # print('Batch len:', batch_len)
                             train_instances += batch_len
                             train_batch_sizes.append(batch_len)
                             train_batches += 1
-                            print('Batches done:', train_batches)
+                            # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, _ = session.run(
                                 [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
-                            print("batch_loss", batch_loss)
-                            print("batch_accuracy", batch_accuracy)
-                            print("preds", preds)
+                            # print("batch_loss", batch_loss)
+                            # print("batch_accuracy", batch_accuracy)
+                            # print("preds", preds)
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
                             # print('Batch accuracy:', batch_accuracy)
