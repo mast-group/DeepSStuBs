@@ -255,6 +255,10 @@ class ELMoModel(AbstractModel):
 
     def get_code_rep_op(self):
         return self._elmo_code_rep_op
+    
+    def get_code_character_ids(self):
+        return self._code_character_ids
+
 
     def warm_up(self, data_prefix):
         """[summary]

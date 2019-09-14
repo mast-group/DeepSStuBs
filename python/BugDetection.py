@@ -423,6 +423,7 @@ if __name__ == '__main__':
         with session.as_default():
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
+                ch_ids = embeddings_model.get_code_character_ids()
                 inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [BATCH_SIZE, 600])
@@ -478,7 +479,7 @@ if __name__ == '__main__':
                             # Train and get loss for minibatch
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, optimizer = session.run(
-                                [loss, acc, out, optimizer], feed_dict={inp_op: batch_x, labels: batch_y})
+                                [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
                             # print('Batch accuracy:', batch_accuracy)
