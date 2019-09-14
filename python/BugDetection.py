@@ -430,6 +430,7 @@ if __name__ == '__main__':
                 labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
+                session.run(tf.local_variables_initializer())
                 
                 # for op in GRAPH.get_operations():
                 #     print(str(op.name))
