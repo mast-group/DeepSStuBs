@@ -275,11 +275,11 @@ def create_tf_network(dimensions, inp):
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu)
     drop_nn = tf.nn.dropout(nn, 0.2)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid)
-    loss = tf.nn.sigmoid_cross_entropy_with_logits(
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
         labels=labels,
         logits=out
-    )
-    acc = tf.metrics.accuracy(
+    ))
+    acc, update_op = tf.metrics.accuracy(
         labels=labels,
         predictions=out
     )
