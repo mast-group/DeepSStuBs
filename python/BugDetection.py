@@ -482,6 +482,7 @@ if __name__ == '__main__':
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, optimizer = session.run(
                                 [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
+                            print(batch_loss, batch_accuracy, preds)
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
                             # print('Batch accuracy:', batch_accuracy)
