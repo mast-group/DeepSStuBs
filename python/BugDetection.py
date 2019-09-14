@@ -322,8 +322,7 @@ if __name__ == '__main__':
     session = tf.Session(config=config)
     set_session(session)  # set this TensorFlow session as the default session for Keras
     # session = tf.keras.backend.get_session()
-    # session.run(tf.global_variables_initializer())
-
+    
     model_factory = ModelFactory(config_file, session)
     embeddings_model = model_factory.get_model()
     emb_model_type = model_factory.get_model_type()
@@ -430,6 +429,8 @@ if __name__ == '__main__':
                 print('rinp_op=', r_inp_op)
                 labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
+                session.run(tf.global_variables_initializer())
+                
                 # for op in GRAPH.get_operations():
                 #     print(str(op.name))
                 learning_data.resetStats()
