@@ -266,6 +266,29 @@ def create_keras_network(dimensions):
     return model
 
 
+def create_tf_network(dimensions):
+    dense_dims = 200
+    inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
+    labels = tf.placeholder(shape=[None, 1])
+    drop_inp = tf.nn.dropout(inp, 0.2)
+    nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu)
+    drop_nn = tf.nn.dropout(nn, 0.2)
+    out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid)
+    loss = tf.nn.sigmoid_cross_entropy_with_logits(
+        labels=labels,
+        logits=out
+    )
+    acc = tf.metrics.accuracy(
+        labels=labels,
+        predictions=out
+    )
+    optimizer = tf.train.RMSPropOptimizer(0.001).minimize(loss)
+    init = tf.global_variables_initializer()
+    tf.summary.scalar("loss", loss)
+    merged_summary_op = tf.summary.merge_all()
+    return inp, labels, loss, acc, out, optimizer
+
+
 
 if __name__ == '__main__':
     # arguments (for learning new model): what --learn <name to vector file> <type to vector file> <AST node type to vector file> --trainingData <list of call data files> --validationData <list of call data files>
@@ -398,7 +421,8 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                model = create_keras_network(dimensions)
+                # model = create_keras_network(dimensions)
+                inp, labels, loss, acc, out, optimizer = create_tf_network(dimensions)
                 print('Created the model!')
                 for op in GRAPH.get_operations():
                     print(str(op.name))
@@ -437,7 +461,6 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            batch_x = np.zeros([100, 600], dtype=float)
 
                             batch_len = len(batch_y)
                             # print('Batch len:', batch_len)
@@ -447,14 +470,16 @@ if __name__ == '__main__':
                             print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            batch_loss, batch_accuracy, preds, optimizer = session.run(
+                                [loss, acc, out, optimizer], feed_dict={inp: batch_x, labels:batch_y})
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
                             # print('Batch accuracy:', batch_accuracy)
                             
                             if train_batches % 1000 == 0:
                                 print("1000 batches") 
-                                print('acc:', mean(train_accuracies, train_batch_sizes))
+                                # print('acc:', mean(train_accuracies, train_batch_sizes))
                                 # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
                             batches_queue.task_done()
                         except queue.Empty:
@@ -515,16 +540,17 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        batch_x = np.zeros([100, 600], dtype=float)
-                        
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        batch_loss, batch_accuracy, preds = session.run(
+                                [loss, acc, out], feed_dict={inp: batch_x, labels:batch_y})
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
-                        predictions.extend(model.predict(batch_x))
+                        # predictions.extend(model.predict(batch_x))
+                        predictions.extend(preds)
                         test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                         test_accuracies.append(batch_accuracy)
                         batches_queue.task_done()
