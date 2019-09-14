@@ -427,7 +427,7 @@ if __name__ == '__main__':
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [BATCH_SIZE, 600])
                 print('rinp_op=', r_inp_op)
-                labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
+                labels, loss, acc, out, _ = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
