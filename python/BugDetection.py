@@ -466,7 +466,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            # print('batch_x:', batch_x)
+                            print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
                             # print('Batch len:', batch_len)
