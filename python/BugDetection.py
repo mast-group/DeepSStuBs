@@ -269,7 +269,7 @@ def create_keras_network(dimensions):
 def create_tf_network(dimensions):
     dense_dims = 200
     inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
-    labels = tf.placeholder(shape=[None, 1])
+    labels = tf.placeholder(shape=[None, 1], dtype=tf.int32)
     drop_inp = tf.nn.dropout(inp, 0.2)
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu)
     drop_nn = tf.nn.dropout(nn, 0.2)
