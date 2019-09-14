@@ -424,9 +424,9 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 print('inp_op=', embeddings_model.get_code_rep_op()['weighted_op'])
-                inp_op = tf.reshape(embeddings_model.get_code_rep_op()['weighted_op'], [BATCH_SIZE, 600])
-                print('inp_op=', inp_op)
-                labels, loss, acc, out, optimizer = create_tf_network(dimensions, inp_op)
+                r_inp_op = tf.reshape(embeddings_model.get_code_rep_op()['weighted_op'], [BATCH_SIZE, 600])
+                print('rinp_op=', r_inp_op)
+                labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
                 # for op in GRAPH.get_operations():
                 #     print(str(op.name))
@@ -465,7 +465,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            print('batch_x:', batch_x)
+                            # print('batch_x:', batch_x)
 
                             batch_len = len(batch_y)
                             # print('Batch len:', batch_len)
