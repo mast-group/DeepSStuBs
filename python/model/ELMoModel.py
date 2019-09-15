@@ -128,7 +128,7 @@ class ELMoModel(AbstractModel):
         """
         # Create batches of data.
         code_ids = self._batcher.batch_sentences(sequence)
-        # return code_ids
+        return code_ids
         # , self._elmo_code_rep_op['weighted_op']
 
         # Compute ELMo representations.

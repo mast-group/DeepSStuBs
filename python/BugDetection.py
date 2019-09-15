@@ -156,7 +156,7 @@ def minibatch_generator():
                 if len(code_pieces) > 0:
                     # Query the model for features
                     xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
-                    xs = xs.reshape(-1, 600)
+                    # xs = xs.reshape(-1, 600)
                     # xs = tf.reshape(xs, [BATCH_SIZE, 600])
                     # for code_piece in code_pieces:
                     #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
@@ -175,7 +175,7 @@ def minibatch_generator():
                 # Query the model for features
                 xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                 # print(xs)
-                xs = xs.reshape(-1, 600)
+                # xs = xs.reshape(-1, 600)
                 # xs = tf.reshape(xs, [BATCH_SIZE, 600])
                 # for code_piece in code_pieces:
                 #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
@@ -274,10 +274,10 @@ def create_tf_network(dimensions, inp):
     # inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
     drop_inp = tf.nn.dropout(inp, 0.2)
-    nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu)
+    nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu, kernel_initializer=tf.keras.initializers.normal)
     drop_nn = tf.nn.dropout(nn, 0.2)
-    out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid)
-    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+    out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
+    loss = tf.reduce_mean(tf.keras.backend.binary_crossentropy(
         labels=labels,
         logits=out
     ))
@@ -423,13 +423,13 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                model = create_keras_network(dimensions)
+                # model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
                 inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 print('rinp_op=', r_inp_op)
-                # labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
+                labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -481,10 +481,10 @@ if __name__ == '__main__':
                             # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                            # batch_loss, batch_accuracy, preds, _ = session.run(
-                            #     [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
-                            # batch_accuracy = batch_accuracy[0]
+                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            batch_loss, batch_accuracy, preds, _ = session.run(
+                                [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
+                            batch_accuracy = batch_accuracy[0]
                             
                             # print("batch_loss", batch_loss)
                             # print("batch_accuracy", batch_accuracy)
@@ -560,10 +560,10 @@ if __name__ == '__main__':
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-                        # batch_loss, batch_accuracy, preds = session.run(
-                        #         [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
-                        # batch_accuracy = batch_accuracy[0]
+                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        batch_loss, batch_accuracy, preds = session.run(
+                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
+                        batch_accuracy = batch_accuracy[0]
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
@@ -619,10 +619,10 @@ if __name__ == '__main__':
                         train_instances += batch_len
                         train_batches += 1
                         train_batch_sizes.append(batch_len)
-                        batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                        # batch_loss, batch_accuracy, preds = session.run(
-                        #         [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
-                        # batch_accuracy = batch_accuracy[0]
+                        # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                        batch_loss, batch_accuracy, preds = session.run(
+                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
+                        batch_accuracy = batch_accuracy[0]
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
