@@ -279,7 +279,7 @@ def create_tf_network(dimensions, inp):
         labels=labels,
         logits=out
     ))
-    acc, update_op = tf.metrics.accuracy(
+    acc = tf.metrics.accuracy(
         labels= tf.round(labels),
         predictions= tf.round(out)
     )
@@ -482,6 +482,7 @@ if __name__ == '__main__':
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, _ = session.run(
                                 [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
+                            batch_accuracy = batch_accuracy[0]
                             # print("batch_loss", batch_loss)
                             # print("batch_accuracy", batch_accuracy)
                             # print("preds", preds)
@@ -559,6 +560,7 @@ if __name__ == '__main__':
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run(
                                 [loss, acc, out], feed_dict={inp_op: batch_x, labels:batch_y})
+                        batch_accuracy = batch_accuracy[0]
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
@@ -616,6 +618,7 @@ if __name__ == '__main__':
                         # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run(
                                 [loss, acc, out], feed_dict={inp_op: batch_x, labels:batch_y})
+                        batch_accuracy = batch_accuracy[0]
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
