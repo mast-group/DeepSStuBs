@@ -425,7 +425,7 @@ if __name__ == '__main__':
                 ch_ids = embeddings_model.get_code_character_ids()
                 inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
-                r_inp_op = tf.reshape(inp_op, [None, 600])
+                r_inp_op = tf.reshape(inp_op, [-1, 600])
                 print('rinp_op=', r_inp_op)
                 labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
