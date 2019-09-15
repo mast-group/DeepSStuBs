@@ -280,8 +280,8 @@ def create_tf_network(dimensions, inp):
         logits=out
     ))
     acc, update_op = tf.metrics.accuracy(
-        labels=labels,
-        predictions= tf.argmax(out, dimension=1)
+        labels= tf.round(labels),
+        predictions= tf.round(out)
     )
     optimizer = tf.train.RMSPropOptimizer(0.001).minimize(loss)
     init = tf.global_variables_initializer()
