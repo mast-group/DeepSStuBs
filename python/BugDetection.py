@@ -492,7 +492,7 @@ if __name__ == '__main__':
                             
                             if train_batches % 1000 == 0:
                                 print("1000 batches") 
-                                # print('acc:', mean(train_accuracies, train_batch_sizes))
+                                print('acc:', mean(train_accuracies, train_batch_sizes))
                                 # print(batch_loss, batch_accuracy, mean(train_losses, train_batch_sizes))
                             batches_queue.task_done()
                         except queue.Empty:
