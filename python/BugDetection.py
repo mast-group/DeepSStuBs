@@ -175,6 +175,7 @@ def minibatch_generator():
                 # Query the model for features
                 xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                 # print(xs)
+                xs = xs.reshape(-1, 600)
                 # xs = tf.reshape(xs, [BATCH_SIZE, 600])
                 # for code_piece in code_pieces:
                 #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
