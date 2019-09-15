@@ -278,8 +278,8 @@ def create_tf_network(dimensions, inp):
     drop_nn = tf.nn.dropout(nn, 0.2)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
     loss = tf.reduce_mean(tf.keras.backend.binary_crossentropy(
-        labels=labels,
-        logits=out
+        target=labels,
+        output=out
     ))
     acc = tf.metrics.accuracy(
         labels= tf.round(labels),
