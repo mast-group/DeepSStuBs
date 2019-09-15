@@ -421,13 +421,13 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                # model = create_keras_network(dimensions)
+                model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
                 inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 print('rinp_op=', r_inp_op)
-                labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
+                # labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -479,10 +479,11 @@ if __name__ == '__main__':
                             # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                            batch_loss, batch_accuracy, preds, _ = session.run(
-                                [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
-                            batch_accuracy = batch_accuracy[0]
+                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            # batch_loss, batch_accuracy, preds, _ = session.run(
+                            #     [loss, acc, out, optimizer], feed_dict={ch_ids: batch_x, labels: batch_y})
+                            # batch_accuracy = batch_accuracy[0]
+                            
                             # print("batch_loss", batch_loss)
                             # print("batch_accuracy", batch_accuracy)
                             # print("preds", preds)
@@ -557,10 +558,11 @@ if __name__ == '__main__':
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-                        batch_loss, batch_accuracy, preds = session.run(
-                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
-                        batch_accuracy = batch_accuracy[0]
+                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        # batch_loss, batch_accuracy, preds = session.run(
+                        #         [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
+                        # batch_accuracy = batch_accuracy[0]
+                        
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
@@ -615,10 +617,11 @@ if __name__ == '__main__':
                         train_instances += batch_len
                         train_batches += 1
                         train_batch_sizes.append(batch_len)
-                        # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                        batch_loss, batch_accuracy, preds = session.run(
-                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
-                        batch_accuracy = batch_accuracy[0]
+                        batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                        # batch_loss, batch_accuracy, preds = session.run(
+                        #         [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
+                        # batch_accuracy = batch_accuracy[0]
+                        
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
