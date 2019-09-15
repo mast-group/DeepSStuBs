@@ -273,9 +273,9 @@ def create_tf_network(dimensions, inp):
     dense_dims = 200
     # inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
-    drop_inp = tf.nn.dropout(inp, 0.2)
+    drop_inp = tf.nn.dropout(inp, 1 - 0.2)
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu, kernel_initializer=tf.keras.initializers.normal)
-    drop_nn = tf.nn.dropout(nn, 0.2)
+    drop_nn = tf.nn.dropout(nn, 1 - 0.2)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
     loss = tf.reduce_mean(tf.keras.backend.binary_crossentropy(
         target=labels,
