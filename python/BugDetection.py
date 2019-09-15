@@ -425,7 +425,7 @@ if __name__ == '__main__':
                 ch_ids = embeddings_model.get_code_character_ids()
                 inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
-                r_inp_op = tf.reshape(inp_op, [-1, 600])
+                r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 print('rinp_op=', r_inp_op)
                 labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op)
                 print('Created the model!')
@@ -559,7 +559,7 @@ if __name__ == '__main__':
                         test_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run(
-                                [loss, acc, out], feed_dict={inp_op: batch_x, labels:batch_y})
+                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
                         batch_accuracy = batch_accuracy[0]
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
@@ -617,7 +617,7 @@ if __name__ == '__main__':
                         train_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run(
-                                [loss, acc, out], feed_dict={inp_op: batch_x, labels:batch_y})
+                                [loss, acc, out], feed_dict={ch_ids: batch_x, labels:batch_y})
                         batch_accuracy = batch_accuracy[0]
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
