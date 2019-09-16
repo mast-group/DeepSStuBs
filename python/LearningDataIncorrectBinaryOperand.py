@@ -154,8 +154,8 @@ class LearningData(object):
                 # return feats
             else:
                 query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+                extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
                 return embeddings_model.get_sequence_embeddings([query]), np.array(extra_vec)
-                # extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
                 # x = list(embeddings_model.get_sequence_embeddings([query]).ravel()) + extra_vec
                 # return x
         elif emb_model_type == 'BPE':
