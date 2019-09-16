@@ -145,6 +145,7 @@ class LearningData(object):
                     queries.append(query)
                     
                 embeds = embeddings_model.get_sequence_default_embeddings(queries)
+                return embeds
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
                     feats.append(vec + extra_vecs[i])
@@ -152,6 +153,7 @@ class LearningData(object):
                 return feats
             else:
                 query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+                return embeddings_model.get_sequence_embeddings([query])
                 extra_vec = self._extra_feats(bin_op, type_to_vector, node_type_to_vector)
                 x = list(embeddings_model.get_sequence_default_embeddings([query]).ravel()) + extra_vec
                 return x
