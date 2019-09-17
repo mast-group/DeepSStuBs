@@ -427,7 +427,7 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                # model = create_keras_network(dimensions)
+                model = create_keras_network(dimensions)
                 # ch_ids = embeddings_model.get_code_character_ids()
                 # inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 # print('inp_op=', inp_op)
