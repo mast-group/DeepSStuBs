@@ -429,10 +429,10 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 # ch_ids = embeddings_model.get_code_character_ids()
-                inp_op = embeddings_model.get_code_rep_op()['weighted_op']
-                print('inp_op=', inp_op)
-                r_inp_op = tf.reshape(inp_op, [-1, dimensions])
-                print('rinp_op=', r_inp_op)
+                # inp_op = embeddings_model.get_code_rep_op()['weighted_op']
+                # print('inp_op=', inp_op)
+                # r_inp_op = tf.reshape(inp_op, [-1, dimensions])
+                # print('rinp_op=', r_inp_op)
                 # extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
