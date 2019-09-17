@@ -58,7 +58,7 @@ node_type_embedding_size = 8 # if changing here, then also change in LearningDat
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 10
+EPOCHS = 1
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
@@ -433,7 +433,7 @@ if __name__ == '__main__':
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 print('rinp_op=', r_inp_op)
-                extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                # extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -475,7 +475,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            code_ids, extra_fs = batch_x
+                            # code_ids, extra_fs = batch_x
                             # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
@@ -486,10 +486,10 @@ if __name__ == '__main__':
                             # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                            batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                            batch_accuracy = batch_accuracy[0]
+                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
+                            #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                            # batch_accuracy = batch_accuracy[0]
                             
                             # print("batch_loss", batch_loss)
                             # print("batch_accuracy", batch_accuracy)
@@ -561,15 +561,15 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        code_ids, extra_fs = batch_x
+                        # code_ids, extra_fs = batch_x
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-                        batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                        batch_accuracy = batch_accuracy[0]
+                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
+                        #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                        # batch_accuracy = batch_accuracy[0]
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
