@@ -42,7 +42,7 @@ class ELMoModel(AbstractModel):
         self._elmo_top_rep_op = weight_layers('top', code_embeddings_op, l2_coef=0.0, use_top_only=True)
         
         # Create an ELMo representation op
-        self._elmo_code_rep_op = weight_layers('elmo', code_embeddings_op, l2_coef=0.0, use_top_only=False, is_trainable=True)
+        self._elmo_code_rep_op = weight_layers('elmo', code_embeddings_op, l2_coef=0.0, use_top_only=False, is_trainable=False)
         print('_elmo_code_rep_op:', self._elmo_code_rep_op)
         
 
