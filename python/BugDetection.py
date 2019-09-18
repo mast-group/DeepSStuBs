@@ -272,7 +272,7 @@ def create_keras_network(dimensions):
 def create_tf_network(dimensions, inp, extra_dims):
     dense_dims = 200
     keep_prob = tf.placeholder_with_default(0.8, shape=())
-    inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
+    # inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     extra_feats = tf.placeholder(shape=[None, extra_dims], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
     drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), keep_prob)
@@ -494,7 +494,7 @@ if __name__ == '__main__':
                             # batch_loss, preds, _ = session.run([loss, out, optimizer], \
                             #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
                             batch_loss, preds, _ = session.run([loss, out, optimizer], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 0.8})
                             # batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
@@ -585,7 +585,7 @@ if __name__ == '__main__':
                         # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
                         #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
                         batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 1.0})
                         # batch_accuracy = batch_accuracy[1]
 
                         correct = 0.0
@@ -651,7 +651,7 @@ if __name__ == '__main__':
                         train_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                         batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 1.0})
                         # batch_accuracy = batch_accuracy[0]
 
                         correct = 0.0
