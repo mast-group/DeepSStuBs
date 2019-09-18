@@ -271,7 +271,7 @@ def create_keras_network(dimensions):
 
 def create_tf_network(dimensions, inp, extra_dims):
     dense_dims = 200
-    keep_prob = tf.placeholder_with_default(1.0, shape=())
+    keep_prob = tf.placeholder_with_default(0.8, shape=())
     inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     extra_feats = tf.placeholder(shape=[None, extra_dims], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
@@ -574,7 +574,7 @@ if __name__ == '__main__':
                         test_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
-                            feed_dict={inp:batch_x, labels: batch_y}) 
+                            feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8}) 
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         batch_accuracy = batch_accuracy[1]
