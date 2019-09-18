@@ -496,8 +496,8 @@ if __name__ == '__main__':
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                             # batch_accuracy = batch_accuracy[0]
                             
-                            # print("batch_loss", batch_loss)
-                            # print("batch_accuracy", batch_accuracy)
+                            print("batch_loss", batch_loss)
+                            print("batch_accuracy", batch_accuracy)
                             # print("preds", preds)
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
