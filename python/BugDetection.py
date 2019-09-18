@@ -58,7 +58,7 @@ node_type_embedding_size = 8 # if changing here, then also change in LearningDat
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 10
+EPOCHS = 2
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
@@ -497,6 +497,13 @@ if __name__ == '__main__':
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                             batch_accuracy = batch_accuracy[1]
                             
+                            correct = 0.0
+                            for i, pred, label in enumerate(zip(preds, batch_y)):
+                               if round(pred) == round(label):
+                                   correct += 1
+                            batch_accuracy = correct / len(pred)
+
+
                             # print("batch_loss", batch_loss)
                             # print("batch_accuracy", batch_accuracy)
                             # print("preds", preds)
@@ -578,6 +585,12 @@ if __name__ == '__main__':
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         batch_accuracy = batch_accuracy[1]
+
+                        correct = 0.0
+                        for i, pred, label in enumerate(zip(preds, batch_y)):
+                            if round(pred) == round(label):
+                                correct += 1
+                        batch_accuracy = correct / len(pred)
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
