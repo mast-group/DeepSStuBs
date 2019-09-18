@@ -500,7 +500,7 @@ if __name__ == '__main__':
                             correct = 0.0
                             # for i in range(len(preds.tolist())):
                             #     print(i)
-                            for i, pred, label in zip(range(len(preds.tolist()), preds.tolist(), batch_y.tolist())):
+                            for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
                                 print(pred, label)
                                 if round(pred[0]) == round(label[0]):
                                     correct += 1
@@ -592,7 +592,7 @@ if __name__ == '__main__':
                         correct = 0.0
                         for i in range(len(preds.tolist())):
                             print(i)
-                        for i, pred, label in zip(range(len(preds.tolist()), preds.tolist(), batch_y.tolist())):
+                        for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
                             if round(pred) == round(label):
                                 correct += 1
                         batch_accuracy = correct / len(pred)
