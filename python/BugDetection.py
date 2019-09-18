@@ -499,7 +499,8 @@ if __name__ == '__main__':
                             
                             correct = 0.0
                             for i, pred, label in zip(range(len(preds), preds, batch_y)):
-                               if round(pred[0]) == round(label[0]):
+                                print(i)
+                                if round(pred[0]) == round(label[0]):
                                    correct += 1
                             batch_accuracy = correct / len(pred)
 
