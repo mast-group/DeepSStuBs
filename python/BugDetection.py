@@ -291,7 +291,7 @@ def create_tf_network(dimensions, inp, extra_dims):
     init = tf.global_variables_initializer()
     tf.summary.scalar("loss", loss)
     merged_summary_op = tf.summary.merge_all()
-    return extra_feats, labels, loss, acc, out, optimizer
+    return inp, labels, loss, acc, out, optimizer
 
 
 
@@ -436,7 +436,7 @@ if __name__ == '__main__':
                 # print('rinp_op=', r_inp_op)
                 r_inp_op = None
                 extra_dims = 10
-                extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                inp, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -491,7 +491,7 @@ if __name__ == '__main__':
                             # Train and get loss for minibatch
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                                feed_dict={extra_feats:batch_x, labels: batch_y})
+                                feed_dict={inp:batch_x, labels: batch_y})
                             # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                             # batch_accuracy = batch_accuracy[0]
@@ -573,7 +573,7 @@ if __name__ == '__main__':
                         test_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
-                            feed_dict={extra_feats:batch_x, labels: batch_y}) 
+                            feed_dict={inp:batch_x, labels: batch_y}) 
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         # batch_accuracy = batch_accuracy[0]
