@@ -435,6 +435,7 @@ if __name__ == '__main__':
                 # r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 # print('rinp_op=', r_inp_op)
                 r_inp_op = None
+                extra_dims = 10
                 extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
