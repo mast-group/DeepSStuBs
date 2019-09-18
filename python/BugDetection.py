@@ -574,7 +574,7 @@ if __name__ == '__main__':
                         test_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
-                            feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8}) 
+                            feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         batch_accuracy = batch_accuracy[1]
