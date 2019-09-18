@@ -578,10 +578,10 @@ if __name__ == '__main__':
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         batch_accuracy = batch_accuracy[1]
                         
-                        batch_predictions = model.predict(batch_x)
-                        predictions.extend([pred for pred in batch_predictions])
+                        # batch_predictions = model.predict(batch_x)
+                        # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
-                        # predictions.extend(preds)
+                        predictions.extend(preds)
                         test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                         test_accuracies.append(batch_accuracy)
                         batches_queue.task_done()
