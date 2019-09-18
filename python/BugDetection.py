@@ -271,13 +271,14 @@ def create_keras_network(dimensions):
 
 def create_tf_network(dimensions, inp, extra_dims):
     dense_dims = 200
+    keep_prob = tf.placeholder_with_default(1.0, shape=())
     inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     extra_feats = tf.placeholder(shape=[None, extra_dims], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
     # drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), 1 - 0.2)
-    drop_inp = tf.nn.dropout(inp, 1 - 0.2)
+    drop_inp = tf.nn.dropout(inp, keep_prob)
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu, kernel_initializer=tf.keras.initializers.normal)
-    drop_nn = tf.nn.dropout(nn, 1 - 0.2)
+    drop_nn = tf.nn.dropout(nn, keep_prob)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
     loss = tf.reduce_mean(tf.keras.backend.binary_crossentropy(
         target=labels,
@@ -291,7 +292,7 @@ def create_tf_network(dimensions, inp, extra_dims):
     init = tf.global_variables_initializer()
     tf.summary.scalar("loss", loss)
     merged_summary_op = tf.summary.merge_all()
-    return inp, labels, loss, acc, out, optimizer
+    return keep_prob, inp, labels, loss, acc, out, optimizer
 
 
 
@@ -436,7 +437,7 @@ if __name__ == '__main__':
                 # print('rinp_op=', r_inp_op)
                 r_inp_op = None
                 extra_dims = 10
-                inp, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                keep_prob, inp, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -491,7 +492,7 @@ if __name__ == '__main__':
                             # Train and get loss for minibatch
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                                feed_dict={inp:batch_x, labels: batch_y})
+                                feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
                             # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                             batch_accuracy = batch_accuracy[1]
