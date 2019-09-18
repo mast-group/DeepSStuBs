@@ -76,7 +76,7 @@ BATCHES_QUEUE_SIZE = 8192
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = False
+USE_ELMO = True
 USE_ELMO_TOP_ONLY = True
 GRAPH = None
 # Connecting to ELMo server
@@ -275,8 +275,8 @@ def create_tf_network(dimensions, inp, extra_dims):
     inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     extra_feats = tf.placeholder(shape=[None, extra_dims], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
-    # drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), 1 - 0.2)
-    drop_inp = tf.nn.dropout(inp, keep_prob)
+    drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), keep_prob)
+    # drop_inp = tf.nn.dropout(inp, keep_prob)
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu, kernel_initializer=tf.keras.initializers.normal)
     drop_nn = tf.nn.dropout(nn, keep_prob)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
@@ -284,15 +284,15 @@ def create_tf_network(dimensions, inp, extra_dims):
         target=labels,
         output=out
     ))
-    acc = tf.metrics.accuracy(
-        labels= tf.round(labels),
-        predictions= tf.round(out)
-    )
+    # acc = tf.metrics.accuracy(
+    #     labels= tf.round(labels),
+    #     predictions= tf.round(out)
+    # )
     optimizer = tf.train.RMSPropOptimizer(0.001, epsilon=1e-07).minimize(loss)
     init = tf.global_variables_initializer()
     tf.summary.scalar("loss", loss)
     merged_summary_op = tf.summary.merge_all()
-    return keep_prob, inp, labels, loss, acc, out, optimizer
+    return keep_prob, extra_feats, inp, labels, loss, out, optimizer
 
 
 
@@ -430,14 +430,14 @@ if __name__ == '__main__':
         with session.as_default():
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
-                # ch_ids = embeddings_model.get_code_character_ids()
-                # inp_op = embeddings_model.get_code_rep_op()['weighted_op']
-                # print('inp_op=', inp_op)
-                # r_inp_op = tf.reshape(inp_op, [-1, dimensions])
-                # print('rinp_op=', r_inp_op)
-                r_inp_op = None
-                extra_dims = 10
-                keep_prob, inp, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                ch_ids = embeddings_model.get_code_character_ids()
+                inp_op = embeddings_model.get_code_rep_op()['weighted_op']
+                print('inp_op=', inp_op)
+                r_inp_op = tf.reshape(inp_op, [-1, dimensions])
+                print('rinp_op=', r_inp_op)
+                # r_inp_op = None
+                # extra_dims = 10
+                keep_prob, extra_feats, inp, labels, loss, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -479,7 +479,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            # code_ids, extra_fs = batch_x
+                            code_ids, extra_fs = batch_x
                             # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
@@ -491,11 +491,11 @@ if __name__ == '__main__':
 
                             # Train and get loss for minibatch
                             # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                            batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                                feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
-                            # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                            #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                            batch_accuracy = batch_accuracy[1]
+                            # batch_loss, preds, _ = session.run([loss, out, optimizer], \
+                            #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
+                            batch_loss, preds, _ = session.run([loss, out, optimizer], \
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                            # batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
                             # for i in range(len(preds.tolist())):
@@ -576,17 +576,17 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        # code_ids, extra_fs = batch_x
+                        code_ids, extra_fs = batch_x
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
-                        batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
-                            feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
-                        # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
-                        #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                        batch_accuracy = batch_accuracy[1]
+                        # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
+                        #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
+                        batch_loss, preds = session.run([loss, out], \
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
+                        # batch_accuracy = batch_accuracy[1]
 
                         correct = 0.0
                         for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
@@ -650,9 +650,15 @@ if __name__ == '__main__':
                         train_batches += 1
                         train_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                        batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
+                        batch_loss, preds = session.run([loss, out], \
                                 feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                        batch_accuracy = batch_accuracy[0]
+                        # batch_accuracy = batch_accuracy[0]
+
+                        correct = 0.0
+                        for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                            if round(pred[0]) == round(label[0]):
+                                correct += 1
+                        batch_accuracy = correct / len(preds.tolist())
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
