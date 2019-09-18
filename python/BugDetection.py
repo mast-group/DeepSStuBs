@@ -498,7 +498,7 @@ if __name__ == '__main__':
                             batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
-                            for i, pred, label in enumerate(zip(preds, batch_y)):
+                            for i, pred, label in zip(range(len(preds), preds, batch_y)):
                                if round(pred) == round(label):
                                    correct += 1
                             batch_accuracy = correct / len(pred)
@@ -587,7 +587,7 @@ if __name__ == '__main__':
                         batch_accuracy = batch_accuracy[1]
 
                         correct = 0.0
-                        for i, pred, label in enumerate(zip(preds, batch_y)):
+                        for i, pred, label in zip(range(len(preds), preds, batch_y)):
                             if round(pred) == round(label):
                                 correct += 1
                         batch_accuracy = correct / len(pred)
