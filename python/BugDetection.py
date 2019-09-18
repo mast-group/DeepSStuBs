@@ -494,10 +494,10 @@ if __name__ == '__main__':
                                 feed_dict={inp:batch_x, labels: batch_y})
                             # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                            # batch_accuracy = batch_accuracy[0]
+                            batch_accuracy = batch_accuracy[1]
                             
-                            print("batch_loss", batch_loss)
-                            print("batch_accuracy", batch_accuracy)
+                            # print("batch_loss", batch_loss)
+                            # print("batch_accuracy", batch_accuracy)
                             # print("preds", preds)
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
@@ -576,7 +576,7 @@ if __name__ == '__main__':
                             feed_dict={inp:batch_x, labels: batch_y}) 
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
-                        # batch_accuracy = batch_accuracy[0]
+                        batch_accuracy = batch_accuracy[1]
                         
                         batch_predictions = model.predict(batch_x)
                         predictions.extend([pred for pred in batch_predictions])
