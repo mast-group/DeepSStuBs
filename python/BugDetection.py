@@ -271,10 +271,11 @@ def create_keras_network(dimensions):
 
 def create_tf_network(dimensions, inp, extra_dims):
     dense_dims = 200
-    # inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
+    inp = tf.placeholder(shape=[None, dimensions], dtype=tf.float32)
     extra_feats = tf.placeholder(shape=[None, extra_dims], dtype=tf.float32)
     labels = tf.placeholder(shape=[None, 1], dtype=tf.float32)
-    drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), 1 - 0.2)
+    # drop_inp = tf.nn.dropout(tf.concat([inp, extra_feats], 1), 1 - 0.2)
+    drop_inp = tf.nn.dropout(inp, 1 - 0.2)
     nn = tf.layers.dense(drop_inp, dense_dims, activation=tf.nn.relu, kernel_initializer=tf.keras.initializers.normal)
     drop_nn = tf.nn.dropout(nn, 1 - 0.2)
     out = tf.layers.dense(drop_nn, 1, activation=tf.nn.sigmoid, kernel_initializer=tf.keras.initializers.normal)
@@ -427,13 +428,13 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                model = create_keras_network(dimensions)
+                # model = create_keras_network(dimensions)
                 # ch_ids = embeddings_model.get_code_character_ids()
                 # inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 # print('inp_op=', inp_op)
                 # r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 # print('rinp_op=', r_inp_op)
-                # extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                extra_feats, labels, loss, acc, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -486,7 +487,9 @@ if __name__ == '__main__':
                             # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
+                                feed_dict={extra_feats:batch_x, labels: batch_y})
                             # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                             #     feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                             # batch_accuracy = batch_accuracy[0]
@@ -566,7 +569,9 @@ if __name__ == '__main__':
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
+                            feed_dict={extra_feats:batch_x, labels: batch_y}) 
                         # batch_loss, batch_accuracy, preds, _ = session.run([loss, acc, out, optimizer], \
                         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y})
                         # batch_accuracy = batch_accuracy[0]
