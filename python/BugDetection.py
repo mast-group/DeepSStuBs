@@ -288,7 +288,7 @@ def create_tf_network(dimensions, inp, extra_dims):
     #     labels= tf.round(labels),
     #     predictions= tf.round(out)
     # )
-    optimizer = tf.train.RMSPropOptimizer(0.001, epsilon=1e-07).minimize(loss)
+    optimizer = tf.train.RMSPropOptimizer(0.001).minimize(loss)
     init = tf.global_variables_initializer()
     tf.summary.scalar("loss", loss)
     merged_summary_op = tf.summary.merge_all()
