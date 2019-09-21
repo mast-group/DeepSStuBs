@@ -259,6 +259,10 @@ class LearningData(object):
                         call_inst["arguments"][0] = "STD:function"
                     if call_inst["arguments"][1] == "function":
                         call_inst["arguments"][1] = "STD:function"
+                    if call_inst["arguments"][0] == "LIT:this":
+                        call_inst["arguments"][0] = "STD:this"
+                    if call_inst["arguments"][1] == "LIT:this":
+                        call_inst["arguments"][1] = "STD:this"
 
                     query = call_inst["tokens"]
                     if call_inst["base"] == '':
