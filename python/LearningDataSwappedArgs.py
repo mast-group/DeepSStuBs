@@ -255,6 +255,11 @@ class LearningData(object):
                 type_vecs = []
                 part_indices = []
                 for call_inst in call:
+                    if call_inst["arguments"][0] == "function":
+                        call_inst["arguments"][0] = "STD:function"
+                    if call_inst["arguments"][1] == "function":
+                        call_inst["arguments"][1] = "STD:function"
+
                     query = call_inst["tokens"]
                     if call_inst["base"] == '':
                         base_vec = [0] * embeddings_model.get_embedding_dims() * 2
