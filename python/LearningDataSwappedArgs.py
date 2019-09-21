@@ -268,13 +268,13 @@ class LearningData(object):
                         if token != r_token:
                             break
                         diff_index += 1
+                    print(call_inst["tokens"], call_inst["arguments"])
                     left_index = call_inst["tokens"].index(call_inst["arguments"][0])
                     right_index = call_inst["tokens"].index(call_inst["arguments"][1])
                     callee_index = call_inst["tokens"].index(call_inst["callee"])
                     base_index = None
                     if call_inst["base"] == '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
-                    print(call_inst["tokens"])
                     print(base_index, callee_index, diff_index, left_index, right_index)
 
                     # Type vector
