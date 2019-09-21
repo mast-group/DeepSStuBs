@@ -272,7 +272,7 @@ class LearningData(object):
                         call_inst["base"] = "STD:function"
                     if call_inst["base"] == "LIT:this":
                         call_inst["base"] = "STD:this"
-                    if call_inst["argubasements"] == "{}":
+                    if call_inst["base"] == "{}":
                         call_inst["base"] = "STD:{"
                     
 
