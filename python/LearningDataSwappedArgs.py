@@ -278,7 +278,7 @@ class LearningData(object):
                     right_index = call_inst["tokens"].index(call_inst["arguments"][1])
                     callee_index = call_inst["tokens"].index(call_inst["callee"])
                     base_index = None
-                    if call_inst["base"] == '':
+                    if call_inst["base"] != '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
                     print(base_index, callee_index, diff_index, left_index, right_index)
 
