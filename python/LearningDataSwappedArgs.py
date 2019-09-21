@@ -254,7 +254,7 @@ class LearningData(object):
                 base_vecs = []
                 type_vecs = []
                 part_indices = []
-                for call_inst in call:
+                for i, call_inst in enumerate(call):
                     if call_inst["arguments"][0] == "function":
                         call_inst["arguments"][0] = "STD:function"
                     if call_inst["arguments"][1] == "function":
@@ -267,6 +267,13 @@ class LearningData(object):
                         call_inst["arguments"][0] = "STD:{"
                     if call_inst["arguments"][1] == "{}":
                         call_inst["arguments"][1] = "STD:{"
+                    
+                    if call_inst["base"] == "function":
+                        call_inst["base"] = "STD:function"
+                    if call_inst["base"] == "LIT:this":
+                        call_inst["base"] = "STD:this"
+                    if call_inst["argubasements"] == "{}":
+                        call_inst["base"] = "STD:{"
                     
 
                     query = call_inst["tokens"]
@@ -282,14 +289,16 @@ class LearningData(object):
                         if token != r_token:
                             break
                         diff_index += 1
-                    print(call_inst["tokens"], call_inst["arguments"])
+                    # print(call_inst["tokens"], call_inst["arguments"])
                     left_index = call_inst["tokens"].index(call_inst["arguments"][0])
                     right_index = call_inst["tokens"].index(call_inst["arguments"][1])
                     callee_index = call_inst["tokens"].index(call_inst["callee"])
-                    base_index = None
+                    base_index = 0
                     if call_inst["base"] != '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
                     print(base_index, callee_index, diff_index, left_index, right_index)
+                    part_indices.append( [[i, base_index], [i, base_index], [i, callee_index], \
+                        [i, diff_index], [i, left_index], [i, right_index]] )
 
                     # Type vector
                     argument_type_strings = call_inst["argumentTypes"]
@@ -297,13 +306,15 @@ class LearningData(object):
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     type_vecs.append( argument0_type_vector + argument1_type_vector )
 
-                for query in queries:
-                    print(query)
-                sys.exit(0)
+                # for query in queries:
+                #     print(query)
+                # sys.exit(0)
 
+                part_indices = np.array(part_indices)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
-                return embeds
+                
+                return embeds, type_vecs, base_vecs, part_indices
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
                     # if len(vec) != 1600: print(len(vec))

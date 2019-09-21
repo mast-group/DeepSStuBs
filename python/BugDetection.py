@@ -386,7 +386,7 @@ if __name__ == '__main__':
                 # dimensions = name_embedding_size
                 # dimensions = name_embedding_size + 2 * type_embedding_size
                 # dimensions = 8 * name_embedding_size #+ 2 * type_embedding_size
-                dimensions = 8 * name_embedding_size
+                dimensions = 5 * name_embedding_size
                 extra_dims = 2 * type_embedding_size
             else:
                 dimensions = 6 * name_embedding_size + 2 * type_embedding_size
