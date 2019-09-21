@@ -253,6 +253,7 @@ class LearningData(object):
                 queries = []
                 base_vecs = []
                 type_vecs = []
+                part_indices = []
                 for call_inst in call:
                     query = call_inst["tokens"]
                     if call_inst["base"] == '':
@@ -261,13 +262,30 @@ class LearningData(object):
                     # base_vec, query  = self._to_ELMo_heuristic_query(call_inst, embeddings_model)
                     queries.append(query)
                     base_vecs.append(base_vec)
+                    
+                    diff_index = 0
+                    for token, r_token in zip(call_inst["tokens"], call_inst["swappedTokens"]):
+                        if token != r_token:
+                            break
+                        diff_index += 1
+                    left_index = call_inst["tokens"].find(call_inst["arguments"][0])
+                    right_index = call_inst["tokens"].find(call_inst["arguments"][1])
+                    callee_index = call_inst["tokens"].find(call_inst["callee"])
+                    base_index = None
+                    if call_inst["base"] == '':
+                        base_index = call_inst["tokens"].find(call_inst["base"])
+                    print(base_index, callee_index, diff_index, left_index, right_index)
+
                     # Type vector
                     argument_type_strings = call_inst["argumentTypes"]
                     argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0] * type_embedding_size)
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     type_vecs.append( argument0_type_vector + argument1_type_vector )
 
-                print(queries)
+                for query in queries:
+                    print(query)
+                sys.exit(0)
+
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
                 return embeds
