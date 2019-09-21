@@ -254,7 +254,11 @@ class LearningData(object):
                 base_vecs = []
                 type_vecs = []
                 for call_inst in call:
-                    base_vec, query  = self._to_ELMo_heuristic_query(call_inst, embeddings_model)
+                    query = call_inst["tokens"]
+                    if call_inst["base"] == '':
+                        base_vec = [0] * embeddings_model.get_embedding_dims() * 2
+                    else: base_vec = []
+                    # base_vec, query  = self._to_ELMo_heuristic_query(call_inst, embeddings_model)
                     queries.append(query)
                     base_vecs.append(base_vec)
                     # Type vector
@@ -263,7 +267,9 @@ class LearningData(object):
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     type_vecs.append( argument0_type_vector + argument1_type_vector )
 
+                print(queries)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
+                print(embeds)
                 return embeds
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
