@@ -274,6 +274,7 @@ class LearningData(object):
                     base_index = None
                     if call_inst["base"] == '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
+                    print(call_inst["tokens"])
                     print(base_index, callee_index, diff_index, left_index, right_index)
 
                     # Type vector
