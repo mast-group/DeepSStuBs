@@ -492,7 +492,9 @@ if __name__ == '__main__':
                             e, inpu = session.run([e_op, inp_op], \
                                 feed_dict = {ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices[0]})
                             print(e, len(e), len(e[0]), len(e[0][0]))
-                            print(inpu, len(inpu), len(inpu[0]), len(inpu[0][0]), len(inpu[0][0][0]))
+                            print(inpu)
+                            print(len(inpu), len(inpu[0]))
+                            # print(len(inpu), len(inpu[0]), len(inpu[0][0]), len(inpu[0][0][0]))
                             # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
