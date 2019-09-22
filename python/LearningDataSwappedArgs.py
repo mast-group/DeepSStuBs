@@ -380,9 +380,9 @@ class LearningData(object):
                 # print(part_indices)
                 part_indices = np.array(part_indices)
                 # print(part_indices)
-                print(part_indices.shape)
+                # print(part_indices.shape)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
-                print(embeds)
+                # print(embeds)
                 
                 return embeds, type_vecs, base_vecs, part_indices
                 for i in range(len(embeds)):
