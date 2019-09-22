@@ -436,7 +436,7 @@ if __name__ == '__main__':
                 gather_op = tf.placeholder(shape=[4, 2], dtype=tf.int32)
                 if what == "SwappedArgs":
                     e_op = embeddings_model.get_code_rep_op()['weighted_op']
-                    inp_op = tf.gather(e_op, gather_op)
+                    inp_op = tf.gather_nd(e_op, gather_op)
                 else:
                     inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
