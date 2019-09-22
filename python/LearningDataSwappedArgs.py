@@ -310,8 +310,9 @@ class LearningData(object):
                 #     print(query)
                 # sys.exit(0)
 
+                print(part_indices)
                 part_indices = np.array(part_indices)
-                print(part_indices.shape())
+                print(part_indices.shape)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
                 
