@@ -305,9 +305,18 @@ class LearningData(object):
                             break
                         diff_index += 1
                     print(call_inst["tokens"], call_inst["arguments"])
-                    left_index = call_inst["tokens"].index(call_inst["arguments"][0])
-                    right_index = call_inst["tokens"].index(call_inst["arguments"][1])
-                    callee_index = call_inst["tokens"].index(call_inst["callee"])
+                    try:
+                        left_index = call_inst["tokens"].index(call_inst["arguments"][0])
+                    except Exception:
+                        left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "STD:"))
+                    try:
+                        right_index = call_inst["tokens"].index(call_inst["arguments"][1])
+                    except Exception:
+                        right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "STD:"))
+                    try:
+                        callee_index = call_inst["tokens"].index(call_inst["callee"])
+                    except Exception:
+                        callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "STD:"))
                     base_index = 0
                     if call_inst["base"] != '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
