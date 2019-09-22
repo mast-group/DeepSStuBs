@@ -433,7 +433,7 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
-                gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
+                # gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
                 if what == "SwappedArgs":
                     inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 else:
