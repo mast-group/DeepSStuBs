@@ -267,6 +267,10 @@ class LearningData(object):
                         call_inst["arguments"][0] = "STD:{"
                     if call_inst["arguments"][1] == "{}":
                         call_inst["arguments"][1] = "STD:{"
+                    if call_inst["arguments"][0] == "[]":
+                        call_inst["arguments"][0] = "STD:["
+                    if call_inst["arguments"][1] == "[]":
+                        call_inst["arguments"][1] = "STD:["
                     
                     if call_inst["base"] == "function":
                         call_inst["base"] = "STD:function"
@@ -274,6 +278,8 @@ class LearningData(object):
                         call_inst["base"] = "STD:this"
                     if call_inst["base"] == "{}":
                         call_inst["base"] = "STD:{"
+                    if call_inst["base"] == "[]":
+                        call_inst["base"] = "STD:["
                     
                     if call_inst["callee"] == "function":
                         call_inst["callee"] = "STD:function"
@@ -281,6 +287,8 @@ class LearningData(object):
                         call_inst["callee"] = "STD:this"
                     if call_inst["callee"] == "{}":
                         call_inst["callee"] = "STD:{"
+                    if call_inst["callee"] == "[]":
+                        call_inst["callee"] = "STD:["
                     
 
                     query = call_inst["tokens"]
