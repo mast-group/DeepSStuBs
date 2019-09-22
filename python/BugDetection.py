@@ -435,7 +435,8 @@ if __name__ == '__main__':
                 ch_ids = embeddings_model.get_code_character_ids()
                 gather_op = tf.placeholder(shape=[4, 2], dtype=tf.int32)
                 if what == "SwappedArgs":
-                    inp_op = tf.gather(embeddings_model.get_code_rep_op()['weighted_op'], gather_op)
+                    e_op = embeddings_model.get_code_rep_op()['weighted_op']
+                    inp_op = tf.gather(e_op, gather_op)
                 else:
                     inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
@@ -488,8 +489,9 @@ if __name__ == '__main__':
                             code_ids, extra_fs, base_vecs, part_indices = batch_x
                             print(part_indices)
                             print(part_indices[0])
-                            inpu = session.run([inp_op], \
+                            e, inpu = session.run([e_op, inp_op], \
                                 feed_dict = {ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices[0]})
+                            print(e, len(e), len(e[0]), len(e[0][0]))
                             print(inpu, len(inpu), len(inpu[0]), len(inpu[0][0]), len(inpu[0][0][0]))
                             # print('batch_x:', batch_x.shape)
 
