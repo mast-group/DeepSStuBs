@@ -433,9 +433,9 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
-                # gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
+                gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
                 if what == "SwappedArgs":
-                    inp_op = embeddings_model.get_code_rep_op()['weighted_op']
+                    inp_op = tf.gather(embeddings_model.get_code_rep_op()['weighted_op'], gather_op)
                 else:
                     inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
@@ -500,7 +500,8 @@ if __name__ == '__main__':
                             # batch_loss, preds, _ = session.run([loss, out, optimizer], \
                             #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
                             batch_loss, preds, _ = session.run([loss, out, optimizer], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 0.8})
+                                feed_dict={ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices, 
+                                    labels: batch_y, keep_prob: 0.8})
                             # batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
