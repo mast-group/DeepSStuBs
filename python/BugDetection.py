@@ -433,7 +433,7 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
-                gather_op = tf.placeholder(shape=[4, 2], dtype=tf.int32)
+                gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
                 if what == "SwappedArgs":
                     e_op = embeddings_model.get_code_rep_op()['weighted_op']
                     inp_op = tf.gather_nd(e_op, gather_op)
@@ -487,13 +487,13 @@ if __name__ == '__main__':
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
                             code_ids, extra_fs, base_vecs, part_indices = batch_x
-                            print(part_indices)
-                            print(part_indices[0])
-                            e, inpu = session.run([e_op, inp_op], \
-                                feed_dict = {ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices[0]})
-                            print(e, len(e), len(e[0]), len(e[0][0]))
-                            print(inpu)
-                            print(len(inpu), len(inpu[0]))
+                            # print(part_indices)
+                            # print(part_indices[0])
+                            # e, inpu = session.run([e_op, inp_op], \
+                            #     feed_dict = {ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices[0]})
+                            # print(e, len(e), len(e[0]), len(e[0][0]))
+                            # print(inpu)
+                            # print(len(inpu), len(inpu[0]))
                             # print(len(inpu), len(inpu[0]), len(inpu[0][0]), len(inpu[0][0][0]))
                             # print('batch_x:', batch_x.shape)
 
