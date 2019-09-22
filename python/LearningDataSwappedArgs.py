@@ -311,6 +311,7 @@ class LearningData(object):
                 # sys.exit(0)
 
                 part_indices = np.array(part_indices)
+                print(part_indices.shape())
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
                 
