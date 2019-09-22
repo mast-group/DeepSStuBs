@@ -319,7 +319,10 @@ class LearningData(object):
                         callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "STD:"))
                     base_index = 0
                     if call_inst["base"] != '':
-                        base_index = call_inst["tokens"].index(call_inst["base"])
+                        try:
+                            base_index = call_inst["tokens"].index(call_inst["base"])
+                        except:
+                            base_index = call_inst["tokens"].index(call_inst["base"].replace("ID:", "STD:"))
                     print(base_index, callee_index, diff_index, left_index, right_index)
                     part_indices.append( [[i, base_index], [i, callee_index], \
                         [i, left_index], [i, right_index]] )
