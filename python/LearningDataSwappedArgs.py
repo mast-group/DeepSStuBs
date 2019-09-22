@@ -292,7 +292,7 @@ class LearningData(object):
                     
 
                     query = call_inst["tokens"]
-                    if len(query > 100):
+                    if len(query) > 100:
                         print(len(query))
                         query = query[:100]
                     if call_inst["base"] == '':
