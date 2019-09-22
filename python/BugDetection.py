@@ -490,7 +490,7 @@ if __name__ == '__main__':
                             print(part_indices[0])
                             inpu = session.run([inp_op], \
                                 feed_dict = {ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices[0]})
-                            print(inpu, inpu.shape())
+                            print(inpu, len(inpu), len(inpu[0]))
                             # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
