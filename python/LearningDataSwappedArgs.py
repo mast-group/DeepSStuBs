@@ -308,21 +308,37 @@ class LearningData(object):
                     try:
                         left_index = call_inst["tokens"].index(call_inst["arguments"][0])
                     except Exception:
-                        left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "STD:"))
+                        try:
+                            left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "STD:"))
+                        except Exception:
+                            left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "LIT:"))
+
                     try:
                         right_index = call_inst["tokens"].index(call_inst["arguments"][1])
                     except Exception:
-                        right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "STD:"))
+                        try:
+                            right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "STD:"))
+                        except Exception:
+                            right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "LIT:"))
+
                     try:
                         callee_index = call_inst["tokens"].index(call_inst["callee"])
                     except Exception:
-                        callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "STD:"))
+                        try:
+                            callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "STD:"))
+                        except Exception:
+                            callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "LIT:"))
+                    
                     base_index = 0
                     if call_inst["base"] != '':
                         try:
                             base_index = call_inst["tokens"].index(call_inst["base"])
-                        except:
-                            base_index = call_inst["tokens"].index(call_inst["base"].replace("ID:", "STD:"))
+                        except Exception:
+                            try:
+                                base_index = call_inst["tokens"].index(call_inst["base"].replace("ID:", "STD:"))
+                            except Exception:
+                                base_index = call_inst["tokens"].index(call_inst["base"].replace("ID:", "LIT:"))
+
                     print(base_index, callee_index, diff_index, left_index, right_index)
                     part_indices.append( [[i, base_index], [i, callee_index], \
                         [i, left_index], [i, right_index]] )
