@@ -304,7 +304,7 @@ class LearningData(object):
                         if token != r_token:
                             break
                         diff_index += 1
-                    # print(call_inst["tokens"], call_inst["arguments"])
+                    print(call_inst["tokens"], call_inst["arguments"])
                     left_index = call_inst["tokens"].index(call_inst["arguments"][0])
                     right_index = call_inst["tokens"].index(call_inst["arguments"][1])
                     callee_index = call_inst["tokens"].index(call_inst["callee"])
@@ -325,9 +325,9 @@ class LearningData(object):
                 #     print(query)
                 # sys.exit(0)
 
-                print(part_indices)
+                # print(part_indices)
                 part_indices = np.array(part_indices)
-                print(part_indices)
+                # print(part_indices)
                 print(part_indices.shape)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
