@@ -304,7 +304,7 @@ class LearningData(object):
                         if token != r_token:
                             break
                         diff_index += 1
-                    print(call_inst["tokens"], call_inst["arguments"])
+                    # print(call_inst["tokens"], call_inst["arguments"])
                     try:
                         left_index = call_inst["tokens"].index(call_inst["arguments"][0])
                     except Exception:
@@ -363,7 +363,7 @@ class LearningData(object):
                                 else:
                                     base_index = call_inst["tokens"].index(call_inst["base"].replace("STD:", "LIT:"))
 
-                    print(base_index, callee_index, diff_index, left_index, right_index)
+                    # print(base_index, callee_index, diff_index, left_index, right_index)
                     part_indices.append( [[i, base_index], [i, callee_index], \
                         [i, left_index], [i, right_index]] )
 
