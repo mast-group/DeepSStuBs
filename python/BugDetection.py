@@ -433,7 +433,11 @@ if __name__ == '__main__':
             with GRAPH.as_default():
                 # model = create_keras_network(dimensions)
                 ch_ids = embeddings_model.get_code_character_ids()
-                inp_op = embeddings_model.get_code_rep_op()['weighted_op']
+                gather_op = tf.placeholder(shape=[BATCH_SIZE, 4, 2], dtype=tf.int32)
+                if what == "SwappedArgs":
+                    inp_op = embeddings_model.get_code_rep_op()['weighted_op']
+                else:
+                    inp_op = embeddings_model.get_code_rep_op()['weighted_op']
                 print('inp_op=', inp_op)
                 r_inp_op = tf.reshape(inp_op, [-1, dimensions])
                 print('rinp_op=', r_inp_op)
@@ -481,7 +485,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            code_ids, extra_fs = batch_x
+                            code_ids, extra_fs, base_vecs, part_indices = batch_x
                             # print('batch_x:', batch_x.shape)
 
                             batch_len = len(batch_y)
