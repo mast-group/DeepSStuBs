@@ -275,6 +275,13 @@ class LearningData(object):
                     if call_inst["base"] == "{}":
                         call_inst["base"] = "STD:{"
                     
+                    if call_inst["callee"] == "function":
+                        call_inst["callee"] = "STD:function"
+                    if call_inst["callee"] == "LIT:this":
+                        call_inst["callee"] = "STD:this"
+                    if call_inst["callee"] == "{}":
+                        call_inst["callee"] = "STD:{"
+                    
 
                     query = call_inst["tokens"]
                     if call_inst["base"] == '':
@@ -297,8 +304,8 @@ class LearningData(object):
                     if call_inst["base"] != '':
                         base_index = call_inst["tokens"].index(call_inst["base"])
                     print(base_index, callee_index, diff_index, left_index, right_index)
-                    part_indices.append( [[i, base_index], [i, base_index], [i, callee_index], \
-                        [i, diff_index], [i, left_index], [i, right_index]] )
+                    part_indices.append( [[i, base_index], [i, callee_index], \
+                        [i, left_index], [i, right_index]] )
 
                     # Type vector
                     argument_type_strings = call_inst["argumentTypes"]
@@ -312,6 +319,7 @@ class LearningData(object):
 
                 print(part_indices)
                 part_indices = np.array(part_indices)
+                print(part_indices)
                 print(part_indices.shape)
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 print(embeds)
