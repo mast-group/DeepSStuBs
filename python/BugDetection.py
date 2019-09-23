@@ -522,8 +522,8 @@ if __name__ == '__main__':
                             batch_accuracy = correct / len(preds.tolist())
 
 
-                            print("batch_loss", batch_loss)
-                            print("%d - batch_accuracy: %f" % (train_batches, batch_accuracy))
+                            # print("batch_loss", batch_loss)
+                            # print("%d - batch_accuracy: %f" % (train_batches, batch_accuracy))
                             # print("preds", preds)
                             train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             train_accuracies.append(batch_accuracy)
@@ -601,7 +601,8 @@ if __name__ == '__main__':
                         # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
                         #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
                         batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 1.0})
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                                    labels: batch_y, keep_prob: 1.0})
                         # batch_accuracy = batch_accuracy[1]
 
                         correct = 0.0
@@ -667,7 +668,8 @@ if __name__ == '__main__':
                         train_batch_sizes.append(batch_len)
                         # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                         batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, labels: batch_y, keep_prob: 1.0})
+                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                                    labels: batch_y, keep_prob: 1.0})
                         # batch_accuracy = batch_accuracy[0]
 
                         correct = 0.0
