@@ -140,13 +140,27 @@ class LearningData(object):
                 feats = []
                 queries = []
                 extra_vecs = []
-                for bin_op_inst in bin_op:
+                part_indices = []
+                for i, bin_op_inst in enumerate(bin_op):
                     extra_vecs.append(self._extra_feats(bin_op_inst, type_to_vector, node_type_to_vector))
-                    query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+
+                    query = bin_op["tokens"]
+                    max_query = 200
+                    if len(query) > max_query:
+                        # print(len(query))
+                        query = query[:max_query]
                     queries.append(query)
-                    
+
+                    # left_index = 0
+                    # right_index =
+                    part_indices.append([[i, 0], [i, int(bin_op["opPosition"])], [i, int(bin_op["opPosition"]) + 1]])
+
+                    # query  = self._to_ELMo_heuristic_query(bin_op_inst, embeddings_model)
+                    # queries.append(query)
+
+                part_indices = np.array(part_indices)  
                 embeds = embeddings_model.get_sequence_embeddings(queries)
-                return embeds, np.array(extra_vecs)
+                return embeds, np.array(extra_vecs), part_indices
                 
                 # for i in range(len(embeds)):
                 #     vec = list(embeds[i].ravel())

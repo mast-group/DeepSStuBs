@@ -391,7 +391,7 @@ class LearningData(object):
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 # print(embeds)
                 
-                return embeds, type_vecs, base_vecs, part_indices
+                return embeds, type_vecs, part_indices #base_vecs, 
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
                     # if len(vec) != 1600: print(len(vec))

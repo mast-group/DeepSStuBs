@@ -486,7 +486,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            code_ids, extra_fs, base_vecs, part_indices = batch_x
+                            code_ids, extra_fs, part_indices = batch_x
                             # print(part_indices)
                             # print(part_indices[0])
                             # e, inpu = session.run([e_op, inp_op], \
