@@ -292,9 +292,10 @@ class LearningData(object):
                     
 
                     query = call_inst["tokens"]
-                    if len(query) > 200:
+                    max_query = 200
+                    if len(query) > max_query:
                         # print(len(query))
-                        query = query[:200]
+                        query = query[:max_query]
                     if call_inst["base"] == '':
                         base_vec = [0] * embeddings_model.get_embedding_dims() * 2
                     else: base_vec = []
@@ -327,14 +328,17 @@ class LearningData(object):
                     except Exception:
                         try:
                             if call_inst["arguments"][1].startswith("ID:"):
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "STD:"))
+                                right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "STD:"))
                             else:
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("STD:", "ID:"))
+                                right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("STD:", "ID:"))
                         except Exception:
-                            if call_inst["arguments"][1].startswith("ID:"):
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "LIT:"))
-                            else:
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("STD:", "LIT:"))
+                            try:
+                                if call_inst["arguments"][1].startswith("ID:"):
+                                    right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("ID:", "LIT:"))
+                                else:
+                                    right_index = call_inst["tokens"].index(call_inst["arguments"][1].replace("STD:", "LIT:"))
+                            except Exception:
+                                right_index = max_query - 1
 
                     try:
                         callee_index = call_inst["tokens"].index(call_inst["callee"])
