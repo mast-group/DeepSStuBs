@@ -62,6 +62,7 @@ class LearningData(object):
         
         mutated_bin_op["op"] = other_operator
         mutated_tokens[mutated_bin_op["opPosition"]] = other_operator
+        mutated_bin_op["tokens"] = mutated_tokens
 
         return mutated_bin_op
     
