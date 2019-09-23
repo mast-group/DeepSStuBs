@@ -82,7 +82,7 @@ class LearningData(object):
                     queries = []
                     extra_vecs = []
                     part_indices = []
-                    for bin_op_inst in bin_op:
+                    for i, bin_op_inst in enumerate(bin_op):
                         extra_vecs.append(self._extra_feats(bin_op_inst, type_to_vector, node_type_to_vector))
                         
                         query = bin_op_inst["tokens"]
