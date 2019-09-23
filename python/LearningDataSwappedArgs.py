@@ -293,7 +293,7 @@ class LearningData(object):
 
                     query = call_inst["tokens"]
                     if len(query) > 200:
-                        print(len(query))
+                        # print(len(query))
                         query = query[:200]
                     if call_inst["base"] == '':
                         base_vec = [0] * embeddings_model.get_embedding_dims() * 2
