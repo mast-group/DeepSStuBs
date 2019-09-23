@@ -111,6 +111,7 @@ class LearningData(object):
             mutated_bin_op["right"] = other_operand.op
             mutated_bin_op["rightType"] = other_operand.type
             mutated_tokens = bin_op["tokens"][: bin_op["opPosition"] + 1] + self.file_to_operands[file][other_operand]
+        mutated_bin_op["tokens"] = mutated_tokens
 
         return mutated_bin_op
     
