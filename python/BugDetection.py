@@ -593,7 +593,7 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        code_ids, extra_fs = batch_x
+                        code_ids, extra_fs, part_indices = batch_x
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
@@ -662,7 +662,7 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        code_ids, extra_fs = batch_x
+                        code_ids, extra_fs, part_indices = batch_x
                         batch_len = len(batch_y)
                         train_instances += batch_len
                         train_batches += 1
