@@ -385,13 +385,13 @@ class LearningData(object):
 
                     parameter_strings = call_inst["parameters"]
                     if parameter_strings[0] == '':
-                        parameter0_vector = [0] * embeddings_model.get_token_embedding_dims()
+                        parameter0_vector = [0] * embeddings_model.get_embedding_dims()
                     else:
                         parameter0_vector = list(embeddings_model.get_embedding(parameter_strings[0])[0].ravel())
-                        print(len(parameter0_vector), embeddings_model.get_token_embedding_dims())
+                        # print(len(parameter0_vector), embeddings_model.get_token_embedding_dims())
                         # print(parameter0_vector, parameter0_vector[0], parameter0_vector[0].ravel())
                     if parameter_strings[1] == '':
-                        parameter1_vector = [0] * embeddings_model.get_token_embedding_dims()
+                        parameter1_vector = [0] * embeddings_model.get_embedding_dims()
                     else:
                         parameter1_vector = list(embeddings_model.get_embedding(parameter_strings[1])[0].ravel())
 
