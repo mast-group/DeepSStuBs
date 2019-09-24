@@ -254,6 +254,7 @@ class LearningData(object):
                 base_vecs = []
                 extra_vecs = []
                 part_indices = []
+                arg_queries = []
                 for i, call_inst in enumerate(call):
                     if call_inst["arguments"][0] == "function":
                         call_inst["arguments"][0] = "STD:function"
@@ -379,27 +380,31 @@ class LearningData(object):
                     argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0] * type_embedding_size)
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     
-                    argument_strings = call_inst["arguments"]
-                    argument0_vector = list(embeddings_model.get_embedding(argument_strings[0])[0].ravel())
-                    argument1_vector = list(embeddings_model.get_embedding(argument_strings[1])[0].ravel())
+                    # argument_strings = call_inst["arguments"]
+                    # argument0_vector = list(embeddings_model.get_embedding(argument_strings[0])[0].ravel())
+                    # argument1_vector = list(embeddings_model.get_embedding(argument_strings[1])[0].ravel())
+                    arg_queries.append( argument_strings )
 
-                    parameter_strings = call_inst["parameters"]
-                    if parameter_strings[0] == '':
-                        parameter0_vector = [0] * embeddings_model.get_embedding_dims()
-                    else:
-                        parameter0_vector = list(embeddings_model.get_embedding(parameter_strings[0])[0].ravel())
-                        # print(len(parameter0_vector), embeddings_model.get_token_embedding_dims())
-                        # print(parameter0_vector, parameter0_vector[0], parameter0_vector[0].ravel())
-                    if parameter_strings[1] == '':
-                        parameter1_vector = [0] * embeddings_model.get_embedding_dims()
-                    else:
-                        parameter1_vector = list(embeddings_model.get_embedding(parameter_strings[1])[0].ravel())
+                    # parameter_strings = call_inst["parameters"]
+                    # if parameter_strings[0] == '':
+                    #     parameter0_vector = [0] * embeddings_model.get_embedding_dims()
+                    # else:
+                    #     parameter0_vector = list(embeddings_model.get_embedding(parameter_strings[0])[0].ravel())
+                    #     # print(len(parameter0_vector), embeddings_model.get_token_embedding_dims())
+                    #     # print(parameter0_vector, parameter0_vector[0], parameter0_vector[0].ravel())
+                    # if parameter_strings[1] == '':
+                    #     parameter1_vector = [0] * embeddings_model.get_embedding_dims()
+                    # else:
+                    #     parameter1_vector = list(embeddings_model.get_embedding(parameter_strings[1])[0].ravel())
 
                     # print(argument0_type_vector, argument1_type_vector)
                     # print(parameter0_vector, parameter1_vector, argument0_vector, argument1_vector)
-                    extra_vecs.append(argument0_type_vector + argument1_type_vector + \
-                        argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
+                    # extra_vecs.append(argument0_type_vector + argument1_type_vector + \
+                    #     argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
 
+                arg_embeds = embeddings_model.get_sequence_token_embeddings(arg_queries)
+                print(arg_embeds)
+                sys.exit(0)
 
                 # for query in queries:
                 #     print(query)
