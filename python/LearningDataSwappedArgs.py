@@ -383,7 +383,7 @@ class LearningData(object):
                     argument0_vector = embeddings_model.get_embedding(argument_strings[0])
                     argument1_vector = embeddings_model.get_embedding(argument_strings[1])
 
-                    parameter_strings = call["parameters"]
+                    parameter_strings = call_inst["parameters"]
                     if parameter_strings[0] == '':
                         parameter0_vector = [0] * embeddings_model.get_embedding_dims()
                     else:
