@@ -404,13 +404,13 @@ class LearningData(object):
                     #     argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
 
                 arg_embeds = embeddings_model.get_sequence_token_embeddings(arg_queries)
-                print(arg_embeds)
+                # print(arg_embeds)
                 for i in range(len(extra_vecs)):
                     # print(arg_embeds[i][0])
-                    print(list(arg_embeds[i][1]))
+                    # print(list(arg_embeds[i][1]))
                     extra_vecs[i] += list(arg_embeds[i][0]) + list(arg_embeds[i][1])
                 # print(extra_vecs[0])
-                sys.exit(0)
+                # sys.exit(0)
 
                 # for query in queries:
                 #     print(query)
