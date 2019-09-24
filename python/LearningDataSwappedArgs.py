@@ -394,7 +394,8 @@ class LearningData(object):
                     else:
                         parameter1_vector = list(embeddings_model.get_embedding(parameter_strings[1])[0].ravel())
 
-                    # print(parameter0_vector, parameter1_vector, argument0_vector, argument1_vector)
+                    print(argument0_type_vector, argument1_type_vector)
+                    print(parameter0_vector, parameter1_vector, argument0_vector, argument1_vector)
                     extra_vecs.append(argument0_type_vector + argument1_type_vector + \
                         argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
 
