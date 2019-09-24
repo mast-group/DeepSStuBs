@@ -388,7 +388,7 @@ class LearningData(object):
                         parameter0_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
                         parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
-                        print(parameter0_vector, parameter0_vector[0], parameter0_vector[0].ravel)
+                        print(parameter0_vector, parameter0_vector[0], parameter0_vector[0].ravel())
                     if parameter_strings[1] == '':
                         parameter1_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
