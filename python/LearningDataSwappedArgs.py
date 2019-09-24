@@ -240,7 +240,7 @@ class LearningData(object):
             else:
                 parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
             if parameter_strings[1] == '':
-                parameter1_vector = [1] * embeddings_model.get_embedding_dims()
+                parameter1_vector = [0] * embeddings_model.get_embedding_dims()
             else:
                 parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
             
@@ -385,11 +385,11 @@ class LearningData(object):
 
                     parameter_strings = call_inst["parameters"]
                     if parameter_strings[0] == '':
-                        parameter0_vector = [0] * embeddings_model.get_embedding_dims()
+                        parameter0_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
                         parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
                     if parameter_strings[1] == '':
-                        parameter1_vector = [1] * embeddings_model.get_embedding_dims()
+                        parameter1_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
                         parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
 
