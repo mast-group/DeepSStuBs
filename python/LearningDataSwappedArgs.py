@@ -397,6 +397,9 @@ class LearningData(object):
                         argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
 
 
+                for ev in extra_vecs:
+                    print(len(ev))
+                print()
                 # for query in queries:
                 #     print(query)
                 # sys.exit(0)
