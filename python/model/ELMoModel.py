@@ -215,7 +215,7 @@ class ELMoModel(AbstractModel):
         Returns:
             [type] -- [description]
         """
-        return self._emb_dims / 2
+        return int(self._emb_dims / 2)
     
 
     def isOOV(self, word):
