@@ -65,14 +65,14 @@ BATCHING_THREADS = 1
 BATCH_SIZE = 50#63 #256
 # assert BATCH_SIZE % 2 == 0, "Batch size must be an even number."
 # Queue used to store code_pieces from_which minibatches are generated
-CODE_PIECES_QUEUE_SIZE = 1000000
-code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
+# CODE_PIECES_QUEUE_SIZE = 1000000
+# code_pieces_queue = queue.Queue(maxsize=CODE_PIECES_QUEUE_SIZE)
 
-CODE_PAIRS_QUEUE_SIZE = 250000
+CODE_PAIRS_QUEUE_SIZE = 100000
 code_pairs_queue = queue.Queue(maxsize=CODE_PAIRS_QUEUE_SIZE)
 
 # Queue used to store generated minibatches
-BATCHES_QUEUE_SIZE = 8192
+BATCHES_QUEUE_SIZE = 4096
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
