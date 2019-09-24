@@ -252,7 +252,7 @@ class LearningData(object):
                 feats = []
                 queries = []
                 base_vecs = []
-                type_vecs = []
+                extra_vecs = []
                 part_indices = []
                 for i, call_inst in enumerate(call):
                     if call_inst["arguments"][0] == "function":
@@ -378,7 +378,24 @@ class LearningData(object):
                     argument_type_strings = call_inst["argumentTypes"]
                     argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0] * type_embedding_size)
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
-                    type_vecs.append( argument0_type_vector + argument1_type_vector )
+                    
+                    argument_strings = call_inst["arguments"]
+                    argument0_vector = embeddings_model.get_embedding(argument_strings[0])
+                    argument1_vector = embeddings_model.get_embedding(argument_strings[1])
+
+                    parameter_strings = call["parameters"]
+                    if parameter_strings[0] == '':
+                        parameter0_vector = [0] * embeddings_model.get_embedding_dims()
+                    else:
+                        parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
+                    if parameter_strings[1] == '':
+                        parameter1_vector = [1] * embeddings_model.get_embedding_dims()
+                    else:
+                        parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
+
+                    extra_vecs.append(argument0_type_vector + argument1_type_vector + \
+                        argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
+
 
                 # for query in queries:
                 #     print(query)
@@ -391,7 +408,7 @@ class LearningData(object):
                 embeds = embeddings_model.get_sequence_embeddings(queries)
                 # print(embeds)
                 
-                return embeds, type_vecs, part_indices #base_vecs, 
+                return embeds, np.array(extra_vecs), part_indices #base_vecs, 
                 for i in range(len(embeds)):
                     vec = list(embeds[i].ravel())
                     # if len(vec) != 1600: print(len(vec))
