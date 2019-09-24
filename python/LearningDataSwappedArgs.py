@@ -380,7 +380,7 @@ class LearningData(object):
                     argument0_type_vector = type_to_vector.get(argument_type_strings[0], [0] * type_embedding_size)
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     
-                    # argument_strings = call_inst["arguments"]
+                    argument_strings = call_inst["arguments"]
                     # argument0_vector = list(embeddings_model.get_embedding(argument_strings[0])[0].ravel())
                     # argument1_vector = list(embeddings_model.get_embedding(argument_strings[1])[0].ravel())
                     arg_queries.append( argument_strings )
