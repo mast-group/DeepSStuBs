@@ -380,19 +380,19 @@ class LearningData(object):
                     argument1_type_vector = type_to_vector.get(argument_type_strings[1], [0] * type_embedding_size)
                     
                     argument_strings = call_inst["arguments"]
-                    argument0_vector = embeddings_model.get_embedding(argument_strings[0])[0].ravel()
-                    argument1_vector = embeddings_model.get_embedding(argument_strings[1])[0].ravel()
+                    argument0_vector = embeddings_model.get_embedding(argument_strings[0])
+                    argument1_vector = embeddings_model.get_embedding(argument_strings[1])
 
                     parameter_strings = call_inst["parameters"]
                     if parameter_strings[0] == '':
                         parameter0_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
-                        parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])[0].ravel()
-                        print(parameter0_vector)
+                        parameter0_vector = embeddings_model.get_embedding(parameter_strings[0])
+                        print(parameter0_vector, parameter0_vector[0], parameter0_vector.ravel(), parameter0_vector[0].ravel)
                     if parameter_strings[1] == '':
                         parameter1_vector = [0] * embeddings_model.get_token_embedding_dims()
                     else:
-                        parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])[0].ravel()
+                        parameter1_vector = embeddings_model.get_embedding(parameter_strings[1])
 
                     extra_vecs.append(argument0_type_vector + argument1_type_vector + \
                         argument0_vector + argument1_vector + parameter0_vector + parameter1_vector)
