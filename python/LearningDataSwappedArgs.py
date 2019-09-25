@@ -319,10 +319,13 @@ class LearningData(object):
                             else:
                                 left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("STD:", "ID:"))
                         except Exception:
-                            if call_inst["arguments"][0].startswith("ID:"):
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "LIT:"))
-                            else:
-                                left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("STD:", "LIT:"))
+                            try:
+                                if call_inst["arguments"][0].startswith("ID:"):
+                                    left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("ID:", "LIT:"))
+                                else:
+                                    left_index = call_inst["tokens"].index(call_inst["arguments"][0].replace("STD:", "LIT:"))
+                            except Exception:
+                                left_index = diff_index
 
                     try:
                         right_index = call_inst["tokens"].index(call_inst["arguments"][1])
