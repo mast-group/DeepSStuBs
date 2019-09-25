@@ -353,10 +353,13 @@ class LearningData(object):
                             else:
                                 callee_index = call_inst["tokens"].index(call_inst["callee"].replace("STD:", "ID:"))
                         except Exception:
-                            if call_inst["callee"].startswith("ID:"):
-                                callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "LIT:"))
-                            else:
-                                callee_index = call_inst["tokens"].index(call_inst["callee"].replace("STD:", "LIT:"))
+                            try:
+                                if call_inst["callee"].startswith("ID:"):
+                                    callee_index = call_inst["tokens"].index(call_inst["callee"].replace("ID:", "LIT:"))
+                                else:
+                                    callee_index = call_inst["tokens"].index(call_inst["callee"].replace("STD:", "LIT:"))
+                            except Exception:
+                                callee_index = diff_index - 2
                     
                     base_index = 0
                     if call_inst["base"] != '':
