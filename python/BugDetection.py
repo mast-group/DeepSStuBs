@@ -568,7 +568,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            print(batch_x)
+                            print(batch_x.shape)
                             
                             # code_ids, extra_fs, part_indices = batch_x
 
