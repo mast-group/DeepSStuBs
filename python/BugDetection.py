@@ -58,7 +58,7 @@ node_type_embedding_size = 8 # if changing here, then also change in LearningDat
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 3
+EPOCHS = 1
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
@@ -79,7 +79,7 @@ BATCHES_QUEUE_SIZE = 4096
 batches_queue = queue.Queue(maxsize=BATCHES_QUEUE_SIZE)
 
 max_tokens_threshold = 30
-USE_ELMO = True
+USE_ELMO = False
 USE_ELMO_TOP_ONLY = True
 GRAPH = None
 # Connecting to ELMo server
@@ -906,7 +906,7 @@ if __name__ == '__main__':
                     # stop workers
                     code_pairs_thread.join()
                     batching_thread.join()
-                    
+
 
         print()
         with open(metrics_file, 'w') as f:
