@@ -70,6 +70,9 @@ BATCH_SIZE = 50#63 #256
 
 CODE_PAIRS_QUEUE_SIZE = 100000
 code_pairs_queue = queue.Queue(maxsize=CODE_PAIRS_QUEUE_SIZE)
+REAL_BUGS_QUEUE_SIZE = 100000
+code_bugs_queue = queue.Queue(maxsize=REAL_BUGS_QUEUE_SIZE)
+
 
 # Queue used to store generated minibatches
 BATCHES_QUEUE_SIZE = 4096
@@ -86,6 +89,7 @@ GRAPH = None
 def parse_data_paths(args):
     training_data_paths = []
     eval_data_paths = []
+    real_data_paths = []
     mode = None
     for arg in args:
         if arg == "--trainingData":
@@ -94,16 +98,22 @@ def parse_data_paths(args):
         elif arg == "--validationData":
             assert mode == "trainingData"
             mode = "validationData"
+        elif arg == "--realData":
+            assert mode == "validationData"
+            mode = "realData"
         else:
             path = join(getcwd(), arg)
             if mode == "trainingData":
                 training_data_paths.append(path)
             elif mode == "validationData":
                 eval_data_paths.append(path)
+            elif mode == "realData":
+                real_data_paths.append(path)
             else:
                 print("Incorrect arguments")
                 sys.exit(0)
-    return [training_data_paths, eval_data_paths]
+    if len(real_data_paths) == 0: real_data_paths = None
+    return [training_data_paths, eval_data_paths, real_data_paths]
 
 def prepare_xy_pairs(data_paths, learning_data):
     xs = []
@@ -129,6 +139,12 @@ def prepare_xy_pairs_batches(data_paths, learning_data):
 
 
 
+def fill_code_bugs_queue(code_bugs):
+    for code_bug in code_bugs:
+        code_bugs_queue.put(code_bug)
+    code_bugs_queue.put(None)
+
+
 def fill_code_pairs_queue(code_pairs):
     for code_pair in code_pairs:
         code_pairs_queue.put(code_pair)
@@ -142,6 +158,62 @@ def create_code_pairs(data_paths, learning_data):
         if not buggy_code_piece is None:
             code_pairs.append( (code_piece, buggy_code_piece) )
     return code_pairs
+
+
+def real_minibatch_generator():
+    xs = []
+    ys = []
+    code_pieces = []
+    while True:
+        try:
+            code_bug = code_bugs_queue.get()
+            if code_bug is None:
+                print('Consumed all code bugs.')
+                if len(code_pieces) > 0:
+                    # Query the model for features
+                    xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    # xs = xs.reshape(-1, 600)
+                    # xs = tf.reshape(xs, [BATCH_SIZE, 600])
+                    # for code_piece in code_pieces:
+                    #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                    #     xs.append(x)
+                    batch = [xs, np.array(ys)]
+                    # batch = [np.array(xs), np.array(ys)]
+                    batches_queue.put(batch)
+                # code_bugs_queue.task_done()
+                break
+            
+            code_pieces.append(code_bug)
+            if code_bug['isBug'] == "false":
+                ys.append([0])
+            else:
+                 ys.append([1])
+            # ys.append([0])
+            # code_pieces.append(buggy)
+            # ys.append([1])
+            if len(code_pieces) == BATCH_SIZE:
+                # Query the model for features
+                xs = learning_data.code_features(code_pieces, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                # print(xs)
+                # xs = xs.reshape(-1, 600)
+                # xs = tf.reshape(xs, [BATCH_SIZE, 600])
+                # for code_piece in code_pieces:
+                #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
+                #     xs.append(x)
+                batch = [xs, np.array(ys)]
+                # batch = [np.array(xs), np.array(ys)]
+                batches_queue.put(batch)
+                xs = []
+                ys = []
+                code_pieces = []
+        except Exception as e:
+            print('Exception:', str(e))
+            exc_type, exc_obj, tb = sys.exc_info()
+            print(traceback.format_exc())
+            break
+        finally:
+            code_bugs_queue.task_done()
+
 
 
 def minibatch_generator():
@@ -310,7 +382,7 @@ if __name__ == '__main__':
         type_to_vector_file = join(getcwd(), sys.argv[4])
         node_type_to_vector_file = join(getcwd(), sys.argv[5])
         metrics_file = join(getcwd(), sys.argv[6])
-        training_data_paths, validation_data_paths = parse_data_paths(sys.argv[7:])
+        training_data_paths, validation_data_paths, real_data_paths = parse_data_paths(sys.argv[7:])
     elif option == "--load":
         print("--load option is buggy and currently disabled")
         sys.exit(1)
@@ -318,7 +390,7 @@ if __name__ == '__main__':
         name_to_vector_file = join(getcwd(), sys.argv[4])
         type_to_vector_file = join(getcwd(), sys.argv[5])
         node_type_to_vector_file = join(getcwd(), sys.argv[6])
-        training_data_paths, validation_data_paths = parse_data_paths(sys.argv[7:])
+        training_data_paths, validation_data_paths, real_data_paths = parse_data_paths(sys.argv[7:])
     else:
         print("Incorrect arguments")
         sys.exit(1)
@@ -455,6 +527,10 @@ if __name__ == '__main__':
                 learning_data.resetStats()
                 train_code_pairs = create_code_pairs(training_data_paths, learning_data)
                 test_code_pairs = create_code_pairs(validation_data_paths, learning_data)
+                if real_data_paths != None: 
+                    real_bugs = Util.DataReader(real_data_paths, False)
+                else:
+                    real_bugs = None
 
                 # Training loop
                 time_stamp = math.floor(time.time() * 1000)
@@ -763,6 +839,75 @@ if __name__ == '__main__':
     #     print("Possible Anomalies written to file : poss_anomalies.txt")
     #     f_inspect.close()
         
+                # Test learned model on test set.
+                if real_bugs is not None:
+                    print("Serving code bugs in the queue.")
+                    # Create thread for code pair creation.
+                    code_pairs_thread = threading.Thread(target=fill_code_bugs_queue, args=((real_bugs), ))
+                    code_pairs_thread.start()
+
+                    # Create thread for minibatches creation.
+                    batching_thread = threading.Thread(target=real_minibatch_generator)
+                    batching_thread.start()
+
+                    predictions = []
+                    code_pieces_validation = []
+                    real_losses = []
+                    real_accuracies = []
+                    real_batch_sizes = []
+                    real_instances = 0
+                    real_batches = 0
+                    # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+                    # Wait until the batches queue is not empty
+                    while batches_queue.empty():
+                        continue
+                    real_batches_done = False
+                    while True:
+                        try:
+                            batch = batches_queue.get(timeout=30)
+                            batch_x, batch_y = batch
+                            code_ids, extra_fs, part_indices = batch_x
+                            batch_len = len(batch_y)
+                            real_instances += batch_len
+                            real_batches += 1
+                            real_batch_sizes.append(batch_len)
+                            # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                            # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
+                            #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
+                            batch_loss, preds = session.run([loss, out], \
+                                    feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                                        labels: batch_y, keep_prob: 1.0})
+                            # batch_accuracy = batch_accuracy[1]
+
+                            correct = 0.0
+                            for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                                if round(pred[0]) == round(label[0]):
+                                    correct += 1
+                            batch_accuracy = correct / len(preds.tolist())
+                            
+                            # batch_predictions = model.predict(batch_x)
+                            # predictions.extend([pred for pred in batch_predictions])
+                            # predictions.extend(model.predict(batch_x))
+                            predictions.extend(preds)
+                            real_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                            real_accuracies.append(batch_accuracy)
+                            batches_queue.task_done()
+                        except queue.Empty:
+                            real_batches_done = True
+                        finally:
+                            # block untill all minibatches have been assigned to a batch_generator thread
+                            if real_batches_done:
+                                break
+                    print(learning_data.stats)
+                    real_loss = mean(real_losses, real_batch_sizes)
+                    real_accuracy = mean(real_accuracies, real_batch_sizes)
+                    print("Test BUG instances %d - Loss & Accuracy [%f, %f]" % \
+                                (real_instances, real_loss, real_accuracy))
+                    # stop workers
+                    code_pairs_thread.join()
+                    batching_thread.join()
+                    
+
         print()
         with open(metrics_file, 'w') as f:
             f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
