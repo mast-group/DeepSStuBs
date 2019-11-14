@@ -597,7 +597,7 @@ if __name__ == '__main__':
                             # batch_loss, preds, _ = session.run([loss, out, optimizer], \
                             #     feed_dict={ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices, 
                             #         labels: batch_y, keep_prob: 0.8})
-                            print(batch_accuracy)
+                            # print(batch_accuracy)
                             # batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
@@ -692,7 +692,7 @@ if __name__ == '__main__':
                     #    batch_loss, preds = session.run([loss, out], \
                     #             feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
                     #                 labels: batch_y, keep_prob: 1.0})
-                        batch_accuracy = batch_accuracy[1]
+                        # batch_accuracy = batch_accuracy[1]
 
                         # correct = 0.0
                         # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
@@ -703,7 +703,7 @@ if __name__ == '__main__':
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
                         # predictions.extend(model.predict(batch_x))
-                        predictions.extend(preds)
+                        # predictions.extend(preds)
                         test_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                         test_accuracies.append(batch_accuracy)
                         batches_queue.task_done()
@@ -802,41 +802,41 @@ if __name__ == '__main__':
             
             # sys.exit(0)
 
-            # compute precision and recall with different thresholds for reporting anomalies
-            # assumption: correct and swapped arguments are alternating in list of x-y pairs
-            threshold_to_correct = Counter()
-            threshold_to_incorrect = Counter()
-            threshold_to_found_seeded_bugs = Counter()
-            threshold_to_warnings_in_orig_code = Counter()
-            # ys_prediction = model.predict(xs_validation)
-            poss_anomalies = []
-            # for idx in range(0, len(xs_validation), 2):
-            for idx in range(0, len(predictions), 2):
-                y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
-                y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
-                anomaly_score = learning_data.anomaly_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be anomaly in current code
-                normal_score = learning_data.normal_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be correct in current code
-                is_anomaly = False
-                for threshold_raw in range(1, 20, 1):
-                    threshold = threshold_raw / 20.0
-                    suggests_change_of_orig = anomaly_score >= threshold
-                    suggests_change_of_changed = normal_score >= threshold
-                    # counts for positive example
-                    if suggests_change_of_orig:
-                        threshold_to_incorrect[threshold] += 1
-                        threshold_to_warnings_in_orig_code[threshold] += 1
-                    else:
-                        threshold_to_correct[threshold] += 1
-                    # counts for negative example
-                    if suggests_change_of_changed:
-                        threshold_to_correct[threshold] += 1
-                        threshold_to_found_seeded_bugs[threshold] += 1
-                    else:
-                        threshold_to_incorrect[threshold] += 1
+            # # compute precision and recall with different thresholds for reporting anomalies
+            # # assumption: correct and swapped arguments are alternating in list of x-y pairs
+            # threshold_to_correct = Counter()
+            # threshold_to_incorrect = Counter()
+            # threshold_to_found_seeded_bugs = Counter()
+            # threshold_to_warnings_in_orig_code = Counter()
+            # # ys_prediction = model.predict(xs_validation)
+            # poss_anomalies = []
+            # # for idx in range(0, len(xs_validation), 2):
+            # for idx in range(0, len(predictions), 2):
+            #     y_prediction_orig = predictions[idx][0] # probab(original code should be changed), expect 0
+            #     y_prediction_changed = predictions[idx + 1][0] # probab(changed code should be changed), expect 1
+            #     anomaly_score = learning_data.anomaly_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be anomaly in current code
+            #     normal_score = learning_data.normal_score(y_prediction_orig, y_prediction_changed) # higher means more likely to be correct in current code
+            #     is_anomaly = False
+            #     for threshold_raw in range(1, 20, 1):
+            #         threshold = threshold_raw / 20.0
+            #         suggests_change_of_orig = anomaly_score >= threshold
+            #         suggests_change_of_changed = normal_score >= threshold
+            #         # counts for positive example
+            #         if suggests_change_of_orig:
+            #             threshold_to_incorrect[threshold] += 1
+            #             threshold_to_warnings_in_orig_code[threshold] += 1
+            #         else:
+            #             threshold_to_correct[threshold] += 1
+            #         # counts for negative example
+            #         if suggests_change_of_changed:
+            #             threshold_to_correct[threshold] += 1
+            #             threshold_to_found_seeded_bugs[threshold] += 1
+            #         else:
+            #             threshold_to_incorrect[threshold] += 1
                     
-                    # check if we found an anomaly in the original code
-                    if suggests_change_of_orig:
-                        is_anomaly = True
+            #         # check if we found an anomaly in the original code
+            #         if suggests_change_of_orig:
+            #             is_anomaly = True
                     
     #         if is_anomaly:
     #             code_piece = code_pieces_validation[idx]
@@ -891,7 +891,7 @@ if __name__ == '__main__':
                             # batch_loss, preds = session.run([loss, out], \
                             #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
                             #             labels: batch_y, keep_prob: 1.0})
-                            batch_accuracy = batch_accuracy[1]
+                            # batch_accuracy = batch_accuracy[1]
 
                             # correct = 0.0
                             # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
@@ -902,7 +902,7 @@ if __name__ == '__main__':
                             # batch_predictions = model.predict(batch_x)
                             # predictions.extend([pred for pred in batch_predictions])
                             # predictions.extend(model.predict(batch_x))
-                            predictions.extend(preds)
+                            # predictions.extend(preds)
                             real_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
                             real_accuracies.append(batch_accuracy)
                             batches_queue.task_done()
