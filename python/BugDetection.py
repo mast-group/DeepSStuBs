@@ -233,8 +233,8 @@ def minibatch_generator():
                     # for code_piece in code_pieces:
                     #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                     #     xs.append(x)
-                    batch = [xs, np.array(ys)]
-                    # batch = [np.array(xs), np.array(ys)]
+                    # batch = [xs, np.array(ys)]
+                    batch = [np.array(xs), np.array(ys)]
                     batches_queue.put(batch)
                 # code_pairs_queue.task_done()
                 break
@@ -252,8 +252,8 @@ def minibatch_generator():
                 # for code_piece in code_pieces:
                 #     x = learning_data.code_features(code_piece, embeddings_model, emb_model_type, type_to_vector, node_type_to_vector)
                 #     xs.append(x)
-                batch = [xs, np.array(ys)]
-                # batch = [np.array(xs), np.array(ys)]
+                # batch = [xs, np.array(ys)]
+                batch = [np.array(xs), np.array(ys)]
                 batches_queue.put(batch)
                 xs = []
                 ys = []
@@ -568,7 +568,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            print(batch_x.shape)
+                            # print(batch_x.shape)
                             
                             # code_ids, extra_fs, part_indices = batch_x
 
