@@ -184,7 +184,9 @@ def real_minibatch_generator():
                 break
             
             code_pieces.append(code_bug)
+            print(code_bug)
             if code_bug['isBug'] == "false":
+                print('Not bug')
                 ys.append([0])
             else:
                  ys.append([1])
@@ -922,29 +924,29 @@ if __name__ == '__main__':
                     batching_thread.join()
 
 
-        print()
-        with open(metrics_file, 'w') as f:
-            f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
-                        (train_instances, train_loss, train_accuracy) + '\n')
-            f.write("Test instances %d - Loss & Accuracy [%f, %f]" % \
-                        (test_instances, test_loss, test_accuracy) + '\n')
-            f.write('\n')
+        # print()
+        # with open(metrics_file, 'w') as f:
+        #     f.write("Train instances %d - Loss & Accuracy [%f, %f]" % \
+        #                 (train_instances, train_loss, train_accuracy) + '\n')
+        #     f.write("Test instances %d - Loss & Accuracy [%f, %f]" % \
+        #                 (test_instances, test_loss, test_accuracy) + '\n')
+        #     f.write('\n')
             
-            for threshold_raw in range(1, 20, 1):
-                threshold = threshold_raw / 20.0
-                recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
-                precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
-                if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
-                    accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
-                else:
-                    accuracy = 0.0
-                print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
-                    "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
-                        + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
+        #     for threshold_raw in range(1, 20, 1):
+        #         threshold = threshold_raw / 20.0
+        #         recall = (threshold_to_found_seeded_bugs[threshold] * 1.0) / (len(predictions) / 2)
+        #         precision = 1 - ((threshold_to_warnings_in_orig_code[threshold] * 1.0) / (len(predictions) / 2))
+        #         if threshold_to_correct[threshold] + threshold_to_incorrect[threshold] > 0:
+        #             accuracy = threshold_to_correct[threshold] * 1.0 / (threshold_to_correct[threshold] + threshold_to_incorrect[threshold])
+        #         else:
+        #             accuracy = 0.0
+        #         print("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+        #             "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+        #                 + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold]))
                 
-                f.write(("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
-                    "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
-                        + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold])) + '\n')
+        #         f.write(("Threshold: " + str(threshold) + "   Accuracy: " + str(round(accuracy, 4)) + \
+        #             "   Recall: " + str(round(recall, 4))+ "   Precision: " + str(round(precision, 4)) \
+        #                 + "  #Warnings: " + str(threshold_to_warnings_in_orig_code[threshold])) + '\n')
 
     
     
