@@ -503,21 +503,26 @@ if __name__ == '__main__':
         # Create the model
         with session.as_default():
             with GRAPH.as_default():
-                # model = create_keras_network(dimensions)
-                ch_ids = embeddings_model.get_code_character_ids()
-                gather_op = tf.placeholder(shape=[None, int(dimensions / name_embedding_size), 2], dtype=tf.int32)
-                if what == "SwappedArgs":
-                    e_op = embeddings_model.get_code_rep_op()['weighted_op']
-                    inp_op = tf.gather_nd(e_op, gather_op)
-                else:
-                    e_op = embeddings_model.get_code_rep_op()['weighted_op']
-                    inp_op = tf.gather_nd(e_op, gather_op)
-                print('inp_op=', inp_op)
-                r_inp_op = tf.reshape(inp_op, [-1, dimensions])
-                print('rinp_op=', r_inp_op)
+                model = create_keras_network(dimensions)
+                
+                # ch_ids = embeddings_model.get_code_character_ids()
+                # gather_op = tf.placeholder(shape=[None, int(dimensions / name_embedding_size), 2], dtype=tf.int32)
+                # if what == "SwappedArgs":
+                #     e_op = embeddings_model.get_code_rep_op()['weighted_op']
+                #     inp_op = tf.gather_nd(e_op, gather_op)
+                # else:
+                #     e_op = embeddings_model.get_code_rep_op()['weighted_op']
+                #     inp_op = tf.gather_nd(e_op, gather_op)
+                # print('inp_op=', inp_op)
+                # r_inp_op = tf.reshape(inp_op, [-1, dimensions])
+                # print('rinp_op=', r_inp_op)
+                
                 # r_inp_op = None
                 # extra_dims = 10
-                keep_prob, extra_feats, inp, labels, loss, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                # keep_prob, extra_feats, inp, labels, loss, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
+                
+                # inp_op = tf.placeholder(shape=[None, int(dimensions)], dtype=tf.int32)
+                # keep_prob, extra_feats, inp, labels, loss, out, optimizer = create_tf_network(dimensions, r_inp_op, extra_dims)
                 print('Created the model!')
                 session.run(tf.global_variables_initializer())
                 session.run(tf.local_variables_initializer())
@@ -563,7 +568,9 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            code_ids, extra_fs, part_indices = batch_x
+                            
+                            # code_ids, extra_fs, part_indices = batch_x
+
                             # print(part_indices)
                             # print(part_indices[0])
                             # e, inpu = session.run([e_op, inp_op], \
@@ -582,21 +589,23 @@ if __name__ == '__main__':
                             # print('Batches done:', train_batches)
 
                             # Train and get loss for minibatch
-                            # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
+                            batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                             # batch_loss, preds, _ = session.run([loss, out, optimizer], \
                             #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 0.8})
-                            batch_loss, preds, _ = session.run([loss, out, optimizer], \
-                                feed_dict={ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices, 
-                                    labels: batch_y, keep_prob: 0.8})
-                            # batch_accuracy = batch_accuracy[1]
+                            
+                            # batch_loss, preds, _ = session.run([loss, out, optimizer], \
+                            #     feed_dict={ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices, 
+                            #         labels: batch_y, keep_prob: 0.8})
+                            batch_accuracy = batch_accuracy[1]
                             
                             correct = 0.0
                             # for i in range(len(preds.tolist())):
                             #     print(i)
-                            for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
-                                if round(pred[0]) == round(label[0]):
-                                    correct += 1
-                            batch_accuracy = correct / len(preds.tolist())
+
+                            # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                            #     if round(pred[0]) == round(label[0]):
+                            #         correct += 1
+                            # batch_accuracy = correct / len(preds.tolist())
 
 
                             # print("batch_loss", batch_loss)
@@ -669,24 +678,25 @@ if __name__ == '__main__':
                     try:
                         batch = batches_queue.get(timeout=30)
                         batch_x, batch_y = batch
-                        code_ids, extra_fs, part_indices = batch_x
+                        # code_ids, extra_fs, part_indices = batch_x
                         batch_len = len(batch_y)
                         test_instances += batch_len
                         test_batches += 1
                         test_batch_sizes.append(batch_len)
-                        # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                        batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                         # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
                         #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
-                        batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
-                                    labels: batch_y, keep_prob: 1.0})
-                        # batch_accuracy = batch_accuracy[1]
+                       
+                    #    batch_loss, preds = session.run([loss, out], \
+                    #             feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                    #                 labels: batch_y, keep_prob: 1.0})
+                        batch_accuracy = batch_accuracy[1]
 
-                        correct = 0.0
-                        for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
-                            if round(pred[0]) == round(label[0]):
-                                correct += 1
-                        batch_accuracy = correct / len(preds.tolist())
+                        # correct = 0.0
+                        # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                        #     if round(pred[0]) == round(label[0]):
+                        #         correct += 1
+                        # batch_accuracy = correct / len(preds.tolist())
                         
                         # batch_predictions = model.predict(batch_x)
                         # predictions.extend([pred for pred in batch_predictions])
@@ -715,67 +725,68 @@ if __name__ == '__main__':
                 print("Time for prediction (seconds): " + str(round(time_prediction_done - time_learning_done)))
                 
 
-                #  Test on training batches
-                # Create thread for code pair creation.
-                code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
-                code_pairs_thread.start()
+                # #  Test on training batches
+                # # Create thread for code pair creation.
+                # code_pairs_thread = threading.Thread(target=fill_code_pairs_queue, args=((train_code_pairs), ))
+                # code_pairs_thread.start()
 
-                # Create thread for minibatches creation.
-                batching_thread = threading.Thread(target=minibatch_generator)
-                batching_thread.start()
+                # # Create thread for minibatches creation.
+                # batching_thread = threading.Thread(target=minibatch_generator)
+                # batching_thread.start()
 
-                train_losses = []
-                train_accuracies = []
-                train_batch_sizes = []
-                train_instances = 0
-                train_batches = 0
-                # prepare_xy_pairs_batches(validation_data_paths, learning_data)
-                # Wait until the batches queue is not empty
-                while batches_queue.empty():
-                    continue
-                train_batches_done = False
-                while True:
-                    try:
-                        batch = batches_queue.get(timeout=30)
-                        batch_x, batch_y = batch
-                        code_ids, extra_fs, part_indices = batch_x
-                        batch_len = len(batch_y)
-                        train_instances += batch_len
-                        train_batches += 1
-                        train_batch_sizes.append(batch_len)
-                        # batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
-                        batch_loss, preds = session.run([loss, out], \
-                                feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
-                                    labels: batch_y, keep_prob: 1.0})
-                        # batch_accuracy = batch_accuracy[0]
-
-                        correct = 0.0
-                        for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
-                            if round(pred[0]) == round(label[0]):
-                                correct += 1
-                        batch_accuracy = correct / len(preds.tolist())
+                # train_losses = []
+                # train_accuracies = []
+                # train_batch_sizes = []
+                # train_instances = 0
+                # train_batches = 0
+                # # prepare_xy_pairs_batches(validation_data_paths, learning_data)
+                # # Wait until the batches queue is not empty
+                # while batches_queue.empty():
+                #     continue
+                # train_batches_done = False
+                # while True:
+                #     try:
+                #         batch = batches_queue.get(timeout=30)
+                #         batch_x, batch_y = batch
+                #         # code_ids, extra_fs, part_indices = batch_x
+                #         batch_len = len(batch_y)
+                #         train_instances += batch_len
+                #         train_batches += 1
+                #         train_batch_sizes.append(batch_len)
+                #         batch_loss, batch_accuracy = model.train_on_batch(batch_x, batch_y)
                         
-                        # batch_predictions = model.predict(batch_x)
-                        # predictions.extend([pred for pred in batch_predictions])
-                        # predictions.extend(model.predict(batch_x))
-                        predictions.extend(preds)
-                        train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-                        train_accuracies.append(batch_accuracy)
-                        batches_queue.task_done()
-                    except queue.Empty:
-                        train_batches_done = True
-                    finally:
-                        # block untill all minibatches have been assigned to a batch_generator thread
-                        if train_batches_done:
-                            break
-                print(learning_data.stats)
-                train_loss = mean(train_losses, train_batch_sizes)
-                train_accuracy = mean(train_accuracies, train_batch_sizes)
-                print("Train instances %d - Loss & Accuracy [%f, %f]" % \
-                            (train_instances, train_loss, train_accuracy))
-                # stop workers
-                code_pairs_thread.join()
-                batching_thread.join()
+                #         # batch_loss, preds = session.run([loss, out], \
+                #         #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                #         #             labels: batch_y, keep_prob: 1.0})
+                #         batch_accuracy = batch_accuracy[0]
+
+                #         # correct = 0.0
+                #         # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                #         #     if round(pred[0]) == round(label[0]):
+                #         #         correct += 1
+                #         # batch_accuracy = correct / len(preds.tolist())
+                        
+                #         # batch_predictions = model.predict(batch_x)
+                #         # predictions.extend([pred for pred in batch_predictions])
+                #         # predictions.extend(model.predict(batch_x))
+                #         predictions.extend(preds)
+                #         train_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
+                #         train_accuracies.append(batch_accuracy)
+                #         batches_queue.task_done()
+                #     except queue.Empty:
+                #         train_batches_done = True
+                #     finally:
+                #         # block untill all minibatches have been assigned to a batch_generator thread
+                #         if train_batches_done:
+                #             break
+                # print(learning_data.stats)
+                # train_loss = mean(train_losses, train_batch_sizes)
+                # train_accuracy = mean(train_accuracies, train_batch_sizes)
+                # print("Train instances %d - Loss & Accuracy [%f, %f]" % \
+                #             (train_instances, train_loss, train_accuracy))
+                # # stop workers
+                # code_pairs_thread.join()
+                # batching_thread.join()
 
             # xs_validation, ys_validation, code_pieces_validation = prepare_xy_pairs(validation_data_paths, learning_data)
             # print("Validation examples : " + str(len(xs_validation)))
@@ -866,7 +877,7 @@ if __name__ == '__main__':
                         try:
                             batch = batches_queue.get(timeout=30)
                             batch_x, batch_y = batch
-                            code_ids, extra_fs, part_indices = batch_x
+                            # code_ids, extra_fs, part_indices = batch_x
                             batch_len = len(batch_y)
                             real_instances += batch_len
                             real_batches += 1
@@ -874,16 +885,17 @@ if __name__ == '__main__':
                             # batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
                             # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
                             #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
-                            batch_loss, preds = session.run([loss, out], \
-                                    feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
-                                        labels: batch_y, keep_prob: 1.0})
-                            # batch_accuracy = batch_accuracy[1]
+                          
+                            # batch_loss, preds = session.run([loss, out], \
+                            #         feed_dict={ch_ids: code_ids, extra_feats:extra_fs, gather_op: part_indices, \
+                            #             labels: batch_y, keep_prob: 1.0})
+                            batch_accuracy = batch_accuracy[1]
 
-                            correct = 0.0
-                            for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
-                                if round(pred[0]) == round(label[0]):
-                                    correct += 1
-                            batch_accuracy = correct / len(preds.tolist())
+                            # correct = 0.0
+                            # for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                            #     if round(pred[0]) == round(label[0]):
+                            #         correct += 1
+                            # batch_accuracy = correct / len(preds.tolist())
                             
                             # batch_predictions = model.predict(batch_x)
                             # predictions.extend([pred for pred in batch_predictions])
