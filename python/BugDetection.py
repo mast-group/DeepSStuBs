@@ -58,7 +58,7 @@ node_type_embedding_size = 8 # if changing here, then also change in LearningDat
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 10
+EPOCHS = 5
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
