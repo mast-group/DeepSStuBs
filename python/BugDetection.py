@@ -902,6 +902,7 @@ if __name__ == '__main__':
                             batch_bugs = 0
                             batch_fixed = 0
                             for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
+                                print(i, pred, label)
                                 if round(label[0]) == 0:
                                     batch_fixed += 1
                                     if round(pred[0]) == round(label[0]):
