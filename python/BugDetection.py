@@ -58,7 +58,7 @@ node_type_embedding_size = 8 # if changing here, then also change in LearningDat
 Anomaly = namedtuple("Anomaly", ["message", "score"])
 
 # Number of training epochs
-EPOCHS = 3
+EPOCHS = 1
 # Number of threads 
 BATCHING_THREADS = 1
 # Minibatch size. An even number is mandatory. A power of two is advised (for optimization purposes).
@@ -902,7 +902,7 @@ if __name__ == '__main__':
                             batch_bugs = 0
                             batch_fixed = 0
                             for i, pred, label in zip(range(len(preds.tolist())), preds.tolist(), batch_y.tolist()):
-                                # print(i, pred, label)
+                                print(i, pred, label)
                                 if round(label[0]) == 0:
                                     batch_fixed += 1
                                     if round(pred[0]) == round(label[0]):
