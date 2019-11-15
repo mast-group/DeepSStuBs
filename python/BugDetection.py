@@ -926,10 +926,13 @@ if __name__ == '__main__':
                             # predictions.extend(model.predict(batch_x))
                             # predictions.extend(preds)
                             real_losses.append(batch_loss) #* (batch_len / float(BATCH_SIZE))
-                            real_accuracies_bugs.append(batch_accuracy_bugs)
-                            real_accuracies_fixed.append(batch_accuracy_fixed)
-                            real_batch_sizes_fixed.append(batch_fixed)
-                            real_batch_sizes_bugs.append(batch_bugs)
+                            if batch_bugs > 0: 
+                                real_accuracies_bugs.append(batch_accuracy_bugs)
+                                real_batch_sizes_bugs.append(batch_bugs)
+                            if batch_fixed > 0:
+                                real_accuracies_fixed.append(batch_accuracy_fixed)
+                                real_batch_sizes_fixed.append(batch_fixed)
+                            
                             batches_queue.task_done()
                         except queue.Empty:
                             real_batches_done = True
