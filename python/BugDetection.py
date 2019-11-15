@@ -596,7 +596,7 @@ if __name__ == '__main__':
                             
                             batch_loss, preds, _ = session.run([loss, out, optimizer], \
                                 feed_dict={ch_ids: code_ids, extra_feats: extra_fs, gather_op: part_indices, 
-                                    labels: batch_y, keep_prob: 0.8})
+                                    labels: batch_y, keep_prob: 0.5})
                             # print(batch_accuracy)
                             # batch_accuracy = batch_accuracy[1]
                             
