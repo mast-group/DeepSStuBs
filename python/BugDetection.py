@@ -911,8 +911,14 @@ if __name__ == '__main__':
                                     batch_bugs += 1
                                     if round(pred[0]) == round(label[0]):
                                         correct_buggy += 1
-                            batch_accuracy_bugs = correct_buggy / batch_bugs
-                            batch_accuracy_fixed = correct_fixed / batch_fixed
+                            if batch_bugs > 0:
+                                batch_accuracy_bugs = correct_buggy / batch_bugs
+                            else:
+                                batch_accuracy_bugs = 0.0
+                            if batch_fixed > 0:
+                                batch_accuracy_fixed = correct_fixed / batch_fixed
+                            else:
+                                batch_accuracy_fixed = 0.0
                             # batch_accuracy = correct / len(preds.tolist())
                             
                             # batch_predictions = model.predict(batch_x)
