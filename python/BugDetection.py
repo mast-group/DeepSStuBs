@@ -184,9 +184,9 @@ def real_minibatch_generator():
                 break
             
             code_pieces.append(code_bug)
-            print(code_bug)
+            # print(code_bug)
             if code_bug['isBug'] == "false":
-                print('Not bug')
+                # print('Not bug')
                 ys.append([0])
             else:
                 ys.append([1])
