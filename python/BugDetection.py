@@ -887,6 +887,7 @@ if __name__ == '__main__':
                             real_batches += 1
                             real_batch_sizes.append(batch_len)
                             batch_loss, batch_accuracy = model.test_on_batch(batch_x, batch_y)
+                            print(batch_loss, batch_accuracy)
                             # batch_loss, batch_accuracy, preds = session.run([loss, acc, out], \
                             #     feed_dict={inp:batch_x, labels: batch_y, keep_prob: 1.0}) 
                           
