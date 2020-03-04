@@ -26,9 +26,17 @@ from bilm import TokenBatcher
 
 
 if __name__ == '__main__':
-    
-    time_start = time.time()
-    
+    raw_code = [
+        'STD:function STD:( ID:e STD:, ID:tags STD:) STD:{ ID:tags STD:. ID:should STD:. ' + 
+        'ID:have STD:. ID:lengthOf STD:( LIT:1 STD:) STD:; ID:done STD:( STD:) STD:; STD:} '
+        'STD:) STD:; STD:} STD:) STD:; STD:} STD:) STD:; STD:} STD:) STD:; STD:} STD:) STD:; ' +
+        'STD:} STD:) STD:; STD:} STD:) STD:; STD:} STD:) STD:; STD:} STD:) STD:; STD:} STD:) ' +
+        'STD:; STD:} STD:) STD:;',
+        'STD:var ID:gfm STD:= ID:require STD:( LIT:github-flavored-markdown STD:) STD:;'
+    ]
+    tokenized_code = [sentence.split() for sentence in raw_code]
+    print(tokenized_code)
+
     vocab_file = 'ELMoVocab.txt'
     # Location of pretrained LM. .
     model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -41,6 +49,8 @@ if __name__ == '__main__':
         # It is necessary to initialize variables once before running inference.
         sess.run(tf.global_variables_initializer())
 
+        time_start = time.time()
+
         token_emb = elmo.get_embedding('STD:function')
         print(token_emb)
         print(token_emb[0].shape)
@@ -48,4 +58,7 @@ if __name__ == '__main__':
         token_embs = elmo.get_sequence_token_embeddings(tokenized_code)
         print(token_embs)
         print(token_embs[0].shape)
+
+        time_end = time.time()
+        print('Lasted: ', time_end - time_start)
 
