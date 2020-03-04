@@ -83,8 +83,13 @@ if __name__ == '__main__':
         time_start = time.time()
         tokens = get_tokens('tokens/tokens_test_1561467600278.json')
         print("Sequences:", len(tokens))
+        embeddings_ELMo = []
         for i in range(0, len(tokens), batch_size):
             query = tokens[i: i + batch_size]
             token_embs = elmo.get_sequence_token_embeddings(query)
+            for embeddings in token_embs:
+                for embedding in embeddings:
+                    embeddings_ELMo.append(embedding)
+            break
         time_end = time.time()
         print('Lasted: ', time_end - time_start)
