@@ -86,6 +86,8 @@ if __name__ == '__main__':
         for i in range(0, len(tokens), batch_size):
             query = tokens[i: i + batch_size]
             print(query)
+            for l in query:
+                print(len(l))
             token_embs = elmo.get_sequence_token_embeddings(query)
             time_end = time.time()
             print('Lasted: ', time_end - time_start)
