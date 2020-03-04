@@ -90,6 +90,7 @@ if __name__ == '__main__':
             for embeddings in token_embs:
                 for embedding in embeddings:
                     embeddings_ELMo.append(embedding)
+                print(embeddings_ELMo)
             break
         time_end = time.time()
         print('Lasted: ', time_end - time_start)
