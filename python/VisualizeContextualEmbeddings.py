@@ -26,7 +26,10 @@ from bilm import TokenBatcher
 def get_tokens(filename):
     with open(filename) as json_file:
         data = json.load(json_file)
-        print(data)
+        print(len(data))
+        print(data[0])
+        print(len(data))
+        
 
 
 if __name__ == '__main__':
