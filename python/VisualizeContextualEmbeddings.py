@@ -88,7 +88,7 @@ if __name__ == '__main__':
             print(query)
             for l in query:
                 print(len(l))
-            token_embs = elmo.get_sequence_token_embeddings(query)
+            token_embs = elmo.get_sequence_token_embeddings(query[:4])
             time_end = time.time()
             print('Lasted: ', time_end - time_start)
             break
