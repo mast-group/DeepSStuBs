@@ -26,9 +26,10 @@ from bilm import TokenBatcher
 def get_tokens(filename):
     with open(filename) as json_file:
         data = json.load(json_file)
-        print(len(data))
-        print(data[0])
-        print(len(data))
+        return data
+        # print(len(data))
+        # print(data[0])
+        # print(len(data))
         
 
 
@@ -69,4 +70,8 @@ if __name__ == '__main__':
         time_end = time.time()
         print('Lasted: ', time_end - time_start)
         
-        get_tokens('tokens/tokens_test_1561467600278.json')
+        time_start = time.time()
+        tokens = get_tokens('tokens/tokens_test_1561467600278.json')
+        token_embs = elmo.get_sequence_token_embeddings(tokens)
+        time_end = time.time()
+        print('Lasted: ', time_end - time_start)
