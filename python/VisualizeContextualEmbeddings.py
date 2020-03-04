@@ -6,6 +6,9 @@ from os.path import join
 from os import getcwd
 from collections import Counter, namedtuple
 import math
+import numpy as np
+
+import umap
 
 import tensorflow as tf
 config = tf.ConfigProto()
@@ -90,7 +93,12 @@ if __name__ == '__main__':
             for embeddings in token_embs:
                 for embedding in embeddings:
                     embeddings_ELMo.append(embedding)
-            print(embeddings_ELMo)
+
+            reducer = umap.UMAP()
+            # Learn UMAP reduction on the original space
+            mapping = reducer.fit(embeddings_ELMo)
+            print(mapping)
+
             break
         time_end = time.time()
         print('Lasted: ', time_end - time_start)
