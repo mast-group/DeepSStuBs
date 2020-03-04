@@ -93,14 +93,16 @@ if __name__ == '__main__':
             for embeddings, query_part in zip(token_embs, query):
                 for t_index in range(len(query_part)):
                     embeddings_ELMo.append(embeddings[t_index])
-
-            reducer = umap.UMAP()
-            # Learn UMAP reduction on the original space
-            reducer.fit(embeddings_ELMo)
-            print('Learned mapping!')
-            print(reducer)
-            print(reducer.transform(embeddings_ELMo))
-
-            break
         time_end = time.time()
-        print('Lasted: ', time_end - time_start)
+        print('Getting embeddings lasted: ', time_end - time_start)
+
+        time_start = time.time()
+        reducer = umap.UMAP()
+        # Learn UMAP reduction on the original space
+        reducer.fit(embeddings_ELMo)
+        print('Learned mapping!')
+        print(reducer)
+        print(reducer.transform(embeddings_ELMo))
+        time_end = time.time()
+        print('Learning reduction mapping lasted: ', time_end - time_start)
+        
