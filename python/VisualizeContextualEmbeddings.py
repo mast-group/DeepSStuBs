@@ -27,6 +27,7 @@ def get_tokens(filename):
     query_size = 1000
     with open(filename) as json_file:
         data = json.load(json_file)
+        print("Files:", len(data))
         tokens = []
         for file_tokens in data:
             if len(file_tokens) < query_size:
@@ -81,9 +82,10 @@ if __name__ == '__main__':
         
         time_start = time.time()
         tokens = get_tokens('tokens/tokens_test_1561467600278.json')
+        print("Sequences:", len(tokens))
         for i in range(0, len(tokens), batch_size):
             query = tokens[i: i + batch_size]
-            token_embs = elmo.get_sequence_token_embeddings(tokens)
+            token_embs = elmo.get_sequence_token_embeddings(query)
             time_end = time.time()
             print('Lasted: ', time_end - time_start)
             break
