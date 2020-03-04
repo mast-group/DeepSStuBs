@@ -90,10 +90,10 @@ if __name__ == '__main__':
         for i in range(0, len(tokens), batch_size):
             query = tokens[i: i + batch_size]
             token_embs = elmo.get_sequence_token_embeddings(query)
-            for embeddings in token_embs:
-                for embedding in embeddings:
-                    embeddings_ELMo.append(embedding)
-
+            for embeddings, query_part in zip(token_embs, query):
+                for t_index in range(len(query_part)):
+                    embeddings_ELMo.append(embeddings[t_index])
+            
             reducer = umap.UMAP()
             # Learn UMAP reduction on the original space
             mapping = reducer.fit(embeddings_ELMo)
