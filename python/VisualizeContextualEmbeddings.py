@@ -24,9 +24,17 @@ from bilm import TokenBatcher
 
 
 def get_tokens(filename):
+    query_size = 1000
     with open(filename) as json_file:
         data = json.load(json_file)
-        return data
+        tokens = []
+        for file_tokens in data:
+            if len(file_tokens) < query_size:
+                tokens.append(file_tokens)
+            else:
+                for i in range(0, len(file_tokens), query_size):
+                    tokens.append(file_tokens[i: i + query_size])
+        return tokens
         # print(len(data))
         # print(data[0])
         # print(len(data))
@@ -45,6 +53,7 @@ if __name__ == '__main__':
     tokenized_code = [sentence.split() for sentence in raw_code]
     print(tokenized_code)
 
+    batch_size = 32
     vocab_file = 'ELMoVocab.txt'
     # Location of pretrained LM. .
     model_dir = '/disk/scratch/mpatsis/eddie/models/phog/js/elmo/emb100_hidden1024_steps20_drop0.1/'
@@ -72,6 +81,9 @@ if __name__ == '__main__':
         
         time_start = time.time()
         tokens = get_tokens('tokens/tokens_test_1561467600278.json')
-        token_embs = elmo.get_sequence_token_embeddings(tokens)
-        time_end = time.time()
-        print('Lasted: ', time_end - time_start)
+        for i in range(0, len(tokens), batch_size):
+            query = tokens[i: i + batch_size]
+            token_embs = elmo.get_sequence_token_embeddings(tokens)
+            time_end = time.time()
+            print('Lasted: ', time_end - time_start)
+            break
