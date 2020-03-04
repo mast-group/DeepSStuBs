@@ -23,6 +23,10 @@ from Util import *
 from bilm import TokenBatcher
 
 
+def get_tokens(filename):
+    with open(filename) as json_file:
+        data = json.load(json_file)
+        print(data)
 
 
 if __name__ == '__main__':
@@ -61,4 +65,5 @@ if __name__ == '__main__':
 
         time_end = time.time()
         print('Lasted: ', time_end - time_start)
-
+        
+        get_tokens('tokens/tokens_test_1561467600278.json')
