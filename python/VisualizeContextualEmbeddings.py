@@ -97,6 +97,7 @@ if __name__ == '__main__':
             reducer = umap.UMAP()
             # Learn UMAP reduction on the original space
             mapping = reducer.fit(embeddings_ELMo)
+            print('Learned mapping!')
             print(mapping)
 
             break
