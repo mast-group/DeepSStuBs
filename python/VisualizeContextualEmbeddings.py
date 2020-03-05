@@ -113,6 +113,8 @@ if __name__ == '__main__':
 
         example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:one', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
             'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
+        colors = [1,1,1,1,1, 2,2,2,2, 3,3,3,3, 4,4,4,4, 5,5,5,5]
+        color_mapping = {1: 'green', 2: 'red', 3: 'blue', 4: 'yellow', 5: 'black'}
         
         example_embs = elmo.get_sequence_default_embeddings(example_tokens)[0]
         print(example_embs)
@@ -141,8 +143,9 @@ if __name__ == '__main__':
         ax.set_xlabel('xlabel')
         ax.set_ylabel('ylabel')
 
-        for e, text in zip(mapped_example_embs, example_tokens[0]):
-            ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=6)
+        current_color = 1
+        for e, text, color_id in zip(mapped_example_embs, example_tokens[0], colors):
+            ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=6, color=color_mapping[color_id])
             print(e[0], e[1], text)
 
 
