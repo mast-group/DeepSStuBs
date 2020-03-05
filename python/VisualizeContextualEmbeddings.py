@@ -133,7 +133,8 @@ if __name__ == '__main__':
         # plt.title('UMAP projection of example code embeddings', fontsize=fontsize);
         # plt.savefig('typeExample.png')
 
-    
+        example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:"one"', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
+            'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
         fig = plt.figure()
         fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
 
