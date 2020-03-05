@@ -9,6 +9,9 @@ import math
 import numpy as np
 
 import umap
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import seaborn as sns
 
 import tensorflow as tf
 config = tf.ConfigProto()
@@ -107,3 +110,18 @@ if __name__ == '__main__':
         time_end = time.time()
         print('Learning reduction mapping lasted: ', time_end - time_start)
         
+
+        example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:one', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
+            'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
+        
+        example_embs = elmo.get_sequence_token_embeddings(example_tokens)
+        mapped_example_embs = reducer.transform(example_embs)
+        print(mapped_example_embs)
+        
+        fontsize = 16
+        # Create and save plot
+        plt.figure(figsize=(20, 10))
+        plt.scatter(mapped_example_embs[:, 0], mapped_example_embs[:, 1], c=[sns.color_palette()[1] ])
+        plt.gca().set_aspect('equal', 'datalim')
+        plt.title('UMAP projection of example code embeddings', fontsize=fontsize);
+        plt.savefig('typeExample.png')
