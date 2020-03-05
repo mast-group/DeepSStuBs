@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
 
         plt_size = 25
-        ax.axis([-plt_size, plt_size, -plt_size, plt_size])
+        ax.axis([-plt_size, 15, -10, plt_size])
 
         plt.show()
         plt.savefig('typeExample.png')
