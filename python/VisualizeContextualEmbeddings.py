@@ -142,7 +142,7 @@ if __name__ == '__main__':
         ax.set_ylabel('ylabel')
 
         for e, text in zip(mapped_example_embs, example_tokens[0]):
-            ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=8)
+            ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=4)
             print(e[0], e[1], text)
 
 
