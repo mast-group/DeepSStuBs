@@ -79,7 +79,7 @@ if __name__ == '__main__':
         print(token_emb)
         print(token_emb[0].shape)
         
-        token_embs = elmo.get_sequence_embeddings(tokenized_code)
+        token_embs = elmo.get_sequence_default_embeddings(tokenized_code)
         print(token_embs)
         print(token_embs[0].shape)
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         embeddings_ELMo = []
         for i in range(0, len(tokens), batch_size):
             query = tokens[i: i + batch_size]
-            token_embs = elmo.get_sequence_embeddings(query)
+            token_embs = elmo.get_sequence_default_embeddings(query)
             for embeddings, query_part in zip(token_embs, query):
                 for t_index in range(len(query_part)):
                     embeddings_ELMo.append(embeddings[t_index])
@@ -114,7 +114,7 @@ if __name__ == '__main__':
         example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:one', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
             'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
         
-        example_embs = elmo.get_sequence_embeddings(example_tokens)[0]
+        example_embs = elmo.get_sequence_default_embeddings(example_tokens)[0]
         print(example_embs)
         mapped_example_embs = reducer.transform(example_embs)
         print(mapped_example_embs)
