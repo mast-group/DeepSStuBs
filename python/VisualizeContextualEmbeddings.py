@@ -115,6 +115,7 @@ if __name__ == '__main__':
             'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
         
         example_embs = elmo.get_sequence_token_embeddings(example_tokens)
+        print(example_embs)
         mapped_example_embs = reducer.transform(example_embs)
         print(mapped_example_embs)
         
