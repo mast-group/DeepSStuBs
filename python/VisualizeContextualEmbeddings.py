@@ -159,5 +159,6 @@ if __name__ == '__main__':
         ax.axis([0, 10, 0, 10])
 
         plt.show()
+        plt.savefig('typeExample.png')
 
 
