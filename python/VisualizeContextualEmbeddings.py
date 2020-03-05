@@ -136,11 +136,11 @@ if __name__ == '__main__':
         example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:"one"', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
             'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
         fig = plt.figure()
-        fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
+        fig.suptitle('Type Change Example', fontsize=14, fontweight='bold')
 
         ax = fig.add_subplot(111)
         fig.subplots_adjust(top=0.85)
-        ax.set_title('axes title')
+        #ax.set_title('axes title')
 
         ax.set_xlabel('xlabel')
         ax.set_ylabel('ylabel')
