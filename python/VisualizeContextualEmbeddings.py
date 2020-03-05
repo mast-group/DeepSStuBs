@@ -124,7 +124,7 @@ if __name__ == '__main__':
         plt.figure(figsize=(20, 10))
         # plt.scatter(mapped_example_embs[:, 0], mapped_example_embs[:, 1], c=[sns.color_palette()[1] ])
         for e, text in zip(mapped_example_embs, example_tokens[0]):
-            plt.text(e[0], e[1], example_tokens[0, :], c=[sns.color_palette()[1]])
+            plt.text(e[0], e[1], example_tokens[0, :]])
         plt.gca().set_aspect('equal', 'datalim')
         plt.title('UMAP projection of example code embeddings', fontsize=fontsize);
         plt.savefig('typeExample.png')
