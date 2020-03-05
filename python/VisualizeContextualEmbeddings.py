@@ -101,6 +101,7 @@ if __name__ == '__main__':
         print('Getting embeddings lasted: ', time_end - time_start)
 
         time_start = time.time()
+        np.random.seed(1) # Fixed random seed
         reducer = umap.UMAP()
         # Learn UMAP reduction on the original space
         reducer.fit(embeddings_ELMo)
