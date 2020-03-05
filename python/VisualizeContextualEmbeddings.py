@@ -93,6 +93,7 @@ if __name__ == '__main__':
             for embeddings, query_part in zip(token_embs, query):
                 for t_index in range(len(query_part)):
                     embeddings_ELMo.append(embeddings[t_index])
+            break
         time_end = time.time()
         print('Getting embeddings lasted: ', time_end - time_start)
 
