@@ -141,8 +141,8 @@ if __name__ == '__main__':
         ax.set_xlabel('xlabel')
         ax.set_ylabel('ylabel')
 
-        for e, text in zip(mapped_example_embs, example_tokens[0][example_tokens[0].index(':') + 1:]):
-            ax.text(e[0], e[1], text, fontsize=8)
+        for e, text in zip(mapped_example_embs, example_tokens[0]):
+            ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=8)
             print(e[0], e[1], text)
 
 
