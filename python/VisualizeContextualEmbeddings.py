@@ -156,7 +156,7 @@ if __name__ == '__main__':
         # ax.plot([2], [1], 'o')
 
 
-        ax.axis([0, 10, 0, 10])
+        ax.axis([-40, 40, -40, 40])
 
         plt.show()
         plt.savefig('typeExample.png')
