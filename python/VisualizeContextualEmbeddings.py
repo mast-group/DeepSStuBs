@@ -143,6 +143,7 @@ if __name__ == '__main__':
 
         for e, text in zip(mapped_example_embs, example_tokens[0]):
             ax.text(e[0], e[1], text, fontsize=12)
+            print(e[0], e[1], text)
 
 
         # ax.text(0.95, 0.01, 'colored text in axes coords',
