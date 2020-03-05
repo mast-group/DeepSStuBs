@@ -119,12 +119,45 @@ if __name__ == '__main__':
         mapped_example_embs = reducer.transform(example_embs)
         print(mapped_example_embs)
         
-        fontsize = 16
-        # Create and save plot
-        plt.figure(figsize=(20, 10))
-        # plt.scatter(mapped_example_embs[:, 0], mapped_example_embs[:, 1], c=[sns.color_palette()[1] ])
+        # fontsize = 16
+        # # Create and save plot
+        # plt.figure(figsize=(20, 10))
+        # # plt.scatter(mapped_example_embs[:, 0], mapped_example_embs[:, 1], c=[sns.color_palette()[1] ])
+        # for e, text in zip(mapped_example_embs, example_tokens[0]):
+        #     print(e[0], e[1], text)
+        #     plt.text(e[0], e[1], text)
+        # plt.gca().set_aspect('equal', 'datalim')
+        # plt.title('UMAP projection of example code embeddings', fontsize=fontsize);
+        # plt.savefig('typeExample.png')
+
+    
+        fig = plt.figure()
+        fig.suptitle('bold figure suptitle', fontsize=14, fontweight='bold')
+
+        ax = fig.add_subplot(111)
+        fig.subplots_adjust(top=0.85)
+        ax.set_title('axes title')
+
+        ax.set_xlabel('xlabel')
+        ax.set_ylabel('ylabel')
+
         for e, text in zip(mapped_example_embs, example_tokens[0]):
-            plt.text(e[0], e[1], text)
-        plt.gca().set_aspect('equal', 'datalim')
-        plt.title('UMAP projection of example code embeddings', fontsize=fontsize);
-        plt.savefig('typeExample.png')
+            ax.text(e[0], e[1], text, fontsize=12)
+
+
+        # ax.text(0.95, 0.01, 'colored text in axes coords',
+        #         verticalalignment='bottom', horizontalalignment='right',
+        #         transform=ax.transAxes,
+        #         color='green', fontsize=15)
+
+        # ax.text(5, 6, r'an equation: $E=mc^2$', fontsize=15)
+
+
+        # ax.plot([2], [1], 'o')
+
+
+        ax.axis([0, 10, 0, 10])
+
+        plt.show()
+
+
