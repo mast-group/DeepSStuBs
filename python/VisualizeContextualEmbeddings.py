@@ -114,7 +114,7 @@ if __name__ == '__main__':
         example_tokens = [[ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;',   'ID:one', 'STD:=', 'LIT:one', 'STD:;', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;',
             'ID:one', 'STD:=',  'LIT:true', 'STD:;', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]]
         
-        example_embs = elmo.get_sequence_token_embeddings(example_tokens)
+        example_embs = elmo.get_sequence_token_embeddings(example_tokens)[0]
         print(example_embs)
         mapped_example_embs = reducer.transform(example_embs)
         print(mapped_example_embs)
