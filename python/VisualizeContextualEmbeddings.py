@@ -169,3 +169,35 @@ if __name__ == '__main__':
         plt.savefig('typeExample.png')
 
 
+
+        example_tokens = [ [ 'STD:var', 'ID:one', 'STD:=', 'LIT:1', 'STD:;'], 
+                            ['STD:var', 'ID:one', 'STD:=', 'LIT:one', 'STD:;'], 
+                            ['STD:var', 'ID:one', 'STD:=', 'LIT:1.1', 'STD:;'],
+                            ['STD:var', 'ID:one', 'STD:=',  'LIT:true', 'STD:;'], 
+                            ['STD:var', 'ID:one',  'STD:=', 'LIT:null', 'STD:;' ]
+                         ]
+        
+        fig = plt.figure()
+        fig.suptitle('Type Change Example', fontsize=14, fontweight='bold')
+
+        ax = fig.add_subplot(111)
+        fig.subplots_adjust(top=0.85)
+
+        ax.set_xlabel('xlabel')
+        ax.set_ylabel('ylabel')
+
+        example_embs = elmo.get_sequence_default_embeddings(example_tokens)[0]
+        print(example_embs)
+        for i, e_e, toks in zip(range(len(example_tokens)), example_embs, example_tokens):
+            mapped_example_embs = reducer.transform(e_e)
+            print(mapped_example_embs)
+            for e, text in zip(e_e, toks):
+                ax.text(e[0], e[1], text[text.index(':') + 1:], fontsize=6, color=color_mapping[i])
+                print(e[0], e[1], text)
+        
+        plt_size = 15
+        ax.axis([-plt_size, plt_size, -10, plt_size])
+
+        plt.show()
+        plt.savefig('typeExample2.png')
+
